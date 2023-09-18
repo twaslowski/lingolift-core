@@ -9,6 +9,13 @@
 </head>
 
 <body>
+<form id="translation-form">
+    <input type="text" id="sentence-input" placeholder="Enter your sentence here..." required>
+    <button type="submit">Translate</button>
+</form>
+
+<p id="loading-message" style="display: none;">Translating...</p>
+
 <div class="translation-container">
     <p id="summary" class="summary"></p>
     <div id="sentence-container" class="sentence-container"></div>

@@ -1,15 +1,16 @@
 import json
-import logging
 
 import openai
 
-from src.gpt.message import Message, USER
+from src.gpt.message import Message, USER, SYSTEM
+from src.gpt.prompts import SYSTEM_PROMPT
 from src.util.timing import timed
+
+EMPTY_CONTEXT = [Message(role=SYSTEM, content=SYSTEM_PROMPT)]
 
 
 def chat_completion(context: list[Message], prompt: str) -> dict:
     context.append(Message(role=USER, content=prompt))
-    logging.info("")
     response = _get_response(context)
     return _parse_response(response)
 
