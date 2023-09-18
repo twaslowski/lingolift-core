@@ -33,15 +33,25 @@ function getTranslation(sentence) {
 }
 
 function renderTranslation(data) {
-    document.getElementById('original-sentence').textContent = data.original_sentence;
     document.getElementById('summary').textContent = data.summary;
 
-    // construct literal translation
+    // construct literal translation html
     let literalTranslationHTML = '';
-    const words = data.literal_translation.split(' ');
-    words.forEach(word => {
-        const wordId = words.indexOf(word);
-        literalTranslationHTML += `<span data-word-id="${wordId}">${word}</span> `;
+    const literal_translation = data.literal_translation.split(' ');
+
+    literal_translation.forEach(word => {
+        word.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g,"")
+        const wordId = literal_translation.indexOf(word);
+        literalTranslationHTML += `<span translation-word-id="${wordId}">${word}</span> `;
+    });
+
+    // construct source sentence html
+    let originalSentenceHTML = '';
+    const original_sentence = data.original_sentence.split(' ')
+    original_sentence.forEach(word => {
+        word.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g,"")
+        const wordId = original_sentence.indexOf(word);
+        originalSentenceHTML += `<span original-word-id="${wordId}">${word}</span> `;
     });
 
     // construct sentence breakdown
@@ -63,46 +73,66 @@ function renderTranslation(data) {
         const grammaticalContext = document.createElement('span');
         grammaticalContext.classList.add('grammatical-context');
         grammaticalContext.textContent = item.grammatical_context;
+
         wordContainer.appendChild(grammaticalContext);
 
-        const matches = words.find(word => word.toLowerCase() === item.translation.toLowerCase());
-        if (matches) {
-            wordContainer.setAttribute("data-word-id", words.indexOf(matches))
+        const translationMatches = literal_translation.find(word => word.toLowerCase() === item.translation.toLowerCase());
+        if (translationMatches) {
+            wordContainer.setAttribute("translation-word-id", literal_translation.indexOf(translationMatches))
         }
+
+        const originalMatches = original_sentence.find(word => word.toLowerCase() === item.word.toLowerCase());
+        if (originalMatches) {
+            wordContainer.setAttribute("original-word-id", original_sentence.indexOf(originalMatches))
+        }
+
 
         sentenceContainer.appendChild(wordContainer);
     });
     document.getElementById('literal-translation').innerHTML = literalTranslationHTML
+    document.getElementById('original-sentence').innerHTML = originalSentenceHTML
     addDecorators()
 }
 
 // Function to highlight a word
-function highlightWord(wordId) {
-    document.querySelector(`#literal-translation [data-word-id="${wordId}"]`).classList.add('highlight');
-    document.querySelector(`#sentence-container [data-word-id="${wordId}"]`).classList.add('highlight');
-    document.querySelector(`[data-word-id="${wordId}"]`).classList.add('highlight');
+function highlightWord(wordIdTranslation, wordIdOriginal) {
+    document.querySelector(`#literal-translation [translation-word-id="${wordIdTranslation}"]`).classList.add('highlight');
+    document.querySelector(`#original-sentence [original-word-id="${wordIdOriginal}"]`).classList.add('highlight');
+    document.querySelector(`#sentence-container [translation-word-id="${wordIdTranslation}"]`).classList.add('highlight');
+    document.querySelector(`[translation-word-id="${wordIdTranslation}"]`).classList.add('highlight');
 }
 
 // Function to remove the highlight
-function removeHighlight(wordId) {
-    document.querySelector(`#literal-translation [data-word-id="${wordId}"]`).classList.remove('highlight');
-    document.querySelector(`#sentence-container [data-word-id="${wordId}"]`).classList.remove('highlight');
-    document.querySelector(`[data-word-id="${wordId}"]`).classList.remove('highlight');
+function removeHighlight(wordIdTranslation, wordIdOriginal) {
+    document.querySelector(`#literal-translation [translation-word-id="${wordIdTranslation}"]`).classList.remove('highlight');
+    document.querySelector(`#original-sentence [original-word-id="${wordIdOriginal}"]`).classList.remove('highlight');
+    document.querySelector(`#sentence-container [translation-word-id="${wordIdTranslation}"]`).classList.remove('highlight');
+    document.querySelector(`[translation-word-id="${wordIdTranslation}"]`).classList.remove('highlight');
 }
 
 function addDecorators() {
 // Add event listeners to the words in the literal translation
-    document.querySelectorAll('#literal-translation [data-word-id]').forEach(wordElement => {
-        const wordId = wordElement.getAttribute('data-word-id');
+    document.querySelectorAll('#literal-translation [translation-word-id]').forEach(wordElement => {
+        const wordIdTranslation = wordElement.getAttribute('translation-word-id');
+        const wordIdOriginal = wordElement.getAttribute('original-word-id');
 
-        wordElement.addEventListener('mouseover', () => highlightWord(wordId));
-        wordElement.addEventListener('mouseout', () => removeHighlight(wordId));
+        wordElement.addEventListener('mouseover', () => highlightWord(wordIdTranslation, wordIdOriginal));
+        wordElement.addEventListener('mouseout', () => removeHighlight(wordIdTranslation, wordIdOriginal));
     });
 
-    document.querySelectorAll('#sentence-container [data-word-id]').forEach(wordElement => {
-        const wordId = wordElement.getAttribute('data-word-id');
+    document.querySelectorAll('#sentence-container [translation-word-id]').forEach(wordElement => {
+        const wordIdTranslation = wordElement.getAttribute('translation-word-id');
+        const wordIdOriginal = wordElement.getAttribute('original-word-id');
 
-        wordElement.addEventListener('mouseover', () => highlightWord(wordId));
-        wordElement.addEventListener('mouseout', () => removeHighlight(wordId));
+        wordElement.addEventListener('mouseover', () => highlightWord(wordIdTranslation, wordIdOriginal));
+        wordElement.addEventListener('mouseout', () => removeHighlight(wordIdTranslation, wordIdOriginal));
+    });
+
+    document.querySelectorAll('#original-sentence [original-word-id]').forEach(wordElement => {
+        const wordIdTranslation = wordElement.getAttribute('translation-word-id');
+        const wordIdOriginal = wordElement.getAttribute('original-word-id');
+
+        wordElement.addEventListener('mouseover', () => highlightWord(wordIdTranslation, wordIdOriginal));
+        wordElement.addEventListener('mouseout', () => removeHighlight(wordIdTranslation, wordIdOriginal));
     });
 }
