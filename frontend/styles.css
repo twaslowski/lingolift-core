@@ -49,3 +49,17 @@ body {
 h2 {
     margin-top: 40px;
 }
+
+.highlight {
+    background-color: yellow;
+}
+
+.original-sentence {
+    font-weight: bold;
+    font-size: x-large;
+}
+
+.literal-translation {
+    font-weight: lighter;
+    font-size: small;
+}
