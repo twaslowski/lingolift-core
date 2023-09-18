@@ -8,9 +8,9 @@ from dacite.exceptions import DaciteError
 from dotenv import load_dotenv
 
 from src.domain.response import Response
-from src.gpt_adapter import _get_response, _parse_response
-from src.message import SYSTEM, Message, USER
-from src.prompts import SYSTEM_PROMPT
+from src.gpt.gpt_adapter import _get_response, _parse_response
+from src.gpt.message import SYSTEM, Message, USER
+from src.gpt.prompts import SYSTEM_PROMPT
 
 
 class Benchmark(unittest.TestCase):

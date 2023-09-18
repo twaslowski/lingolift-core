@@ -3,7 +3,7 @@ import logging
 
 import openai
 
-from message import Message, USER
+from src.gpt.message import Message, USER
 from src.util.timing import timed
 
 

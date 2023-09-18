@@ -4,9 +4,9 @@ import os
 import openai
 from dotenv import load_dotenv
 
-from gpt_adapter import chat_completion
-from message import Message, SYSTEM
-from prompts import SYSTEM_PROMPT
+from src.gpt.gpt_adapter import chat_completion
+from src.gpt.message import Message, SYSTEM
+from src.gpt.prompts import SYSTEM_PROMPT
 
 # setup
 load_dotenv()
