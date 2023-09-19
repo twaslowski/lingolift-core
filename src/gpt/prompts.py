@@ -42,11 +42,11 @@ Suggest responses for the following sentence:
 """
 
 
-SYNTACTICAL_ANALYSIS_CONTEXT = """
-Break down , translating and giving grammatical context for each word.
+SYNTACTICAL_ANALYSIS_SYSTEM_PROMPT = """
+Provide a syntactical analysis for supplied sentences. List words with their corresponding grammatical role or function.
 Your answer is should be valid JSON with the following structure:
     {
-      "sentence_breakdown": [
+      "syntactical_analysis": [
         {
           "word": "word_source_language",
           "translation": "translation_target_language",
@@ -59,4 +59,8 @@ Your answer is should be valid JSON with the following structure:
         }
       ]
     }
+"""
+
+SYNTACTICAL_ANALYSIS_USER_PROMPT = """
+Analyse the following sentence: 
 """

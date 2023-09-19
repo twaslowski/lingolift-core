@@ -2,17 +2,13 @@ import json
 
 import openai
 
-from src.gpt.message import Message, USER, SYSTEM
-from src.gpt.prompts import SYSTEM_PROMPT, TRANSLATION_SYSTEM_PROMPT, TRANSLATION_USER_PROMPT, RESPONSES_SYSTEM_PROMPT, \
-    RESPONSES_USER_PROMPT
+from src.gpt.context import TRANSLATION_CONTEXT, RESPONSES_CONTEXT, SYNTACTICAL_ANALYSIS_CONTEXT
+from src.gpt.message import Message, USER
+from src.gpt.prompts import TRANSLATION_USER_PROMPT, RESPONSES_USER_PROMPT, SYNTACTICAL_ANALYSIS_USER_PROMPT
 from src.util.timing import timed
 
-EMPTY_CONTEXT = [Message(role=SYSTEM, content=SYSTEM_PROMPT)]
-TRANSLATION_CONTEXT = [Message(role=SYSTEM, content=TRANSLATION_SYSTEM_PROMPT)]
-RESPONSES_CONTEXT = [Message(role=SYSTEM, content=RESPONSES_SYSTEM_PROMPT)]
 
-
-def _openai_exchange(messages: list[Message]):
+def _openai_exchange(messages: list[Message]) -> str:
     openai_response = openai.ChatCompletion.create(
         model="gpt-3.5-turbo-0613",
         messages=[message.asdict() for message in messages]
@@ -22,7 +18,7 @@ def _openai_exchange(messages: list[Message]):
 
 @timed
 def generate_translation(sentence: str) -> dict:
-    context = TRANSLATION_SYSTEM_PROMPT
+    context = TRANSLATION_CONTEXT
     context.append(Message(role=USER, content=TRANSLATION_USER_PROMPT + sentence))
     response = _parse_response(_openai_exchange(context))
     response['original_sentence'] = sentence
@@ -30,8 +26,11 @@ def generate_translation(sentence: str) -> dict:
 
 
 @timed
-def generate_breakdown(sentence: str) -> dict:
-    pass
+def generate_syntactical_analysis(sentence: str) -> dict:
+    context = SYNTACTICAL_ANALYSIS_CONTEXT
+    context.append(Message(role=USER, content=SYNTACTICAL_ANALYSIS_USER_PROMPT + sentence))
+    response = _parse_response(_openai_exchange(context))
+    return response
 
 
 @timed

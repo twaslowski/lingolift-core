@@ -4,7 +4,7 @@ import os
 import openai
 from dotenv import load_dotenv
 
-from src.gpt.gpt_adapter import generate_translation, generate_breakdown, generate_responses
+from src.gpt.gpt_adapter import generate_translation, generate_syntactical_analysis, generate_responses
 from src.util.mocks import mock_response
 
 from flask import Flask, jsonify, request
@@ -38,7 +38,7 @@ def get_translation():
 @app.route('/breakdown', methods=['POST'])
 def get_translation():
     sentence = request.json.get('sentence')
-    response = generate_breakdown(sentence)
+    response = generate_syntactical_analysis(sentence)
     return jsonify(response)
 
 
