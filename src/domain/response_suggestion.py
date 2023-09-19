@@ -3,5 +3,5 @@ from dataclasses import dataclass
 
 @dataclass
 class ResponseSuggestion:
-    response: str
+    suggestion: str
     translation: str

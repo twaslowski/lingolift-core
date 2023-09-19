@@ -3,7 +3,7 @@ You translate texts from other languages to English.
 Your answers are strictly structured according to user prompts. 
 """
 
-TRANSLATION_CONTEXT = """
+TRANSLATION_SYSTEM_PROMPT = """
 Translate sentences from other languages into English. Provide two translations:
 1. A literal translation that closely follows the original structure of the sentence.
 2. A natural translation that might rephrase the sentence to sound more idiomatic in English.
@@ -14,18 +14,38 @@ Provide the response in the following structure:
 }
 """
 
-TRANSLATION_PROMPT = """
+TRANSLATION_USER_PROMPT = """
 Translate the following sentence into English: 
 """
 
 
-SYNTACTICAL_ANALYSIS = """
-Create a breakdown of the grammar, 
-translating and giving grammatical context for each word.
+RESPONSES_SYSTEM_PROMPT = """
+Generate responses for sentences in other languages. 
+Provide an English translation for each potential response.
+{
+  "response_suggestions": [
+    {
+      "suggestion": "one possible response to the sentence",
+      "translation": "a translation of this response"
+    },
+    {
+      "suggestion": "another possible response to the sentence",
+      "translation": "a translation of this response"
+    }
+  ]
+}
+"""
+
+
+RESPONSES_USER_PROMPT = """
+Suggest responses for the following sentence: 
+"""
+
+
+SYNTACTICAL_ANALYSIS_CONTEXT = """
+Break down , translating and giving grammatical context for each word.
 Your answer is should be valid JSON with the following structure:
     {
-      "summary": "your_summary_of_the_sentence",
-      "literal_translation": "a_literal_translation_of_the_sentence",
       "sentence_breakdown": [
         {
           "word": "word_source_language",
@@ -36,16 +56,6 @@ Your answer is should be valid JSON with the following structure:
           "word": "word_source_language",
           "translation": "translation_target_language",
           "grammatical_context": "explanation_of_grammatical_context"
-        }
-      ],
-      "response_suggestions": [
-        {
-          "response": "suggested_response_one",
-          "translation": "translation_of_the_response",
-        },
-        {
-          "response": "suggested_response_two",
-          "translation": "translation_of_the_response",
         }
       ]
     }
