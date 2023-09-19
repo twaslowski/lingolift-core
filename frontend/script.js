@@ -37,19 +37,17 @@ function renderTranslation(data) {
 
     // construct literal translation html
     let literalTranslationHTML = '';
-    const literal_translation = data.literal_translation.split(' ');
+    const literal_translation = tokenizeSentence(data.literal_translation);
 
     literal_translation.forEach(word => {
-        word.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g,"")
         const wordId = literal_translation.indexOf(word);
         literalTranslationHTML += `<span translation-word-id="${wordId}">${word}</span> `;
     });
 
     // construct source sentence html
     let originalSentenceHTML = '';
-    const original_sentence = data.original_sentence.split(' ')
+    const original_sentence = tokenizeSentence(data.original_sentence)
     original_sentence.forEach(word => {
-        word.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g,"")
         const wordId = original_sentence.indexOf(word);
         originalSentenceHTML += `<span original-word-id="${wordId}">${word}</span> `;
     });
@@ -94,8 +92,20 @@ function renderTranslation(data) {
     addDecorators()
 }
 
+function tokenizeSentence(sentence) {
+    // Use regex to split the sentence into words and punctuation
+    return sentence.match(/([\u0400-\u04FF\w]+|\S)/g);
+}
+
 // Function to highlight a word
 function highlightWord(wordIdTranslation, wordIdOriginal) {
+    if (!wordIdTranslation) {
+        wordIdTranslation = document.querySelector(`#sentence-container [original-word-id="${wordIdOriginal}"]`).getAttribute("translation-word-id")
+    }
+    if (!wordIdOriginal) {
+        wordIdOriginal = document.querySelector(`#sentence-container [translation-word-id="${wordIdTranslation}"]`).getAttribute("original-word-id")
+    }
+
     document.querySelector(`#literal-translation [translation-word-id="${wordIdTranslation}"]`).classList.add('highlight');
     document.querySelector(`#original-sentence [original-word-id="${wordIdOriginal}"]`).classList.add('highlight');
     document.querySelector(`#sentence-container [translation-word-id="${wordIdTranslation}"]`).classList.add('highlight');
@@ -104,6 +114,13 @@ function highlightWord(wordIdTranslation, wordIdOriginal) {
 
 // Function to remove the highlight
 function removeHighlight(wordIdTranslation, wordIdOriginal) {
+    if (!wordIdTranslation) {
+        wordIdTranslation = document.querySelector(`#sentence-container [original-word-id="${wordIdOriginal}"]`).getAttribute("translation-word-id")
+    }
+    if (!wordIdOriginal) {
+        wordIdOriginal = document.querySelector(`#sentence-container [translation-word-id="${wordIdTranslation}"]`).getAttribute("original-word-id")
+    }
+
     document.querySelector(`#literal-translation [translation-word-id="${wordIdTranslation}"]`).classList.remove('highlight');
     document.querySelector(`#original-sentence [original-word-id="${wordIdOriginal}"]`).classList.remove('highlight');
     document.querySelector(`#sentence-container [translation-word-id="${wordIdTranslation}"]`).classList.remove('highlight');
@@ -114,21 +131,19 @@ function addDecorators() {
 // Add event listeners to the words in the literal translation
     document.querySelectorAll('#literal-translation [translation-word-id]').forEach(wordElement => {
         const wordIdTranslation = wordElement.getAttribute('translation-word-id');
-        const wordIdOriginal = wordElement.getAttribute('original-word-id');
 
-        wordElement.addEventListener('mouseover', () => highlightWord(wordIdTranslation, wordIdOriginal));
-        wordElement.addEventListener('mouseout', () => removeHighlight(wordIdTranslation, wordIdOriginal));
-    });
-
-    document.querySelectorAll('#sentence-container [translation-word-id]').forEach(wordElement => {
-        const wordIdTranslation = wordElement.getAttribute('translation-word-id');
-        const wordIdOriginal = wordElement.getAttribute('original-word-id');
-
-        wordElement.addEventListener('mouseover', () => highlightWord(wordIdTranslation, wordIdOriginal));
-        wordElement.addEventListener('mouseout', () => removeHighlight(wordIdTranslation, wordIdOriginal));
+        wordElement.addEventListener('mouseover', () => highlightWord(wordIdTranslation, null));
+        wordElement.addEventListener('mouseout', () => removeHighlight(wordIdTranslation, null));
     });
 
     document.querySelectorAll('#original-sentence [original-word-id]').forEach(wordElement => {
+        const wordIdOriginal = wordElement.getAttribute('original-word-id');
+
+        wordElement.addEventListener('mouseover', () => highlightWord(null, wordIdOriginal));
+        wordElement.addEventListener('mouseout', () => removeHighlight(null, wordIdOriginal));
+    });
+
+    document.querySelectorAll('#sentence-container [translation-word-id]').forEach(wordElement => {
         const wordIdTranslation = wordElement.getAttribute('translation-word-id');
         const wordIdOriginal = wordElement.getAttribute('original-word-id');
 
