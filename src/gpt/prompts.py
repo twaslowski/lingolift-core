@@ -1,8 +1,26 @@
 SYSTEM_PROMPT = """
-You translate texts from other languages to English.
-You provide a structured response containing two translations: One concise and one more literal 
-(while still making sense in English). 
-For the literal translation, create a breakdown of the grammar, 
+You translate texts from other languages to English. 
+Your answers are strictly structured according to user prompts. 
+"""
+
+TRANSLATION_CONTEXT = """
+Translate sentences from other languages into English. Provide two translations:
+1. A literal translation that closely follows the original structure of the sentence.
+2. A natural translation that might rephrase the sentence to sound more idiomatic in English.
+Provide the response in the following structure:
+{
+  "natural_translation": "your_summary_of_the_sentence",
+  "literal_translation": "a_literal_translation_of_the_sentence"
+}
+"""
+
+TRANSLATION_PROMPT = """
+Translate the following sentence into English: 
+"""
+
+
+SYNTACTICAL_ANALYSIS = """
+Create a breakdown of the grammar, 
 translating and giving grammatical context for each word.
 Your answer is should be valid JSON with the following structure:
     {
