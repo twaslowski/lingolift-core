@@ -14,14 +14,18 @@
     <button type="submit">Translate</button>
 </form>
 
-<p id="loading-message" style="display: none;">Translating...</p>
+<p id="loading-message-translation" style="display: none;">Translating...</p>
 
-<div class="translation-container">
+<div style="display: none" class="translation-container" id="translation-container">
     <p id="natural-translation" class="summary"></p>
     <p id="original-sentence" class="original-sentence"></p>
     <p id="literal-translation" class="literal-translation"></p>
     <div id="sentence-container" class="sentence-container"></div>
 </div>
+
+<h2 style="display: none" id="response-suggestions-header">Response Suggestions</h2>
+<p id="loading-message-responses" style="display: none;">Loading response suggestions...</p>
+<ul id="response-suggestions"></ul>
 
 <script src="script.js"></script>
 </body>

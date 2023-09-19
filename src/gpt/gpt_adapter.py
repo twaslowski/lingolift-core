@@ -32,6 +32,7 @@ def generate_syntactical_analysis(sentence: str) -> dict:
     context = SYNTACTICAL_ANALYSIS_CONTEXT
     context.append(Message(role=USER, content=SYNTACTICAL_ANALYSIS_USER_PROMPT + sentence))
     response = _parse_response(_openai_exchange(context))
+    response['original_sentence'] = sentence
     return response
 
 
