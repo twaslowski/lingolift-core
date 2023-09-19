@@ -6,21 +6,13 @@ document.getElementById('translation-form').addEventListener('submit', function 
 });
 
 function getTranslation(sentence) {
-    // Display the loading message
-    document.getElementById('loading-message').style.display = 'block';
-
-    // Clear the previous translation data
-    document.getElementById('summary').textContent = '';
-    document.getElementById('literal-translation').textContent = '';
-    document.getElementById('sentence-container').innerHTML = '';
-
-    // Using the fetch API to POST the sentence to the backend
+    cleanup();
     fetch('http://127.0.0.1:5000/translate', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify({sentence: sentence}), // Assuming your backend expects a JSON with this format
+        body: JSON.stringify({sentence: sentence})
     })
         .then(response => response.json())
         .then(data => {
@@ -32,9 +24,28 @@ function getTranslation(sentence) {
         });
 }
 
-function renderTranslation(data) {
-    document.getElementById('summary').textContent = data.summary;
+function cleanup() {
+    // Display the loading message
+    document.getElementById('loading-message').style.display = 'block';
 
+    // Clear the previous translation data
+    document.getElementById('natural-translation').textContent = '';
+    document.getElementById('literal-translation').textContent = '';
+    document.getElementById('sentence-container').innerHTML = '';
+}
+
+function renderTranslation(data) {
+    document.getElementById('natural-translation').textContent = data.natural_translation;
+    document.getElementById('original-sentence').textContent = data.original_sentence;
+    document.getElementById('literal-translation').textContent = data.literal_translation;
+}
+
+function tokenizeSentence(sentence) {
+    // Use regex to split the sentence into words and punctuation
+    return sentence.match(/([\u0400-\u04FF\w]+|\S)/g);
+}
+
+function constructAnalysis() {
     // construct literal translation html
     let literalTranslationHTML = '';
     const literal_translation = tokenizeSentence(data.literal_translation);
@@ -90,64 +101,4 @@ function renderTranslation(data) {
     document.getElementById('literal-translation').innerHTML = literalTranslationHTML
     document.getElementById('original-sentence').innerHTML = originalSentenceHTML
     addDecorators()
-}
-
-function tokenizeSentence(sentence) {
-    // Use regex to split the sentence into words and punctuation
-    return sentence.match(/([\u0400-\u04FF\w]+|\S)/g);
-}
-
-// Function to highlight a word
-function highlightWord(wordIdTranslation, wordIdOriginal) {
-    if (!wordIdTranslation) {
-        wordIdTranslation = document.querySelector(`#sentence-container [original-word-id="${wordIdOriginal}"]`).getAttribute("translation-word-id")
-    }
-    if (!wordIdOriginal) {
-        wordIdOriginal = document.querySelector(`#sentence-container [translation-word-id="${wordIdTranslation}"]`).getAttribute("original-word-id")
-    }
-
-    document.querySelector(`#literal-translation [translation-word-id="${wordIdTranslation}"]`).classList.add('highlight');
-    document.querySelector(`#original-sentence [original-word-id="${wordIdOriginal}"]`).classList.add('highlight');
-    document.querySelector(`#sentence-container [translation-word-id="${wordIdTranslation}"]`).classList.add('highlight');
-    document.querySelector(`[translation-word-id="${wordIdTranslation}"]`).classList.add('highlight');
-}
-
-// Function to remove the highlight
-function removeHighlight(wordIdTranslation, wordIdOriginal) {
-    if (!wordIdTranslation) {
-        wordIdTranslation = document.querySelector(`#sentence-container [original-word-id="${wordIdOriginal}"]`).getAttribute("translation-word-id")
-    }
-    if (!wordIdOriginal) {
-        wordIdOriginal = document.querySelector(`#sentence-container [translation-word-id="${wordIdTranslation}"]`).getAttribute("original-word-id")
-    }
-
-    document.querySelector(`#literal-translation [translation-word-id="${wordIdTranslation}"]`).classList.remove('highlight');
-    document.querySelector(`#original-sentence [original-word-id="${wordIdOriginal}"]`).classList.remove('highlight');
-    document.querySelector(`#sentence-container [translation-word-id="${wordIdTranslation}"]`).classList.remove('highlight');
-    document.querySelector(`[translation-word-id="${wordIdTranslation}"]`).classList.remove('highlight');
-}
-
-function addDecorators() {
-// Add event listeners to the words in the literal translation
-    document.querySelectorAll('#literal-translation [translation-word-id]').forEach(wordElement => {
-        const wordIdTranslation = wordElement.getAttribute('translation-word-id');
-
-        wordElement.addEventListener('mouseover', () => highlightWord(wordIdTranslation, null));
-        wordElement.addEventListener('mouseout', () => removeHighlight(wordIdTranslation, null));
-    });
-
-    document.querySelectorAll('#original-sentence [original-word-id]').forEach(wordElement => {
-        const wordIdOriginal = wordElement.getAttribute('original-word-id');
-
-        wordElement.addEventListener('mouseover', () => highlightWord(null, wordIdOriginal));
-        wordElement.addEventListener('mouseout', () => removeHighlight(null, wordIdOriginal));
-    });
-
-    document.querySelectorAll('#sentence-container [translation-word-id]').forEach(wordElement => {
-        const wordIdTranslation = wordElement.getAttribute('translation-word-id');
-        const wordIdOriginal = wordElement.getAttribute('original-word-id');
-
-        wordElement.addEventListener('mouseover', () => highlightWord(wordIdTranslation, wordIdOriginal));
-        wordElement.addEventListener('mouseout', () => removeHighlight(wordIdTranslation, wordIdOriginal));
-    });
 }

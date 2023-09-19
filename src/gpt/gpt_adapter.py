@@ -1,4 +1,5 @@
 import json
+import logging
 
 import openai
 
@@ -21,6 +22,7 @@ def generate_translation(sentence: str) -> dict:
     context = TRANSLATION_CONTEXT
     context.append(Message(role=USER, content=TRANSLATION_USER_PROMPT + sentence))
     response = _parse_response(_openai_exchange(context))
+    logging.info(f"Received OpenAI response: {response}")
     response['original_sentence'] = sentence
     return response
 

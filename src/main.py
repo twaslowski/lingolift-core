@@ -24,19 +24,20 @@ CORS(app)
 @app.route('/translate', methods=['POST'])
 def get_translation():
     sentence = request.json.get('sentence')
+    logging.info(f"Received sentence: {sentence}")
     response = generate_translation(sentence)
     return jsonify(response)
 
 
 @app.route('/responses', methods=['POST'])
-def get_translation():
+def get_responses():
     sentence = request.json.get('sentence')
     response = generate_responses(sentence)
     return jsonify(response)
 
 
-@app.route('/breakdown', methods=['POST'])
-def get_translation():
+@app.route('/syntactical-analysis', methods=['POST'])
+def get_syntactical_analysis():
     sentence = request.json.get('sentence')
     response = generate_syntactical_analysis(sentence)
     return jsonify(response)
