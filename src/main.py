@@ -32,7 +32,8 @@ def get_translation():
 @app.route('/responses', methods=['POST'])
 def get_responses():
     sentence = request.json.get('sentence')
-    response = generate_responses(sentence)
+    number_suggestions = request.json.get('number_suggestions')
+    response = generate_responses(sentence, number_suggestions)
     return jsonify(response)
 
 

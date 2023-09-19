@@ -38,7 +38,7 @@ Provide an English translation for each potential response.
 
 
 RESPONSES_USER_PROMPT = """
-Suggest responses for the following sentence: 
+Suggest {} responses for the following sentence: {} 
 """
 
 

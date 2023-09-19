@@ -14,7 +14,9 @@ def _openai_exchange(messages: list[Message]) -> str:
         model="gpt-3.5-turbo-0613",
         messages=[message.asdict() for message in messages]
     )
-    return openai_response["choices"][0]["message"]["content"]
+    response = openai_response["choices"][0]["message"]["content"]
+    logging.info(f"Received response: {response}")
+    return response
 
 
 @timed
@@ -22,7 +24,6 @@ def generate_translation(sentence: str) -> dict:
     context = TRANSLATION_CONTEXT
     context.append(Message(role=USER, content=TRANSLATION_USER_PROMPT + sentence))
     response = _parse_response(_openai_exchange(context))
-    logging.info(f"Received OpenAI response: {response}")
     response['original_sentence'] = sentence
     return response
 
@@ -37,9 +38,10 @@ def generate_syntactical_analysis(sentence: str) -> dict:
 
 
 @timed
-def generate_responses(sentence: str) -> dict:
+def generate_responses(sentence: str, number_suggestions: int = 2) -> dict:
     context = RESPONSES_CONTEXT
-    context.append(Message(role=USER, content=RESPONSES_USER_PROMPT + sentence))
+    prompt = RESPONSES_USER_PROMPT.format(number_suggestions, sentence)
+    context.append(Message(role=USER, content=prompt))
     response = _parse_response(_openai_exchange(context))
     return response
 
