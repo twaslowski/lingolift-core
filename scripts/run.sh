@@ -22,5 +22,9 @@ fi
 ROOT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 export PYTHONPATH=$PYTHONPATH:$ROOT_DIR
 
-python src/main.py
+if [[ -n $MOCK ]]; then
+  python src/mock.py
+else
+  python src/main.py
+fi
 echo $! > .pid

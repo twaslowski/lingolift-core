@@ -122,7 +122,6 @@ function renderSyntacticalAnalysis(data) {
     // construct sentence breakdown
     const sentenceContainer = document.getElementById('sentence-container');
     data.syntactical_analysis.forEach(item => {
-        console.log(item)
         const wordContainer = document.createElement('div');
         wordContainer.classList.add('word-container');
 
@@ -160,35 +159,68 @@ function renderSyntacticalAnalysis(data) {
     addDecorators()
 }
 
-// Function to highlight a word
+// evil chatgpt copypaste
 function highlightWord(wordIdTranslation, wordIdOriginal) {
-    if (!wordIdTranslation) {
-        wordIdTranslation = document.querySelector(`#sentence-container [original-word-id="${wordIdOriginal}"]`).getAttribute("translation-word-id")
+    let translationElement, originalElement;
+
+    if (!wordIdTranslation && wordIdOriginal) {
+        translationElement = document.querySelector(`#sentence-container [original-word-id="${wordIdOriginal}"]`);
+        wordIdTranslation = translationElement ? translationElement.getAttribute("translation-word-id") : null;
     }
-    if (!wordIdOriginal) {
-        wordIdOriginal = document.querySelector(`#sentence-container [translation-word-id="${wordIdTranslation}"]`).getAttribute("original-word-id")
+    if (!wordIdOriginal && wordIdTranslation) {
+        originalElement = document.querySelector(`#sentence-container [translation-word-id="${wordIdTranslation}"]`);
+        wordIdOriginal = originalElement ? originalElement.getAttribute("original-word-id") : null;
     }
 
-    document.querySelector(`#literal-translation [translation-word-id="${wordIdTranslation}"]`).classList.add('highlight');
-    document.querySelector(`#original-sentence [original-word-id="${wordIdOriginal}"]`).classList.add('highlight');
-    document.querySelector(`#sentence-container [translation-word-id="${wordIdTranslation}"]`).classList.add('highlight');
-    document.querySelector(`[translation-word-id="${wordIdTranslation}"]`).classList.add('highlight');
+    console.log("add highlighting for " + wordIdTranslation + " and " + wordIdOriginal)
+
+    if (wordIdTranslation) {
+        const targetTranslationElement = document.querySelector(`#literal-translation [translation-word-id="${wordIdTranslation}"]`);
+        if (targetTranslationElement) targetTranslationElement.classList.add('highlight');
+
+        const sentenceTranslationElement = document.querySelector(`#sentence-container [translation-word-id="${wordIdTranslation}"]`);
+        if (sentenceTranslationElement) sentenceTranslationElement.classList.add('highlight');
+
+        const generalTranslationElement = document.querySelector(`[translation-word-id="${wordIdTranslation}"]`);
+        if (generalTranslationElement) generalTranslationElement.classList.add('highlight');
+    }
+
+    if (wordIdOriginal) {
+        const targetOriginalElement = document.querySelector(`#original-sentence [original-word-id="${wordIdOriginal}"]`);
+        if (targetOriginalElement) targetOriginalElement.classList.add('highlight');
+    }
 }
 
 // Function to remove the highlight
 function removeHighlight(wordIdTranslation, wordIdOriginal) {
-    if (!wordIdTranslation) {
-        wordIdTranslation = document.querySelector(`#sentence-container [original-word-id="${wordIdOriginal}"]`).getAttribute("translation-word-id")
+    let translationElement, originalElement;
+
+    if (!wordIdTranslation && wordIdOriginal) {
+        translationElement = document.querySelector(`#sentence-container [original-word-id="${wordIdOriginal}"]`);
+        wordIdTranslation = translationElement ? translationElement.getAttribute("translation-word-id") : null;
     }
-    if (!wordIdOriginal) {
-        wordIdOriginal = document.querySelector(`#sentence-container [translation-word-id="${wordIdTranslation}"]`).getAttribute("original-word-id")
+    if (!wordIdOriginal && wordIdTranslation) {
+        originalElement = document.querySelector(`#sentence-container [translation-word-id="${wordIdTranslation}"]`);
+        wordIdOriginal = originalElement ? originalElement.getAttribute("original-word-id") : null;
     }
 
-    document.querySelector(`#literal-translation [translation-word-id="${wordIdTranslation}"]`).classList.remove('highlight');
-    document.querySelector(`#original-sentence [original-word-id="${wordIdOriginal}"]`).classList.remove('highlight');
-    document.querySelector(`#sentence-container [translation-word-id="${wordIdTranslation}"]`).classList.remove('highlight');
-    document.querySelector(`[translation-word-id="${wordIdTranslation}"]`).classList.remove('highlight');
-}
+    console.log("remove highlighting for " + wordIdTranslation + " and " + wordIdOriginal)
+
+    if (wordIdTranslation) {
+        const targetTranslationElement = document.querySelector(`#literal-translation [translation-word-id="${wordIdTranslation}"]`);
+        if (targetTranslationElement) targetTranslationElement.classList.remove('highlight');
+
+        const sentenceTranslationElement = document.querySelector(`#sentence-container [translation-word-id="${wordIdTranslation}"]`);
+        if (sentenceTranslationElement) sentenceTranslationElement.classList.remove('highlight');
+
+        const generalTranslationElement = document.querySelector(`[translation-word-id="${wordIdTranslation}"]`);
+        if (generalTranslationElement) generalTranslationElement.classList.remove('highlight');
+    }
+
+    if (wordIdOriginal) {
+        const targetOriginalElement = document.querySelector(`#original-sentence [original-word-id="${wordIdOriginal}"]`);
+        if (targetOriginalElement) targetOriginalElement.classList.remove('highlight');
+    }}
 
 function addDecorators() {
 // Add event listeners to the words in the literal translation
@@ -206,7 +238,8 @@ function addDecorators() {
         wordElement.addEventListener('mouseout', () => removeHighlight(null, wordIdOriginal));
     });
 
-    document.querySelectorAll('#sentence-container [translation-word-id]').forEach(wordElement => {
+    document.querySelectorAll('#sentence-container [original-word-id]').forEach(wordElement => {
+        console.log(wordElement)
         const wordIdTranslation = wordElement.getAttribute('translation-word-id');
         const wordIdOriginal = wordElement.getAttribute('original-word-id');
 
