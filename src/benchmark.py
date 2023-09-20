@@ -7,10 +7,10 @@ from dacite import from_dict
 from dacite.exceptions import DaciteError
 from dotenv import load_dotenv
 
-from src.domain.response_suggestion import ResponseSuggestion
-from src.domain.sentence_component import SentenceComponent
-from src.domain.translation import Translation
-from src.gpt.gpt_adapter import generate_responses, generate_syntactical_analysis, generate_translation
+from domain.response_suggestion import ResponseSuggestion
+from domain.sentence_component import SentenceComponent
+from domain.translation import Translation
+from gpt.gpt_adapter import generate_responses, generate_syntactical_analysis, generate_translation
 
 
 class Benchmark(unittest.TestCase):

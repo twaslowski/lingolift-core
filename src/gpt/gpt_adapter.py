@@ -3,10 +3,10 @@ import logging
 
 import openai
 
-from src.gpt.context import TRANSLATION_CONTEXT, RESPONSES_CONTEXT, SYNTACTICAL_ANALYSIS_CONTEXT
-from src.gpt.message import Message, USER
-from src.gpt.prompts import TRANSLATION_USER_PROMPT, RESPONSES_USER_PROMPT, SYNTACTICAL_ANALYSIS_USER_PROMPT
-from src.util.timing import timed
+from gpt.context import TRANSLATION_CONTEXT, RESPONSES_CONTEXT, SYNTACTICAL_ANALYSIS_CONTEXT
+from gpt.message import Message, USER
+from gpt.prompts import TRANSLATION_USER_PROMPT, RESPONSES_USER_PROMPT, SYNTACTICAL_ANALYSIS_USER_PROMPT
+from util.timing import timed
 
 
 def _openai_exchange(messages: list[Message]) -> str:

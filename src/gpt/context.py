@@ -1,5 +1,5 @@
-from src.gpt.message import Message, SYSTEM
-from src.gpt.prompts import *
+from gpt.message import Message, SYSTEM
+from gpt.prompts import *
 
 EMPTY_CONTEXT = [Message(role=SYSTEM, content=SYSTEM_PROMPT)]
 TRANSLATION_CONTEXT = [Message(role=SYSTEM, content=TRANSLATION_SYSTEM_PROMPT)]

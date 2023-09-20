@@ -4,8 +4,7 @@ import os
 import openai
 from dotenv import load_dotenv
 
-from src.gpt.gpt_adapter import generate_translation, generate_syntactical_analysis, generate_responses
-from src.util.mocks import mock_response
+from gpt.gpt_adapter import generate_translation, generate_syntactical_analysis, generate_responses
 
 from flask import Flask, jsonify, request
 from flask_cors import CORS
