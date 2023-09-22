@@ -13,12 +13,6 @@ export class TranslationComponent implements OnInit {
     original_sentence: string
   };
 
-  @Input() analysisData!: Array<{
-    grammatical_context: string;
-    translation: string;
-    word: string;
-  }>;
-
   activeWord: string | null = null;
 
   ngOnInit(): void {

@@ -2,7 +2,7 @@
 .translation-container {
   text-align: center; /* Center everything by default */
   padding: 20px;
-  margin: 5%;
+  margin-top: 50px;
 }
 
 .natural-text {
@@ -10,13 +10,6 @@
   font-weight: normal; /* Bold text for idiomatic translation */
   font-size: 36px;
   margin: 10px 0;
-}
-
-.original-text {
-   font-family: Verdana, cursive;
-   font-weight: lighter; /* Bold text for idiomatic translation */
-   font-size: 24px;
-   margin: 10px 0;
 }
 
 .highlighted {
