@@ -1,0 +1,21 @@
+<div *ngIf="analysisData" xmlns="http://www.w3.org/1999/html">
+  <p class="literal-translation">
+  <span *ngFor="let wordData of analysisData.syntactical_analysis"
+        [class.highlighted]="wordData.translation === activeWord"
+        (mouseover)="setActiveWord(wordData.translation)"
+        (mouseout)="clearActiveWord()">
+    {{ wordData.translation }}
+  </span>
+  </p>
+  <div class="syntax-container">
+
+    <div class="word-box" *ngFor="let wordData of analysisData.syntactical_analysis"
+         [class.highlighted]="wordData.translation === activeWord"
+         (mouseover)="setActiveWord(wordData.translation)"
+         (mouseout)="clearActiveWord()">
+      <div class="original-word">{{ wordData.word }}</div>
+      <div class="translated-word">{{ wordData.translation }}</div>
+      <div class="context">{{ wordData.grammatical_context }}</div>
+    </div>
+  </div>
+</div>

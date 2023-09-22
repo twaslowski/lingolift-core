@@ -1,0 +1,39 @@
+.textarea-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;  /* This makes the container take up the whole viewport height */
+}
+
+textarea {
+  width: 80%;  /* Adjust this value to your liking */
+  height: 100px;
+  font-size: 36px;  /* Increases the font size inside the textarea */
+  text-align: center;  /* Centers the text inside the textarea */
+  padding-top: 50px;
+  margin-left: 10%;
+  margin-right: 10%;
+  border-radius: 5px;  /* Optional: rounds the corners */
+  border: 1px solid #ccc;  /* Optional: provides a subtle border */
+  outline: none;  /* Removes the blue outline when the textarea is focused */
+}
+
+.button-container {
+  display: flex;
+  justify-content: center; /* Horizontally center the button */
+}
+
+button {
+  font-size: 20px; /* Adjust this value to change the button's text size */
+  padding: 10px 20px; /* Increase padding for a larger button */
+  border-radius: 5px; /* Rounds the button's corners */
+  border: none; /* Removes default borders */
+  background-color: #007bff; /* Button color */
+  color: #ffffff; /* Button text color */
+  cursor: pointer; /* Changes mouse cursor when hovering over the button */
+  transition: background-color 0.3s; /* Smooth color transition on hover */
+}
+
+textarea:focus {
+  border-color: #007bff;  /* Optional: changes the border color when the textarea is focused */
+}

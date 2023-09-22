@@ -1,0 +1,27 @@
+/* Overall container */
+.translation-container {
+  text-align: center; /* Center everything by default */
+  padding: 20px;
+  margin: 5%;
+}
+
+.natural-text {
+  font-family: Verdana, cursive;
+  font-weight: normal; /* Bold text for idiomatic translation */
+  font-size: 36px;
+  margin: 10px 0;
+}
+
+.original-text {
+   font-family: Verdana, cursive;
+   font-weight: lighter; /* Bold text for idiomatic translation */
+   font-size: 24px;
+   margin: 10px 0;
+}
+
+.highlighted {
+  background-color: #FFEB3B;  /* Bright yellow for visibility */
+  border-radius: 4px;
+  padding: 2px;
+  transition: background-color 0.3s ease-in-out;
+}

@@ -1,0 +1,15 @@
+<div>
+  <textarea [(ngModel)]="sentence" placeholder="Enter your sentence here"></textarea>
+</div>
+
+<div class="button-container">
+  <button (click)="processSentence()">Translate</button>
+</div>
+
+<app-translation
+  [translationResult]="results"
+  [analysisData]="results?.syntactical_analysis">
+</app-translation>
+
+<app-syntax-breakdown [analysisData]="syntaxBreakdown"></app-syntax-breakdown>
+

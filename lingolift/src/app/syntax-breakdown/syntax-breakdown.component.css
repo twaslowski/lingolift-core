@@ -1,0 +1,43 @@
+.syntax-container {
+  display: flex;
+  flex-wrap: wrap;  /* Allow boxes to wrap to the next line if needed */
+  justify-content: center;  /* Center-align boxes horizontally */
+  gap: 10px;  /* Space between each box */
+}
+
+.word-box {
+  border: 1px solid #ddd;
+  padding: 10px;
+  box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.1);
+  border-radius: 5px;
+  text-align: center;
+}
+
+.original-word {
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.translated-word {
+  color: #007BFF;
+  margin-bottom: 5px;
+}
+
+.context {
+  font-style: italic;
+  color: #555;
+}
+
+.highlighted {
+  background-color: #FFEB3B;  /* Bright yellow for visibility */
+  border-radius: 4px;
+  padding: 2px;
+  transition: background-color 0.3s ease-in-out;
+}
+
+.literal-translation {
+  text-align: center;
+  font-family: Verdana, monospace;
+  font-weight: lighter; /* Bold text for idiomatic translation */
+  font-size: 12px;
+}
