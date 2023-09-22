@@ -18,7 +18,6 @@ TRANSLATION_USER_PROMPT = """
 Translate the following sentence into English: 
 """
 
-
 RESPONSES_SYSTEM_PROMPT = """
 Generate responses for sentences in other languages. 
 Provide an English translation for each potential response.
@@ -36,11 +35,9 @@ Provide an English translation for each potential response.
 }
 """
 
-
 RESPONSES_USER_PROMPT = """
 Suggest {} responses for the following sentence: {} 
 """
-
 
 SYNTACTICAL_ANALYSIS_SYSTEM_PROMPT = """
 Provide a syntactical analysis for supplied sentences. List words with their corresponding grammatical role or function.
@@ -63,4 +60,19 @@ Your answer is should be valid JSON with the following structure:
 
 SYNTACTICAL_ANALYSIS_USER_PROMPT = """
 Analyse the following sentence: 
+"""
+
+WORD_INFLECTIONS_SYSTEM_PROMPT = """
+Explain the inflection of a word in a given sentence.
+Provide the base form of the word as well as an explanation of the inflection, 
+e.g. 'genitive singular' or 'first person present tense'.
+Respond exactly in the following structure:
+    {
+        "word_base": "the uninflected base of the word",
+        "inflection": "the conjugation or declension of the word"
+    }
+"""
+
+WORD_INFLECTIONS_USER_PROMPT = """
+Explain the following word {} in the context of this sentence: {}.
 """

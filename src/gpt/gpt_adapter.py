@@ -2,16 +2,15 @@ import json
 import logging
 
 import openai
-
-from gpt.context import TRANSLATION_CONTEXT, RESPONSES_CONTEXT, SYNTACTICAL_ANALYSIS_CONTEXT
+from gpt.context import *
 from gpt.message import Message, USER
-from gpt.prompts import TRANSLATION_USER_PROMPT, RESPONSES_USER_PROMPT, SYNTACTICAL_ANALYSIS_USER_PROMPT
+from gpt.prompts import *
 from util.timing import timed
 
 
 def _openai_exchange(messages: list[Message]) -> str:
     openai_response = openai.ChatCompletion.create(
-        model="gpt-3.5-turbo-0613",
+        model="gpt-4",
         messages=[message.asdict() for message in messages]
     )
     response = openai_response["choices"][0]["message"]["content"]
@@ -41,6 +40,15 @@ def generate_syntactical_analysis(sentence: str) -> dict:
 def generate_responses(sentence: str, number_suggestions: int = 2) -> dict:
     context = RESPONSES_CONTEXT
     prompt = RESPONSES_USER_PROMPT.format(number_suggestions, sentence)
+    context.append(Message(role=USER, content=prompt))
+    response = _parse_response(_openai_exchange(context))
+    return response
+
+
+@timed
+def generate_word_inflections(language: str, sentence_context: str, word: str) -> dict:
+    context = WORD_INFLECTIONS_CONTEXT
+    prompt = WORD_INFLECTIONS_USER_PROMPT.format(sentence_context, word)
     context.append(Message(role=USER, content=prompt))
     response = _parse_response(_openai_exchange(context))
     return response

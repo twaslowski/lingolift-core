@@ -4,7 +4,7 @@ import os
 import openai
 from dotenv import load_dotenv
 
-from gpt.gpt_adapter import generate_translation, generate_syntactical_analysis, generate_responses
+from gpt.gpt_adapter import generate_translation, generate_syntactical_analysis, generate_responses, generate_word_inflections
 
 from flask import Flask, jsonify, request
 from flask_cors import CORS
@@ -42,6 +42,16 @@ def get_syntactical_analysis():
     literal_translation = request.json.get('literal_translation')
     response = generate_syntactical_analysis(sentence)
     response['literal_translation'] = literal_translation
+    return jsonify(response)\
+
+
+
+@app.route('/inflections', methods=['POST'])
+def get_word_inflections():
+    word = request.json.get('word')
+    language = request.json.get('language')
+    context = request.json.get('context')
+    response = generate_word_inflections(language, context, word)
     return jsonify(response)
 
 
