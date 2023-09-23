@@ -70,6 +70,7 @@ class Benchmark(unittest.TestCase):
             logging.info(f"Getting syntactical analysis for {sentence} ...")
             try:
                 response = generate_syntactical_analysis(sentence)
+                self.assertIsNotNone(response['literal_translation'])
                 analysis = response['syntactical_analysis']
                 for component in analysis:
                     from_dict(data_class=SentenceComponent, data=component)

@@ -4,9 +4,10 @@
 
 ### suggestions
 
-- render suggestions
-- copy to clipboard button for each suggestion
-- reload suggestions button
+- render suggestions ✅
+- copy to clipboard button for each suggestion ✅
+- reload suggestions button 🔴
+  - implemented, but no functionality yet
 
 ### syntax breakdown
 

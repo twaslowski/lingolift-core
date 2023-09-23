@@ -40,20 +40,19 @@ Suggest {} response-suggestions for the following sentence: {}
 """
 
 SYNTACTICAL_ANALYSIS_SYSTEM_PROMPT = """
-Provide a syntactical analysis for supplied sentences. List words with their corresponding grammatical role or function.
-Your answer is should be valid JSON with the following structure:
+Provide a syntactical analysis for the supplied sentences and offer a translation that's as literal as possible, 
+while ensuring it still makes sense in the target language. 
+List each word with its corresponding grammatical role or function.
+Your answer should be structured as valid JSON, following the example below: 
     {
+      "literal_translation": "PLACEHOLDER_TRANSLATION_OF_WHOLE_SENTENCE",
       "syntactical_analysis": [
         {
-          "word": "word_source_language",
-          "translation": "translation_target_language",
-          "grammatical_context": "explanation_of_grammatical_context"
+          "word": "PLACEHOLDER_WORD",
+          "translation": "PLACEHOLDER_LITERAL_TRANSLATION",
+          "grammatical_context": "PLACEHOLDER_GRAMMATICAL_CONTEXT"
         },
-        {
-          "word": "word_source_language",
-          "translation": "translation_target_language",
-          "grammatical_context": "explanation_of_grammatical_context"
-        }
+      ...
       ]
     }
 """
