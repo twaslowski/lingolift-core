@@ -1,5 +1,5 @@
-<div *ngIf="translationResult" class="translation-container">
-
-  <p class="natural-text">{{ translationResult.natural_translation }}</p>
-
+<div class="translation-container">
+    <p class="natural-text">
+        {{ isLoading ? 'Loading translation ...' : translationResult?.natural_translation }}
+    </p>
 </div>

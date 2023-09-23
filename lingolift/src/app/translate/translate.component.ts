@@ -30,21 +30,31 @@ export class TranslateComponent {
         }>;
     }
 
+    isLoadingTranslation!: boolean;
+    isLoadingSyntax!: boolean;
+    isLoadingSuggestions!: boolean;
+
     constructor(private apiService: ApiService) {
     }
 
     processSentence() {
+        this.isLoadingTranslation = true;
         this.apiService.translate(this.sentence).subscribe(data => {
             this.results = data;
+            this.isLoadingTranslation = false;
         });
 
+        this.isLoadingSyntax = true;
         this.apiService.getSyntacticalAnalysis(this.sentence).subscribe(data => {
-                this.syntaxBreakdown = data;
-            }
-        )
+            this.syntaxBreakdown = data;
+            this.isLoadingSyntax = false;
+        });
 
+        this.isLoadingSuggestions = true;
         this.apiService.getResponseSuggestions(this.sentence).subscribe(data => {
             this.responseSuggestions = data;
-        })
+            this.isLoadingSuggestions = false;
+        });
     }
+
 }

@@ -17,6 +17,7 @@ export class SyntaxBreakdownComponent implements OnInit {
     }>;
   };
 
+  @Input() isLoading: boolean = false;
   activeWord: string | null = null;
 
   ngOnInit(): void {

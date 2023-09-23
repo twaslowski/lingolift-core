@@ -1,5 +1,6 @@
 import logging
 import os
+import time
 
 import openai
 from dotenv import load_dotenv
@@ -20,6 +21,7 @@ CORS(app)
 
 @app.route('/translate', methods=['POST'])
 def get_translation():
+    time.sleep(1)
     response = {
         "literal_translation": "How is it going with you today?",
         "natural_translation": "How are you doing today?",
@@ -30,6 +32,7 @@ def get_translation():
 
 @app.route('/responses', methods=['POST'])
 def get_responses():
+    time.sleep(3)
     response = {
         "response_suggestions": [
             {
@@ -47,6 +50,7 @@ def get_responses():
 
 @app.route('/syntactical-analysis', methods=['POST'])
 def get_syntactical_analysis():
+    time.sleep(7)
     response = {
         "literal_translation": "How is it going with you today?",
         "original_sentence": "Как у тебя сегодня дела?",

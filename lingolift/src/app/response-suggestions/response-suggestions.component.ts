@@ -12,5 +12,6 @@ export class ResponseSuggestionsComponent {
       translation: string;
     }>;
   };
+  @Input() isLoading: boolean = false;
   protected readonly navigator = navigator;
 }

@@ -1,32 +1,39 @@
-<div *ngIf="analysisData" xmlns="http://www.w3.org/1999/html">
-
-  <p class=original-sentence>
-  <span *ngFor="let word of analysisData.original_sentence.split(' ')"
-        [class.highlighted]="word === activeWord"
-        (mouseover)="setActiveWord(word)"
-        (mouseout)="clearActiveWord()">
-    {{ word }}
-  </span>
+<ng-container *ngIf="isLoading; else loadedContent">
+  <p class="original-sentence">
+    Loading analysis data...
   </p>
+</ng-container>
 
-  <p class="literal-translation">
-  <span *ngFor="let word of analysisData.literal_translation.split(' ')"
-        [class.highlighted]="word === activeWord"
-        (mouseover)="setActiveWord(word)"
-        (mouseout)="clearActiveWord()">
-    {{ word }}
-  </span>
-  </p>
+<ng-template #loadedContent>
+  <div *ngIf="analysisData">
 
-  <div class="syntax-container">
+    <p class="original-sentence">
+            <span *ngFor="let word of analysisData.original_sentence.split(' ')"
+                  [class.highlighted]="word === activeWord"
+                  (mouseover)="setActiveWord(word)"
+                  (mouseout)="clearActiveWord()">
+                {{ word }}
+            </span>
+    </p>
 
-    <div class="word-box" *ngFor="let wordData of analysisData.syntactical_analysis"
-         [class.highlighted]="wordData.translation === activeWord || wordData.word === activeWord"
-         (mouseover)="setActiveWord(wordData.translation)"
-         (mouseout)="clearActiveWord()">
-      <div class="original-word">{{ wordData.word }}</div>
-      <div class="translated-word">{{ wordData.translation }}</div>
-      <div class="context">{{ wordData.grammatical_context }}</div>
+    <p class="literal-translation">
+            <span *ngFor="let word of analysisData.literal_translation.split(' ')"
+                  [class.highlighted]="word === activeWord"
+                  (mouseover)="setActiveWord(word)"
+                  (mouseout)="clearActiveWord()">
+                {{ word }}
+            </span>
+    </p>
+
+    <div class="syntax-container">
+      <div class="word-box" *ngFor="let wordData of analysisData.syntactical_analysis"
+           [class.highlighted]="wordData.translation === activeWord || wordData.word === activeWord"
+           (mouseover)="setActiveWord(wordData.translation)"
+           (mouseout)="clearActiveWord()">
+        <div class="original-word">{{ wordData.word }}</div>
+        <div class="translated-word">{{ wordData.translation }}</div>
+        <div class="context">{{ wordData.grammatical_context }}</div>
+      </div>
     </div>
   </div>
-</div>
+</ng-template>

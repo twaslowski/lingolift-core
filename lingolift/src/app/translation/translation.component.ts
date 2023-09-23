@@ -6,29 +6,11 @@ import {HighlightService} from "../highlight.service";
   templateUrl: './translation.component.html',
   styleUrls: ['./translation.component.css']
 })
-export class TranslationComponent implements OnInit {
+export class TranslationComponent {
   @Input() translationResult!: {
     natural_translation: string,
     literal_translation: string,
     original_sentence: string
   };
-
-  activeWord: string | null = null;
-
-  ngOnInit(): void {
-    this.highlightService.highlightedWord$.subscribe(word => {
-      this.activeWord = word;
-    });
-  }
-
-  constructor(private highlightService: HighlightService) {}
-
-  setActiveWord(word: string): void {
-    this.highlightService.setHighlightedWord(word);
-  }
-
-  clearActiveWord(): void {
-    this.highlightService.clearHighlightedWord();
-  }
-
+  @Input() isLoading: boolean = false;
 }
