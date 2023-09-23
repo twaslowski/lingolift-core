@@ -31,7 +31,6 @@
 .highlighted {
   background-color: #FFEB3B;  /* Bright yellow for visibility */
   border-radius: 4px;
-  padding: 2px;
   transition: background-color 0.3s ease-in-out;
 }
 

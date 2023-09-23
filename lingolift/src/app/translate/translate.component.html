@@ -6,9 +6,6 @@
   <button (click)="processSentence()">Translate</button>
 </div>
 
-<app-translation
-  [translationResult]="results">
-</app-translation>
-
+<app-translation [translationResult]="results"></app-translation>
 <app-syntax-breakdown [analysisData]="syntaxBreakdown"></app-syntax-breakdown>
-
+<app-response-suggestions [responseSuggestions]="responseSuggestions"></app-response-suggestions>

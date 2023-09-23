@@ -19,7 +19,7 @@ Translate the following sentence into English:
 """
 
 RESPONSES_SYSTEM_PROMPT = """
-Generate responses for sentences in other languages. 
+Generate response-suggestions for sentences in other languages. 
 Provide an English translation for each potential response.
 {
   "response_suggestions": [
@@ -36,7 +36,7 @@ Provide an English translation for each potential response.
 """
 
 RESPONSES_USER_PROMPT = """
-Suggest {} responses for the following sentence: {} 
+Suggest {} response-suggestions for the following sentence: {} 
 """
 
 SYNTACTICAL_ANALYSIS_SYSTEM_PROMPT = """

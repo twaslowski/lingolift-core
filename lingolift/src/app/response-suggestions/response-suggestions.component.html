@@ -1,0 +1,10 @@
+<div class="response-suggestions-parent" *ngIf="responseSuggestions" xmlns="http://www.w3.org/1999/html">
+    <div class="reload-button">
+        <button><i class="fa fa-refresh"></i></button>
+    </div>
+    <div class="response-suggestion-container" *ngFor="let suggestion of responseSuggestions.response_suggestions">
+        <span class="response-suggestion-text">{{ suggestion.suggestion }}</span>
+        <button (click)="navigator.clipboard.writeText(suggestion.suggestion)"><i class="fa fa-clipboard"></i></button>
+        <p class="response-suggestion-translation">{{ suggestion.translation }}</p>
+    </div>
+</div>

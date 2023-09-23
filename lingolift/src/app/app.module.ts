@@ -8,13 +8,15 @@ import { TranslateComponent } from './translate/translate.component';
 import { ApiService } from './api.service';
 import { TranslationComponent } from './translation/translation.component';
 import { SyntaxBreakdownComponent } from './syntax-breakdown/syntax-breakdown.component';
+import { ResponseSuggestionsComponent } from './response-suggestions/response-suggestions.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     TranslateComponent,
     TranslationComponent,
-    SyntaxBreakdownComponent
+    SyntaxBreakdownComponent,
+    ResponseSuggestionsComponent
   ],
   imports: [
     BrowserModule,

@@ -16,7 +16,7 @@ export class ApiService {
     return this.http.post(`${this.baseUrl}/translate`, { sentence: sentence });
   }
 
-  getResponses(sentence: string): Observable<any> {
+  getResponseSuggestions(sentence: string): Observable<any> {
     return this.http.post(`${this.baseUrl}/responses`, { sentence: sentence });
   }
 
