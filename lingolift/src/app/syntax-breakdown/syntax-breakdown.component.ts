@@ -1,5 +1,6 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {HighlightService} from "../highlight.service";
+import {TooltipModule} from "../ui/tooltip/tooltip.module";
 
 @Component({
     selector: 'app-syntax-breakdown',
