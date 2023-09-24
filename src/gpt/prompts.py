@@ -37,39 +37,23 @@ RESPONSES_USER_PROMPT = """
 Suggest {} response-suggestions for the following sentence: {} 
 """
 
-SYNTACTICAL_ANALYSIS_SYSTEM_PROMPT = """
-Provide a syntactical analysis for the supplied sentences and offer a translation that's as literal as possible, 
+LITERAL_TRANSLATIONS_SYSTEM_PROMPT = """
+Translate sentences. Offer a translation that's as literal as possible, 
 while ensuring it still makes sense in the target language. 
-List each word with its corresponding grammatical role or function.
-Your answer should be structured as valid JSON, following the example below: 
+Additionally, provide a list of words from the sentence with their respective translation.
+Your answer should be structured as valid JSON, EXACTLY like the example below: 
     {
       "literal_translation": "PLACEHOLDER_TRANSLATION_OF_WHOLE_SENTENCE",
-      "syntactical_analysis": [
+      "words": [
         {
           "word": "PLACEHOLDER_WORD",
           "translation": "PLACEHOLDER_LITERAL_TRANSLATION",
-          "grammatical_context": "PLACEHOLDER_GRAMMATICAL_CONTEXT"
         },
       ...
       ]
     }
 """
 
-SYNTACTICAL_ANALYSIS_USER_PROMPT = """
-Analyse the following sentence: 
-"""
-
-WORD_INFLECTIONS_SYSTEM_PROMPT = """
-Explain the inflection of a word in a given sentence.
-Provide the base form of the word as well as an explanation of the inflection, 
-e.g. 'genitive singular' or 'first person present tense'.
-Respond exactly in the following structure:
-    {
-        "word_base": "the uninflected base of the word",
-        "inflection": "the conjugation or declension of the word"
-    }
-"""
-
-WORD_INFLECTIONS_USER_PROMPT = """
-Explain the following word {} in the context of this sentence: {}.
+LITERAL_TRANSLATIONS_USER_PROMPT = """
+Analyse the following sentence: {}
 """

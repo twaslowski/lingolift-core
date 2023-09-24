@@ -8,9 +8,9 @@ from dacite.exceptions import DaciteError
 from dotenv import load_dotenv
 
 from domain.response_suggestion import ResponseSuggestion
-from domain.sentence_component import SentenceComponent
 from domain.translation import Translation
-from gpt.gpt_adapter import generate_responses, generate_syntactical_analysis, generate_translation
+from gpt.gpt_adapter import generate_responses, generate_translation, generate_literal_translations
+from src.domain.literal_translation import LiteralTranslation
 
 
 class Benchmark(unittest.TestCase):
@@ -48,6 +48,23 @@ class Benchmark(unittest.TestCase):
                 continue
         self.assertLessEqual(error_count, 1)
 
+    def test_benchmark_literal_translations(self):
+        error_count = 0
+        for sentence in self.BENCHMARK_SENTENCES:
+            logging.info(f"Getting response suggestions for {sentence} ...")
+            try:
+                openai_response = generate_literal_translations(sentence["sentence"])
+                from_dict(data_class=LiteralTranslation, data=openai_response)
+            except ValueError as ve:
+                logging.error(f"Could not parse JSON: {ve}")
+                error_count = error_count + 1
+                continue
+            except DaciteError as de:
+                logging.error(f"Error serializing JSON to dataclass: {de}")
+                error_count = error_count + 1
+                continue
+        self.assertLessEqual(error_count, 1)
+
     def test_benchmark_responses(self):
         error_count = 0
         bad_answer_count = 0
@@ -55,7 +72,7 @@ class Benchmark(unittest.TestCase):
         for sentence in self.BENCHMARK_SENTENCES:
             logging.info(f"Getting translation for {sentence} ...")
             try:
-                openai_response = generate_responses(sentence, expected_number_of_suggestions)
+                openai_response = generate_responses(sentence["sentence"], expected_number_of_suggestions)
                 if len(openai_response['response_suggestions']) is not expected_number_of_suggestions:
                     bad_answer_count = bad_answer_count + 1
                 for response in openai_response['response_suggestions']:
@@ -69,25 +86,6 @@ class Benchmark(unittest.TestCase):
                 error_count = error_count + 1
         self.assertLessEqual(error_count, 1)
         self.assertLessEqual(bad_answer_count, 1)
-
-    def test_benchmark_grammatical_analysis(self):
-        error_count = 0
-        for sentence in self.BENCHMARK_SENTENCES:
-            logging.info(f"Getting syntactical analysis for {sentence} ...")
-            try:
-                response = generate_syntactical_analysis(sentence)
-                self.assertIsNotNone(response['literal_translation'])
-                analysis = response['syntactical_analysis']
-                for component in analysis:
-                    from_dict(data_class=SentenceComponent, data=component)
-            except (ValueError, KeyError):
-                logging.error(f"Could not parse JSON: {response}")
-                error_count = error_count + 1
-                continue
-            except DaciteError as de:
-                logging.error(f"Error serializing JSON to dataclass: {de}")
-                error_count = error_count + 1
-        self.assertLessEqual(error_count, 1)
 
 
 if __name__ == "__main__":

@@ -2,9 +2,9 @@ import json
 import logging
 
 import openai
-from gpt.context import *
+from gpt.context import TRANSLATION_CONTEXT, RESPONSES_CONTEXT, LITERAL_TRANSLATIONS_CONTEXT
 from gpt.message import Message, USER
-from gpt.prompts import *
+from gpt.prompts import TRANSLATION_USER_PROMPT, RESPONSES_USER_PROMPT, LITERAL_TRANSLATIONS_USER_PROMPT
 from util.timing import timed
 
 
@@ -36,9 +36,9 @@ def generate_responses(sentence: str, number_suggestions: int = 2) -> dict:
 
 
 @timed
-def generate_word_inflections(language: str, sentence_context: str, word: str) -> dict:
-    context = WORD_INFLECTIONS_CONTEXT
-    prompt = WORD_INFLECTIONS_USER_PROMPT.format(sentence_context, word)
+def generate_literal_translations(sentence: str) -> dict:
+    context = LITERAL_TRANSLATIONS_CONTEXT
+    prompt = LITERAL_TRANSLATIONS_USER_PROMPT.format(sentence)
     context.append(Message(role=USER, content=prompt))
     response = _parse_response(_openai_exchange(context))
     return response

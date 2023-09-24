@@ -6,9 +6,8 @@ from dotenv import load_dotenv
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 
-from gpt.gpt_adapter import generate_translation, generate_syntactical_analysis, generate_responses, \
-    generate_word_inflections
-from spacy.spacy_adapter import perform_analysis
+from gpt.gpt_adapter import generate_translation, generate_responses, generate_literal_translations
+from morph_analysis.spacy_adapter import perform_analysis
 
 # setup
 load_dotenv()
@@ -45,12 +44,10 @@ def get_syntactical_analysis():
     return jsonify(analysis)
 
 
-@app.route('/inflections', methods=['POST'])
+@app.route('/literal-translation', methods=['POST'])
 def get_word_inflections():
-    word = request.json.get('word')
-    language = request.json.get('language')
-    context = request.json.get('context')
-    response = generate_word_inflections(language, context, word)
+    sentence = request.json.get('sentence')
+    response = generate_literal_translations(sentence)
     return jsonify(response)
 
 

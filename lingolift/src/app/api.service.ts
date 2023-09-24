@@ -23,4 +23,8 @@ export class ApiService {
   getSyntacticalAnalysis(sentence: string, sourceLanguage: string): Observable<any> {
     return this.http.post(`${this.baseUrl}/syntactical-analysis`, { sentence: sentence, source_language: sourceLanguage });
   }
+
+  getLiteralTranslation(sentence: string): Observable<any> {
+    return this.http.post(`${this.baseUrl}/literal-translation`, { sentence: sentence });
+  }
 }

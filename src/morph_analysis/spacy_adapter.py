@@ -1,6 +1,5 @@
-import json
-
 import spacy
+from dotenv import load_dotenv
 
 models = {
     "en": "en_core_web_sm",
@@ -20,10 +19,13 @@ def perform_analysis(sentence: str, language: str) -> dict:
                     "word": str(token.text),
                     "lemma": str(token.lemma_),
                     "morph_analysis": str(token.morph),
-                    "dependencies": str(token.head)}
+                    "dependencies": str(token.head),
+                    # "translation": str(translate.translate_word(token.text))
+                }
                     for token in doc]
             }
 
 
 if __name__ == '__main__':
+    load_dotenv()
     print(perform_analysis("Как у тебя сегодня дела?", "ru"))

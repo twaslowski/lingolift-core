@@ -28,6 +28,38 @@ def get_translation():
     return jsonify(response)
 
 
+@app.route('/literal-translation', methods=['POST'])
+def get_literal_translation():
+    time.sleep(2)
+    response = {
+        "literal_translation": "How are your matters today?",
+        "words": [
+            {
+                "translation": "How",
+                "word": "Как"
+            },
+            {
+                "translation": "at",
+                "word": "у"
+            },
+            {
+                "translation": "you",
+                "word": "тебя"
+            },
+            {
+                "translation": "today",
+                "word": "сегодня"
+            },
+            {
+                "translation": "matters",
+                "word": "дела"
+            }
+        ]
+    }
+
+    return jsonify(response)
+
+
 @app.route('/responses', methods=['POST'])
 def get_responses():
     time.sleep(3)
@@ -50,44 +82,43 @@ def get_responses():
 def get_syntactical_analysis():
     time.sleep(1)
     response = {
-        "original_sentence": "Как у тебя сегодня дела?",
-        "literal_translation": "How are your affairs today?",
+        "sentence": "Как у тебя сегодня дела?",
         "morph_analysis": [
             {
                 "word": "Как",
                 "lemma": "как",
                 "morph_analysis": "",
-                "dependencies": "тебя"
+                "dependencies": "тебя",
             },
             {
                 "word": "у",
                 "lemma": "у",
                 "morph_analysis": "",
-                "dependencies": "тебя"
+                "dependencies": "тебя",
             },
             {
                 "word": "тебя",
                 "lemma": "тебя",
                 "morph_analysis": "Case=Gen|Number=Sing|Person=Second",
-                "dependencies": "тебя"
+                "dependencies": "тебя",
             },
             {
                 "word": "сегодня",
                 "lemma": "сегодня",
                 "morph_analysis": "Degree=Pos",
-                "dependencies": "дела"
+                "dependencies": "дела",
             },
             {
                 "word": "дела",
                 "lemma": "дело",
                 "morph_analysis": "Animacy=Inan|Case=Gen|Gender=Neut|Number=Sing",
-                "dependencies": "тебя"
+                "dependencies": "тебя",
             },
             {
                 "word": "?",
                 "lemma": "?",
                 "morph_analysis": "",
-                "dependencies": "тебя"
+                "dependencies": "тебя",
             }
         ]
     }

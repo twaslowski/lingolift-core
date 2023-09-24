@@ -8,13 +8,14 @@ import {HighlightService} from "../highlight.service";
 })
 export class SyntaxBreakdownComponent implements OnInit {
     @Input() analysisData!: {
+        sentence: string;
         literal_translation: string;
-        original_sentence: string;
         morph_analysis: Array<{
             word: string;
             lemma: string;
             morph_analysis: string;
             dependencies: string;
+            translation: string;
         }>;
     };
 
@@ -38,5 +39,4 @@ export class SyntaxBreakdownComponent implements OnInit {
     clearActiveWord(): void {
         this.highlightService.clearHighlightedWord();
     }
-
 }
