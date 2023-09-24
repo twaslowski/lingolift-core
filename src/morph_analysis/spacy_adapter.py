@@ -2,14 +2,14 @@ import spacy
 from dotenv import load_dotenv
 
 models = {
-    "en": "en_core_web_sm",
-    "de": "de_core_news_sm",
-    "ru": "ru_core_news_sm"
+    "english": "en_core_web_sm",
+    "german": "de_core_news_sm",
+    "russian": "ru_core_news_sm"
 }
 
 
 def perform_analysis(sentence: str, language: str) -> dict:
-    language_key = models[language]
+    language_key = models[language.lower()]
     nlp = spacy.load(language_key)
     doc = nlp(sentence)
     return {"sentence": sentence,

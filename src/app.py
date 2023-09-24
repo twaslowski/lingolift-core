@@ -39,7 +39,7 @@ def get_responses():
 @app.route('/syntactical-analysis', methods=['POST'])
 def get_syntactical_analysis():
     sentence = request.json.get('sentence')
-    language = request.json.get('language')
+    language = request.json.get('source_language')
     analysis = perform_analysis(sentence, language)
     return jsonify(analysis)
 
