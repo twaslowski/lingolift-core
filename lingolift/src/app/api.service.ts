@@ -20,7 +20,7 @@ export class ApiService {
     return this.http.post(`${this.baseUrl}/responses`, { sentence: sentence });
   }
 
-  getSyntacticalAnalysis(sentence: string): Observable<any> {
-    return this.http.post(`${this.baseUrl}/syntactical-analysis`, { sentence: sentence });
+  getSyntacticalAnalysis(sentence: string, sourceLanguage: string): Observable<any> {
+    return this.http.post(`${this.baseUrl}/syntactical-analysis`, { sentence: sentence, source_language: sourceLanguage });
   }
 }

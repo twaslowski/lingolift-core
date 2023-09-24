@@ -26,13 +26,13 @@
     </p>
 
     <div class="syntax-container">
-      <div class="word-box" *ngFor="let wordData of analysisData.syntactical_analysis"
-           [class.highlighted]="wordData.translation === activeWord || wordData.word === activeWord"
+      <div class="word-box" *ngFor="let wordData of analysisData.morph_analysis">
+           <!-- [class.highlighted]="wordData.translation === activeWord || wordData.word === activeWord"
            (mouseover)="setActiveWord(wordData.translation)"
-           (mouseout)="clearActiveWord()">
+           (mouseout)="clearActiveWord()"-->
         <div class="original-word">{{ wordData.word }}</div>
-        <div class="translated-word">{{ wordData.translation }}</div>
-        <div class="context">{{ wordData.grammatical_context }}</div>
+        <div class="translated-word">{{ wordData.lemma }}</div>
+        <!--div class="context">{{ wordData.grammatical_context }}</div-->
       </div>
     </div>
   </div>

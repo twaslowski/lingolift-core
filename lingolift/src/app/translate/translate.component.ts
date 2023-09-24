@@ -16,10 +16,11 @@ export class TranslateComponent {
     syntaxBreakdown!: {
         literal_translation: string;
         original_sentence: string;
-        syntactical_analysis: Array<{
-            grammatical_context: string;
-            translation: string;
+        morph_analysis: Array<{
             word: string;
+            lemma: string;
+            morph_analysis: string;
+            dependencies: string;
         }>;
     }
     responseSuggestions!: {
@@ -38,15 +39,20 @@ export class TranslateComponent {
 
     processSentence() {
         this.isLoadingTranslation = true;
+        this.isLoadingSyntax = true;
+        console.log("Fetching translation for sentence: %s", this.sentence)
         this.apiService.translate(this.sentence).subscribe(data => {
             this.results = data;
             this.isLoadingTranslation = false;
-        });
 
-        this.isLoadingSyntax = true;
-        this.apiService.getSyntacticalAnalysis(this.sentence).subscribe(data => {
-            this.syntaxBreakdown = data;
-            this.isLoadingSyntax = false;
+            console.log("Fetching morphological analysis for sentence %s in language %s.",
+                this.sentence, this.results.source_language)
+            this.apiService.getSyntacticalAnalysis(this.sentence, this.results.source_language)
+                .subscribe(data => {
+                    console.log(data)
+                    this.syntaxBreakdown = data;
+                    this.isLoadingSyntax = false;
+                });
         });
 
         this.isLoadingSuggestions = true;

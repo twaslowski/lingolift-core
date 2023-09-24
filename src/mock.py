@@ -4,7 +4,6 @@ import time
 
 import openai
 from dotenv import load_dotenv
-
 from flask import Flask, jsonify
 from flask_cors import CORS
 
@@ -49,35 +48,46 @@ def get_responses():
 
 @app.route('/syntactical-analysis', methods=['POST'])
 def get_syntactical_analysis():
-    time.sleep(7)
+    time.sleep(1)
     response = {
-        "literal_translation": "How is it going with you today?",
         "original_sentence": "Как у тебя сегодня дела?",
-        "syntactical_analysis": [
+        "literal_translation": "How are your affairs today?",
+        "morph_analysis": [
             {
-                "grammatical_context": "interrogative pronoun",
-                "translation": "How",
-                "word": "Как"
+                "word": "Как",
+                "lemma": "как",
+                "morph_analysis": "",
+                "dependencies": "тебя"
             },
             {
-                "grammatical_context": "preposition indicating possession",
-                "translation": "at",
-                "word": "у"
+                "word": "у",
+                "lemma": "у",
+                "morph_analysis": "",
+                "dependencies": "тебя"
             },
             {
-                "grammatical_context": "pronoun indicating possession",
-                "translation": "you",
-                "word": "тебя"
+                "word": "тебя",
+                "lemma": "тебя",
+                "morph_analysis": "Case=Gen|Number=Sing|Person=Second",
+                "dependencies": "тебя"
             },
             {
-                "grammatical_context": "adverb indicating time",
-                "translation": "today",
-                "word": "сегодня"
+                "word": "сегодня",
+                "lemma": "сегодня",
+                "morph_analysis": "Degree=Pos",
+                "dependencies": "дела"
             },
             {
-                "grammatical_context": "noun",
-                "translation": "affairs",
-                "word": "дела"
+                "word": "дела",
+                "lemma": "дело",
+                "morph_analysis": "Animacy=Inan|Case=Gen|Gender=Neut|Number=Sing",
+                "dependencies": "тебя"
+            },
+            {
+                "word": "?",
+                "lemma": "?",
+                "morph_analysis": "",
+                "dependencies": "тебя"
             }
         ]
     }

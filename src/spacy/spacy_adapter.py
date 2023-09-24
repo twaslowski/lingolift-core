@@ -1,3 +1,5 @@
+import json
+
 import spacy
 
 models = {
@@ -7,15 +9,21 @@ models = {
 }
 
 
-def perform_analysis(sentence: str, language: str):
+def perform_analysis(sentence: str, language: str) -> dict:
     language_key = models[language]
     nlp = spacy.load(language_key)
     doc = nlp(sentence)
-    return {token.text: {
-        "lemma": token.lemma_,
-        "morph_analysis": token.morph
-    } for token in doc}
+    return {"sentence": sentence,
+            "literal_translation": "Как у тебя сегодня дела?",
+            "morph_analysis":
+                [{
+                    "word": str(token.text),
+                    "lemma": str(token.lemma_),
+                    "morph_analysis": str(token.morph),
+                    "dependencies": str(token.head)}
+                    for token in doc]
+            }
 
 
 if __name__ == '__main__':
-    print(perform_analysis("Die schöne Frau geht mit dem Hund spazieren.", "de"))
+    print(perform_analysis("Как у тебя сегодня дела?", "ru"))

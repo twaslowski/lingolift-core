@@ -8,6 +8,7 @@ from flask_cors import CORS
 
 from gpt.gpt_adapter import generate_translation, generate_syntactical_analysis, generate_responses, \
     generate_word_inflections
+from spacy.spacy_adapter import perform_analysis
 
 # setup
 load_dotenv()
@@ -39,8 +40,9 @@ def get_responses():
 @app.route('/syntactical-analysis', methods=['POST'])
 def get_syntactical_analysis():
     sentence = request.json.get('sentence')
-    response = generate_syntactical_analysis(sentence)
-    return jsonify(response)
+    language = request.json.get('language')
+    analysis = perform_analysis(sentence, language)
+    return jsonify(analysis)
 
 
 @app.route('/inflections', methods=['POST'])
