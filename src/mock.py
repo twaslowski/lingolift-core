@@ -23,9 +23,8 @@ CORS(app)
 def get_translation():
     time.sleep(1)
     response = {
-        "literal_translation": "How is it going with you today?",
-        "natural_translation": "How are you doing today?",
-        "original_sentence": "Как у тебя сегодня дела?"
+        "translation": "How is it going with you today?",
+        "source_language": "russian",
     }
     return jsonify(response)
 

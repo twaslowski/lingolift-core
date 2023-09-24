@@ -15,10 +15,10 @@ from gpt.gpt_adapter import generate_responses, generate_syntactical_analysis, g
 
 class Benchmark(unittest.TestCase):
     BENCHMARK_SENTENCES = [
-        "Как у тебя сегодня дела?",
-        "Hvordan har du det i dag?",
-        "Apa kabarmu hari ini?",
-        "Como você está hoje?"
+        {"sentence": "Как у тебя сегодня дела?", "language": "russian"},
+        {"sentence": "Hvordan har du det i dag?", "language": "norwegian"},
+        {"sentence": "Apa kabarmu hari ini?", "language": "indonesian"},
+        {"sentence": "Como você está hoje?", "language": "portuguese"}
     ]
 
     def setUp(self) -> None:
@@ -31,8 +31,9 @@ class Benchmark(unittest.TestCase):
         for sentence in self.BENCHMARK_SENTENCES:
             logging.info(f"Getting response suggestions for {sentence} ...")
             try:
-                openai_response = generate_translation(sentence)
-                from_dict(data_class=Translation, data=openai_response)
+                openai_response = generate_translation(sentence["sentence"])
+                parsed = from_dict(data_class=Translation, data=openai_response)
+                self.assertEqual(parsed.source_language.lower(), sentence["language"])
             except ValueError as ve:
                 logging.error(f"Could not parse JSON: {ve}")
                 error_count = error_count + 1
@@ -40,6 +41,11 @@ class Benchmark(unittest.TestCase):
             except DaciteError as de:
                 logging.error(f"Error serializing JSON to dataclass: {de}")
                 error_count = error_count + 1
+                continue
+            except AssertionError as ae:
+                logging.error(f"Error with assertion: {ae}")
+                error_count = error_count + 1
+                continue
         self.assertLessEqual(error_count, 1)
 
     def test_benchmark_responses(self):

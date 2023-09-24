@@ -10,9 +10,8 @@ export class TranslateComponent {
 
     sentence: string = '';
     results!: {
-        natural_translation: string,
-        literal_translation: string,
-        original_sentence: string
+        translation: string,
+        source_language: string,
     };
     syntaxBreakdown!: {
         literal_translation: string;

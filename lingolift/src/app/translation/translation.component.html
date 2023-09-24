@@ -1,5 +1,6 @@
 <div class="translation-container">
-    <p class="natural-text">
-        {{ isLoading ? 'Loading translation ...' : translationResult?.natural_translation }}
+    <p class="idiomatic-translation">
+        {{ isLoading ? 'Loading translation ...' : translationResult.translation }}
     </p>
+    <p>{{ translationResult.source_language }}</p>
 </div>

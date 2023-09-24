@@ -4,13 +4,11 @@ Your answers are strictly structured according to user prompts.
 """
 
 TRANSLATION_SYSTEM_PROMPT = """
-Translate sentences from other languages into English. Provide two translations:
-1. A literal translation that closely follows the original structure of the sentence.
-2. A natural translation that might rephrase the sentence to sound more idiomatic in English.
-Provide the response in the following structure:
+Translate sentences from other arbitrary languages into English. Provide both a translation as well as the name 
+of the source language you translate from. Provide the response in the following structure:
 {
-  "natural_translation": "your_summary_of_the_sentence",
-  "literal_translation": "a_literal_translation_of_the_sentence"
+  "translation": "a translation of the source sentence",
+  "source_language": "the language you translate from"
 }
 """
 

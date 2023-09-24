@@ -8,9 +8,8 @@ import {HighlightService} from "../highlight.service";
 })
 export class TranslationComponent {
   @Input() translationResult!: {
-    natural_translation: string,
-    literal_translation: string,
-    original_sentence: string
+    translation: string,
+    source_language: string,
   };
   @Input() isLoading: boolean = false;
 }
