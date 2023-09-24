@@ -1,11 +1,9 @@
-<div class="response-suggestions-parent">
-    <ng-container *ngIf="isLoading; else loadedContent">
-        <div class="response-suggestion-container">
-            <span class="response-suggestion-text">Loading response suggestions...</span>
-        </div>
-    </ng-container>
+<ng-container *ngIf="isLoading; else loadedContent">
+    <p class="loading-placeholder">Loading response suggestions...</p>
+</ng-container>
 
-    <ng-template #loadedContent>
+<ng-template #loadedContent>
+    <div class="response-suggestions-parent" *ngIf="responseSuggestions">
         <div class="reload-button">
             <button><i class="fa fa-refresh"></i></button>
         </div>
@@ -16,5 +14,5 @@
             </button>
             <p class="response-suggestion-translation">{{ suggestion.translation }}</p>
         </div>
-    </ng-template>
-</div>
+    </div>
+</ng-template>

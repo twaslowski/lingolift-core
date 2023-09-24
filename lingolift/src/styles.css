@@ -1,1 +1,8 @@
 /* You can add global styles to this file, and also import other style files */
+.loading-placeholder {
+    text-align: center;
+    font-family: Verdana, cursive;
+    font-weight: lighter; /* Bold text for idiomatic translation */
+    font-size: 24px;
+    margin: 10px 0;
+}

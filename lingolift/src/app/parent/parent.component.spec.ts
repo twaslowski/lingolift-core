@@ -1,16 +1,16 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { TranslateComponent } from './translate.component';
+import { ParentComponent } from './parent.component';
 
 describe('TranslateComponent', () => {
-  let component: TranslateComponent;
-  let fixture: ComponentFixture<TranslateComponent>;
+  let component: ParentComponent;
+  let fixture: ComponentFixture<ParentComponent>;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [TranslateComponent]
+      declarations: [ParentComponent]
     });
-    fixture = TestBed.createComponent(TranslateComponent);
+    fixture = TestBed.createComponent(ParentComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

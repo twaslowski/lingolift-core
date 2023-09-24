@@ -1,6 +1,14 @@
-<div class="translation-container">
-    <p class="idiomatic-translation">
-        {{ isLoading ? 'Loading translation ...' : translationResult.translation }}
+<ng-container *ngIf="isLoading; else loadedContent">
+    <p class="loading-placeholder">
+        Loading translation...
     </p>
-    <p>{{ translationResult.source_language }}</p>
-</div>
+</ng-container>
+
+<ng-template #loadedContent>
+    <div class="translation-container" *ngIf="translationResult">
+        <p class="idiomatic-translation">
+            {{ translationResult.translation }}
+        </p>
+        <p>{{ translationResult.source_language }}</p>
+    </div>
+</ng-template>

@@ -3,11 +3,11 @@ import {ApiService} from '../api.service';
 import {lastValueFrom} from "rxjs";
 
 @Component({
-    selector: 'app-translate',
-    templateUrl: './translate.component.html',
-    styleUrls: ['./translate.component.css']
+    selector: 'app-parent',
+    templateUrl: './parent.component.html',
+    styleUrls: ['./parent.component.css']
 })
-export class TranslateComponent {
+export class ParentComponent {
 
     sentence: string = '';
 
