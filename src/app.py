@@ -14,7 +14,7 @@ load_dotenv()
 openai.api_key = os.environ.get("OPENAI_API_KEY")
 
 # configure logging
-logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO, filename='log')
+logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 
 app = Flask(__name__)
 CORS(app)
@@ -31,8 +31,8 @@ def get_translation():
 @app.route('/responses', methods=['POST'])
 def get_responses():
     sentence = request.json.get('sentence')
-    number_suggestions = request.json.get('number_suggestions')
-    response = generate_responses(sentence, number_suggestions)
+    # number_suggestions = request.json.get('number_suggestions')
+    response = generate_responses(sentence)
     return jsonify(response)
 
 
