@@ -27,10 +27,10 @@ if [ "$?" -eq 0 ]; then
   if [[ -n $REBUILD_DOCKER ]]; then
     docker build -t lingolift-backend:latest .
     docker stop lingolift-backend
-    docker run -p 5001:5000 -d --env OPENAI_API_KEY=$OPENAI_API_KEY lingolift-backend:latest
+    docker run -p 5001:5000 -d --name lingolift-backend --env OPENAI_API_KEY=$OPENAI_API_KEY lingolift-backend:latest
   fi
 else
-  docker run -p 5001:5000 -d --env OPENAI_API_KEY=$OPENAI_API_KEY lingolift-backend:latest
+  docker run -p 5001:5000 -d --name lingolift-backend --env OPENAI_API_KEY=$OPENAI_API_KEY lingolift-backend:latest
 fi
 
 # run frontend
