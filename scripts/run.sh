@@ -38,4 +38,4 @@ ROOT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 export PYTHONPATH=$PYTHONPATH:$ROOT_DIR
 
 pushd src
-python -m flask run --host=0.0.0.0 --port=5001
+python -m flask run --host=0.0.0.0 --port=5001 &

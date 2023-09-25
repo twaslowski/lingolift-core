@@ -14,7 +14,7 @@ load_dotenv()
 openai.api_key = os.environ.get("OPENAI_API_KEY")
 
 # configure logging
-logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
+logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO, filename='log')
 
 app = Flask(__name__)
 CORS(app)
