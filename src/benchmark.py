@@ -32,8 +32,7 @@ class Benchmark(unittest.TestCase):
             logging.info(f"Getting response suggestions for {sentence} ...")
             try:
                 openai_response = generate_translation(sentence["sentence"])
-                parsed = from_dict(data_class=Translation, data=openai_response)
-                self.assertEqual(parsed.source_language.lower(), sentence["language"])
+                from_dict(data_class=Translation, data=openai_response)
             except ValueError as ve:
                 logging.error(f"Could not parse JSON: {ve}")
                 error_count = error_count + 1

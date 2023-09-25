@@ -10,6 +10,7 @@ import {TranslationComponent} from './translation/translation.component';
 import {SyntaxBreakdownComponent} from './syntax-breakdown/syntax-breakdown.component';
 import {ResponseSuggestionsComponent} from './response-suggestions/response-suggestions.component';
 import {TooltipModule} from "./ui/tooltip/tooltip.module";
+import {DropdownModule} from "primeng/dropdown";
 
 @NgModule({
     declarations: [
@@ -23,7 +24,8 @@ import {TooltipModule} from "./ui/tooltip/tooltip.module";
         BrowserModule,
         HttpClientModule,
         FormsModule,
-        TooltipModule
+        TooltipModule,
+        DropdownModule
     ],
     providers: [ApiService],
     bootstrap: [AppComponent]

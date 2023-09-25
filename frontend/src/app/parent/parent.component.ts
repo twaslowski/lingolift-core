@@ -7,4 +7,5 @@ import {Component} from '@angular/core';
 })
 export class ParentComponent {
     sentence: string = '';
+    language: string = 'english';
 }

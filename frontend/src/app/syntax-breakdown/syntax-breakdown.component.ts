@@ -10,9 +10,9 @@ import {ApiService} from "../api.service";
 })
 export class SyntaxBreakdownComponent implements OnInit {
 
-    sentence: string = '';
     isLoading: boolean = false;
     activeWord: string | null = null;
+    error: boolean = false;
 
     analysisData: {
         sentence: string;
@@ -29,7 +29,7 @@ export class SyntaxBreakdownComponent implements OnInit {
     constructor(private apiService: ApiService, private highlightService: HighlightService) {
     }
 
-    async fetchAndBuildSyntaxBreakdown(sentence: string) {
+    async fetchAndBuildSyntaxBreakdown(sentence: string, language: string) {
         this.isLoading = true;
         let morphAnalysisData: {
             sentence: string;
@@ -51,13 +51,15 @@ export class SyntaxBreakdownComponent implements OnInit {
             }>;
         };
 
-        const literalTranslation$ = this.apiService.getLiteralTranslation(this.sentence);
-        const analysis$ = this.apiService.getSyntacticalAnalysis(this.sentence, "russian");
+        const literalTranslation$ = this.apiService.getLiteralTranslation(sentence);
+        const analysis$ = this.apiService.getSyntacticalAnalysis(sentence, language);
 
-        morphAnalysisData = await lastValueFrom(analysis$);
-        literalTranslationData = await lastValueFrom(literalTranslation$);
+        morphAnalysisData = await lastValueFrom(analysis$).catch(() => this.error = true);
+        literalTranslationData = await lastValueFrom(literalTranslation$).catch(() => this.error = true);
 
+        // @ts-ignore
         for (let morphItem of morphAnalysisData.morph_analysis) {
+            // @ts-ignore
             for (let wordItem of literalTranslationData.words) {
                 if (morphItem.word === wordItem.word) {
                     morphItem.translation = wordItem.translation;
@@ -65,6 +67,7 @@ export class SyntaxBreakdownComponent implements OnInit {
                 }
             }
         }
+
         morphAnalysisData.literal_translation = literalTranslationData.literal_translation
         console.log("Successfully consolidated morphological analysis and literal translation.")
 
@@ -73,7 +76,7 @@ export class SyntaxBreakdownComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        this.highlightService.highlightedWord$.subscribe(word => {
+        this.highlightService.highlightedWord$.subscribe((word: any) => {
             this.activeWord = word;
         });
     }

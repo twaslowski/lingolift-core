@@ -4,11 +4,9 @@ Your answers are strictly structured according to user prompts.
 """
 
 TRANSLATION_SYSTEM_PROMPT = """
-Translate sentences from other arbitrary languages into English. Provide both a translation as well as the name 
-of the source language you parent from. Provide the response in the following structure:
+Translate sentences from other arbitrary languages into English. Provide the response in the following structure:
 {
   "translation": "a translation of the source sentence",
-  "source_language": "the language you parent from"
 }
 """
 

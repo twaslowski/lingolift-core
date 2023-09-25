@@ -9,11 +9,8 @@ import {lastValueFrom} from "rxjs";
 })
 export class TranslationComponent {
 
-    @Input() sentence: string = '';
-
     translationResult: {
-        translation: string,
-        source_language: string,
+        translation: string
     } | null = null;
 
     isLoading: boolean = false;

@@ -8,8 +8,9 @@ import {lastValueFrom} from "rxjs";
     styleUrls: ['./response-suggestions.component.css']
 })
 export class ResponseSuggestionsComponent {
-    @Input() sentence: string = '';
     isLoading: boolean = false;
+
+    // @ts-ignore
     protected readonly navigator = navigator;
 
     responseSuggestions: {

@@ -1,17 +1,23 @@
-<div>
+<div class="input-container">
     <textarea [(ngModel)]="sentence" placeholder="Enter your sentence here"></textarea>
+    <div class="inner-container">
+        <select [(ngModel)]="language" name="languageSelector" class="language-selector">
+            <option value="german">German</option>
+            <option value="english">English</option>
+            <option value="russian">Russian</option>
+        </select>
+        <div class="button-container">
+            <button (click)="
+                translationComponent.fetchTranslation(this.sentence);
+                syntaxBreakdownComponent.fetchAndBuildSyntaxBreakdown(this.sentence, this.language);
+                responseSuggestionsComponent.fetchResponseSuggestions(this.sentence)">Translate
+            </button>
+        </div>
+    </div>
 </div>
 
-<div class="button-container">
-    <button (click)="
-        translationComponent.fetchTranslation(this.sentence);
-        syntaxBreakdownComponent.fetchAndBuildSyntaxBreakdown(this.sentence);
-        responseSuggestionsComponent.fetchResponseSuggestions(sentence)">Translate
-    </button>
-</div>
-
-<app-translation [sentence]="sentence" #translationComponent></app-translation>
+<app-translation #translationComponent></app-translation>
 
 <app-syntax-breakdown #syntaxBreakdownComponent></app-syntax-breakdown>
 
-<app-response-suggestions [sentence]="sentence" #responseSuggestionsComponent></app-response-suggestions>
+<app-response-suggestions #responseSuggestionsComponent></app-response-suggestions>
