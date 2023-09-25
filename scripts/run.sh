@@ -20,12 +20,18 @@ else
   source .env
 fi
 
-# build and run backend
-if [[ -n $REBUILD_DOCKER ]]; then
-  docker build -t lingolift-backend:latest .
+# run mongodb docker image
+docker ps --format '{{.Names}}' | grep -q lingolift-backend
+if [ "$?" -eq 0 ]; then
+  echo "backend already running"
+  if [[ -n $REBUILD_DOCKER ]]; then
+    docker build -t lingolift-backend:latest .
+    docker stop lingolift-backend
+    docker run -p 5001:5000 -d --env OPENAI_API_KEY=$OPENAI_API_KEY lingolift-backend:latest
+  fi
+else
+  docker run -p 5001:5000 -d --env OPENAI_API_KEY=$OPENAI_API_KEY lingolift-backend:latest
 fi
-
-docker run -p 5001:5000 -d --env OPENAI_API_KEY=$OPENAI_API_KEY lingolift-backend:latest
 
 # run frontend
 pushd frontend

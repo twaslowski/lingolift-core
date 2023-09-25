@@ -2,7 +2,7 @@ from dataclasses import dataclass
 
 
 @dataclass
-class WordTranslation:
+class Words:
     word: str
     translation: str
 
@@ -10,4 +10,4 @@ class WordTranslation:
 @dataclass
 class LiteralTranslation:
     literal_translation: str
-    words: WordTranslation
+    words: list[Words]

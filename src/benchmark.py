@@ -10,7 +10,7 @@ from dotenv import load_dotenv
 from domain.response_suggestion import ResponseSuggestion
 from domain.translation import Translation
 from gpt.gpt_adapter import generate_responses, generate_translation, generate_literal_translations
-from src.domain.literal_translation import LiteralTranslation
+from src.domain.literal_translation import Words
 
 
 class Benchmark(unittest.TestCase):
@@ -54,7 +54,7 @@ class Benchmark(unittest.TestCase):
             logging.info(f"Getting response suggestions for {sentence} ...")
             try:
                 openai_response = generate_literal_translations(sentence["sentence"])
-                from_dict(data_class=LiteralTranslation, data=openai_response)
+                from_dict(data_class=Words, data=openai_response)
             except ValueError as ve:
                 logging.error(f"Could not parse JSON: {ve}")
                 error_count = error_count + 1
