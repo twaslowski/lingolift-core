@@ -1,19 +1,17 @@
 <div>
-  <textarea [(ngModel)]="sentence" placeholder="Enter your sentence here"></textarea>
+    <textarea [(ngModel)]="sentence" placeholder="Enter your sentence here"></textarea>
 </div>
 
 <div class="button-container">
-  <button (click)="processSentence()">Translate</button>
+    <button (click)="
+        translationComponent.fetchTranslation(this.sentence);
+        syntaxBreakdownComponent.fetchAndBuildSyntaxBreakdown(this.sentence);
+        responseSuggestionsComponent.fetchResponseSuggestions(sentence)">Translate
+    </button>
 </div>
 
-<app-translation
-        [translationResult]="results"
-        [isLoading]="isLoadingTranslation"></app-translation>
+<app-translation [sentence]="sentence" #translationComponent></app-translation>
 
-<app-syntax-breakdown
-        [analysisData]="morphAnalysis"
-        [isLoading]="isLoadingSyntax"></app-syntax-breakdown>
+<app-syntax-breakdown #syntaxBreakdownComponent></app-syntax-breakdown>
 
-<app-response-suggestions
-        [responseSuggestions]="responseSuggestions"
-        [isLoading]="isLoadingSuggestions"></app-response-suggestions>
+<app-response-suggestions [sentence]="sentence" #responseSuggestionsComponent></app-response-suggestions>

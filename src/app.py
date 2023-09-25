@@ -45,7 +45,7 @@ def get_syntactical_analysis():
 
 
 @app.route('/literal-translation', methods=['POST'])
-def get_word_inflections():
+def get_literal_translation():
     sentence = request.json.get('sentence')
     response = generate_literal_translations(sentence)
     return jsonify(response)
