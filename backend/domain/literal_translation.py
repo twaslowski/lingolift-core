@@ -9,5 +9,4 @@ class Words:
 
 @dataclass
 class LiteralTranslation:
-    literal_translation: str
     words: list[Words]

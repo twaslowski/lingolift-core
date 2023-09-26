@@ -16,13 +16,13 @@ export class SyntaxBreakdownComponent implements OnInit {
 
     analysisData: {
         sentence: string;
-        literal_translation: string;
+        literal_translation: string | null;
         morph_analysis: Array<{
             word: string;
             lemma: string;
             morph_analysis: string;
             dependencies: string;
-            translation: string;
+            translation: string | null;
         }>;
     } | null = null;
 
@@ -33,13 +33,13 @@ export class SyntaxBreakdownComponent implements OnInit {
         this.isLoading = true;
         let morphAnalysisData: {
             sentence: string;
-            literal_translation: string;
+            literal_translation: string | null;
             morph_analysis: Array<{
                 word: string;
                 lemma: string;
                 morph_analysis: string;
                 dependencies: string;
-                translation: string;
+                translation: string | null;
             }>;
         };
 
@@ -55,6 +55,13 @@ export class SyntaxBreakdownComponent implements OnInit {
         const analysis$ = this.apiService.getSyntacticalAnalysis(sentence, language);
 
         morphAnalysisData = await lastValueFrom(analysis$).catch(() => this.error = true);
+
+        if (!this.shouldFetchLiteralTranslation(sentence)) {
+            this.analysisData = morphAnalysisData;
+            this.isLoading = false;
+            return;
+        }
+
         literalTranslationData = await lastValueFrom(literalTranslation$).catch(() => this.error = true);
 
         // @ts-ignore
@@ -70,10 +77,13 @@ export class SyntaxBreakdownComponent implements OnInit {
 
         morphAnalysisData.literal_translation = literalTranslationData.literal_translation
         console.log("Successfully consolidated morphological analysis and literal translation.")
-
-        this.analysisData = morphAnalysisData;
         this.isLoading = false;
     }
+
+    shouldFetchLiteralTranslation(sentence: string): boolean {
+        return sentence.split(' ').length > 7;
+    }
+
 
     ngOnInit(): void {
         this.highlightService.highlightedWord$.subscribe((word: any) => {

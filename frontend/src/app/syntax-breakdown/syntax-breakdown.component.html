@@ -16,7 +16,7 @@
             </span>
         </p>
 
-        <p class="literal-translation">
+        <p class="literal-translation" *ngIf="analysisData.literal_translation">
             <span *ngFor="let word of analysisData.literal_translation.split(' ')"
                   [class.highlighted]="word === activeWord"
                   (mouseover)="setActiveWord(word)"
@@ -27,10 +27,10 @@
 
         <div class="syntax-container">
             <div class="word-box" *ngFor="let wordData of analysisData.morph_analysis"
-                 [tooltip]="'lemma: ' + wordData.lemma + '\ncontext: ' + wordData.morph_analysis"
-                 [class.highlighted]="wordData.translation === activeWord || wordData.word === activeWord"
+                 [tooltip]="'lemma: ' + wordData.lemma + '\ncontext: ' + wordData.morph_analysis">
+                 <!--[class.highlighted]="wordData.translation === activeWord || wordData.word === activeWord"
                  (mouseover)="setActiveWord(wordData.translation)"
-                 (mouseout)="clearActiveWord()">
+                 (mouseout)="clearActiveWord()"-->
                 <div class="original-word">{{ wordData.word }}</div>
                 <div class="context">{{ wordData.translation }}</div>
             </div>

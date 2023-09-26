@@ -36,22 +36,16 @@ Suggest {} response-suggestions for the following sentence: {}
 """
 
 LITERAL_TRANSLATIONS_SYSTEM_PROMPT = """
-Translate sentences. Offer a translation that's as literal as possible, 
-while ensuring it still makes sense in the target language. 
-Additionally, provide a list of words from the sentence with their respective translation.
-Your answer should be structured as valid JSON, EXACTLY like the example below: 
+Provide literal translations for words in the context of a sentence.
+You will receive a JSON with a sentence and one or multiple words, and provide a response in the following structure:
+[
     {
-      "literal_translation": "PLACEHOLDER_TRANSLATION_OF_WHOLE_SENTENCE",
-      "words": [
-        {
-          "word": "PLACEHOLDER_WORD",
-          "translation": "PLACEHOLDER_LITERAL_TRANSLATION",
-        },
-      ...
-      ]
-    }
+      "word": "PLACEHOLDER_WORD",
+      "translation": "PLACEHOLDER_LITERAL_TRANSLATION"
+    },
+]
 """
 
 LITERAL_TRANSLATIONS_USER_PROMPT = """
-Analyse the following sentence: {}
+Translate the word(s) '{}' in the context of the following sentence: '{}'.
 """
