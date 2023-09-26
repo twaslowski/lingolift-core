@@ -23,10 +23,10 @@ echo "activating virtual environment"
 source venv/bin/activate
 
 echo "installing dependencies"
-pip install -r requirements.txt
+pip install -r backend/requirements.txt
 
 # check that .env exists
-if [ ! -f .env ]; then
+if [ ! -f ./backend/.env ]; then
   echo "Error: .env file does not exist." >&2
   exit 1
 else
@@ -35,7 +35,7 @@ fi
 
 # get current directory path
 ROOT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
-export PYTHONPATH=$PYTHONPATH:$ROOT_DIR
+export PYTHONPATH=$PYTHONPATH:$ROOT_DIR/backend
 
-pushd src
+pushd backend
 python -m flask run --host=0.0.0.0 --port=5001 &

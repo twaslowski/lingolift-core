@@ -1,4 +1,4 @@
-import {Component, Input} from '@angular/core';
+import {Component, EventEmitter, Input, Output} from '@angular/core';
 import {ApiService} from "../api.service";
 import {lastValueFrom} from "rxjs";
 
@@ -20,6 +20,8 @@ export class ResponseSuggestionsComponent {
         }>;
     } | null = null;
 
+    @Output() analysisRequest = new EventEmitter<string>();
+
     constructor(private apiService: ApiService) {
     };
 
@@ -30,5 +32,9 @@ export class ResponseSuggestionsComponent {
             (err: any) => console.log("error occurred while fetching response suggestions: " + err.toString())
         )
         this.isLoading = false;
+    }
+
+    emitAnalysisRequest(sentence: string) {
+        this.analysisRequest.emit(sentence);
     }
 }

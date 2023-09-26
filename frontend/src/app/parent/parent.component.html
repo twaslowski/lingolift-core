@@ -20,4 +20,4 @@
 
 <app-syntax-breakdown #syntaxBreakdownComponent></app-syntax-breakdown>
 
-<app-response-suggestions #responseSuggestionsComponent></app-response-suggestions>
+<app-response-suggestions (analysisRequest)="setSentence($event)" #responseSuggestionsComponent></app-response-suggestions>
