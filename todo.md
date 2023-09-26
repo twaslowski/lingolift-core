@@ -11,5 +11,5 @@
 
 ### syntax breakdown
 
-- render info box on mouseover
-- display lemma in info box
+- render info box on mouseover ✅
+- display lemma in info box ✅

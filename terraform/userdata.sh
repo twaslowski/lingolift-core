@@ -1,16 +1,13 @@
 #!/bin/bash
 
 yum update -y
-sudo yum install gcc openssl-devel bzip2-devel libffi-devel zlib-devel git -y
+sudo yum install docker git
+sudo service docker start
 
-# install python
-wget https://www.python.org/ftp/python/3.11.4/Python-3.11.4.tgz
-tar xzf Python-3.11.4.tgz
-cd Python-3.11.4
-./configure
-make altinstall
+# fetch and install docker compose
+sudo curl -L https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m) -o /usr/local/bin/docker-compose
+sudo chmod +x /usr/local/bin/docker-compose
 
 cd /home/ec2-user
 git clone https://github.com/TobiasWaslowski/lingolift.git && cd lingolift
-
-./scripts/run.sh
+docker-compose up -d --build
