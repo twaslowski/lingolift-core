@@ -10,7 +10,7 @@ from dotenv import load_dotenv
 from domain.response_suggestion import ResponseSuggestion
 from domain.translation import Translation
 from gpt.gpt_adapter import generate_responses, generate_translation, generate_literal_translations
-from src.domain.literal_translation import Words
+from backend.domain.literal_translation import LiteralTranslation
 
 
 class Benchmark(unittest.TestCase):
@@ -29,7 +29,7 @@ class Benchmark(unittest.TestCase):
     def test_benchmark_translations(self):
         error_count = 0
         for sentence in self.BENCHMARK_SENTENCES:
-            logging.info(f"Getting response suggestions for {sentence} ...")
+            logging.info(f"Getting translations for {sentence} ...")
             try:
                 openai_response = generate_translation(sentence["sentence"])
                 from_dict(data_class=Translation, data=openai_response)
@@ -50,10 +50,10 @@ class Benchmark(unittest.TestCase):
     def test_benchmark_literal_translations(self):
         error_count = 0
         for sentence in self.BENCHMARK_SENTENCES:
-            logging.info(f"Getting response suggestions for {sentence} ...")
+            logging.info(f"Getting literal translations for {sentence} ...")
             try:
                 openai_response = generate_literal_translations(sentence["sentence"])
-                from_dict(data_class=Words, data=openai_response)
+                from_dict(data_class=LiteralTranslation, data=openai_response)
             except ValueError as ve:
                 logging.error(f"Could not parse JSON: {ve}")
                 error_count = error_count + 1
@@ -69,7 +69,7 @@ class Benchmark(unittest.TestCase):
         bad_answer_count = 0
         expected_number_of_suggestions = 2
         for sentence in self.BENCHMARK_SENTENCES:
-            logging.info(f"Getting translation for {sentence} ...")
+            logging.info(f"Getting response suggestions for {sentence} ...")
             try:
                 openai_response = generate_responses(sentence["sentence"], expected_number_of_suggestions)
                 if len(openai_response['response_suggestions']) is not expected_number_of_suggestions:
