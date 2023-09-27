@@ -18,7 +18,7 @@
 
         <div class="syntax-container">
             <div class="word-box" *ngFor="let wordData of analysisData.morph_analysis"
-                 [tooltip]="'lemma: ' + wordData.lemma + '\ncontext: ' + wordData.morph_analysis"
+                 [tooltip]="[wordData.lemma, wordData.morph_analysis, wordData.dependencies]"
                  [class.highlighted]="wordData.word === activeWord"
                  (mouseover)="setActiveWord(wordData.word)"
                  (mouseout)="clearActiveWord()">

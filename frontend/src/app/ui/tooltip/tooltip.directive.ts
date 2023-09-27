@@ -14,7 +14,7 @@ import {TooltipComponent} from "./tooltip.component";
 })
 export class TooltipDirective implements OnDestroy {
 
-    @Input() tooltip = '';
+    @Input() tooltip : string[] = [];
 
     private componentRef: ComponentRef<any> | null = null;
 

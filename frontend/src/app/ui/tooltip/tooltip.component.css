@@ -1,11 +1,13 @@
 .tooltip {
     position: fixed;
-    background-color: black;
+    background-color: #111111;
     border-radius: 4px;
-    color: #ffffff;
+    color: #dddddd;
     font-family: Verdana, cursive;
+    font-weight: lighter;
     padding: 3px 6px;
-    font-size: 13px;
+    font-size: 11px;
     margin-top: 5px;
     transform:translateX(-50%);
+    line-height: 50%;
 }

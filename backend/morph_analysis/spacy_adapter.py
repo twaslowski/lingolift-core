@@ -20,7 +20,6 @@ def perform_analysis(sentence: str, language: str) -> dict:
                     "lemma": str(token.lemma_),
                     "morph_analysis": str(token.morph),
                     "dependencies": str(token.head),
-                    # "translation": str(parent.translate_word(token.text))
                 }
                     for token in doc]
             }

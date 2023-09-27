@@ -9,10 +9,10 @@
         </div>
         <div class="response-suggestion-container" *ngFor="let suggestion of responseSuggestions.response_suggestions">
             <span class="response-suggestion-text">{{ suggestion.suggestion }}</span>
-            <button [tooltip]="'Analyse'" (click)="emitAnalysisRequest(suggestion.suggestion)">
+            <button [tooltip]="['Analyse']" (click)="emitAnalysisRequest(suggestion.suggestion)">
                 <i class="fa fa-comment"></i>
             </button>
-            <button [tooltip]="'Copy'" (click)="navigator.clipboard.writeText(suggestion.suggestion)">
+            <button [tooltip]="['Copy']" (click)="navigator.clipboard.writeText(suggestion.suggestion)">
                 <i class="fa fa-clipboard"></i>
             </button>
             <p class="response-suggestion-translation">{{ suggestion.translation }}</p>

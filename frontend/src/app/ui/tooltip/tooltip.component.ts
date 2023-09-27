@@ -7,7 +7,7 @@ import {Component, OnInit} from '@angular/core';
 })
 export class TooltipComponent implements OnInit {
 
-  tooltip: string = '';
+  tooltip: string[] = [];
   left: number = 0;
   top: number = 0;
 
