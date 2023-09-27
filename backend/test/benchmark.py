@@ -7,10 +7,10 @@ from dacite import from_dict
 from dacite.exceptions import DaciteError
 from dotenv import load_dotenv
 
-from domain.response_suggestion import ResponseSuggestion
-from domain.translation import Translation
-from gpt.gpt_adapter import generate_responses, generate_translation, generate_literal_translations
-from backend.domain.literal_translation import LiteralTranslation
+from backend.gpt.gpt_service import generate_responses, generate_translation, generate_literal_translations
+from backend.test.domain.literal_translation import LiteralTranslation
+from backend.test.domain.response_suggestion import ResponseSuggestion
+from backend.test.domain.translation import Translation
 
 
 class Benchmark(unittest.TestCase):
@@ -53,7 +53,9 @@ class Benchmark(unittest.TestCase):
             logging.info(f"Getting literal translations for {sentence} ...")
             try:
                 openai_response = generate_literal_translations(sentence["sentence"])
-                from_dict(data_class=LiteralTranslation, data=openai_response)
+                parsed = from_dict(data_class=LiteralTranslation, data=openai_response)
+                logging.info(parsed)
+                self.assertEqual(len(sentence['sentence'].split()), len(parsed.words))
             except ValueError as ve:
                 logging.error(f"Could not parse JSON: {ve}")
                 error_count = error_count + 1

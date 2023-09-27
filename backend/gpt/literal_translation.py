@@ -1,8 +1,9 @@
-from gpt.context import LITERAL_TRANSLATIONS_CONTEXT
-from gpt.prompts import LITERAL_TRANSLATIONS_USER_PROMPT
-from gpt.message import Message, USER
-from gpt.parser import openai_exchange
 import concurrent
+import logging
+
+from backend.gpt.gpt_adapter import openai_exchange
+from backend.gpt.message import Message, USER, SYSTEM
+from backend.gpt.prompts import LITERAL_TRANSLATIONS_SYSTEM_PROMPT
 
 
 def generate_literal_translation(sentence: str) -> dict:
@@ -10,28 +11,23 @@ def generate_literal_translation(sentence: str) -> dict:
     result = {"words": []}
     # Create a ThreadPoolExecutor to process chunks concurrently
     with concurrent.futures.ThreadPoolExecutor() as executor:
-        # Use a list to keep track of the futures
-        futures = []
+        futures = [executor.submit(generate_literal_translation_for_chunk, sentence, chunk) for chunk in chunks]
 
-        for chunk in chunks:
-            # Submit each chunk for processing and store the future
-            future = executor.submit(generate_literal_translation_for_chunk, sentence, chunk)
-            futures.append(future)
-
-        # Retrieve the results from the futures as they complete
         for future in concurrent.futures.as_completed(futures):
             translation = future.result()
             for word in translation:
                 result["words"].append(word)
 
-    print(result)
     return result
 
+
 def generate_literal_translation_for_chunk(sentence: str, chunk: list[str]) -> dict:
-    context = LITERAL_TRANSLATIONS_CONTEXT
-    prompt = LITERAL_TRANSLATIONS_USER_PROMPT.format(chunk, sentence)
+    logging.info(f"Sending sentence {sentence}, chunk {chunk} to gpt3")
+    context = [Message(role=SYSTEM, content=LITERAL_TRANSLATIONS_SYSTEM_PROMPT)]
+    prompt = "Translate the word(s) '{}' in the context of the following sentence: '{}'.".format(chunk, sentence)
     context.append(Message(role=USER, content=prompt))
-    return openai_exchange(context)
+    response = openai_exchange(context)
+    return response
 
 
 def chunk_sentence(sentence: str, chunk_size: int = 2) -> list[list[str]]:

@@ -1,32 +1,21 @@
-import json5 as json
 import logging
 
+import json5 as json
 import openai
-from gpt.context import TRANSLATION_CONTEXT, RESPONSES_CONTEXT, LITERAL_TRANSLATIONS_CONTEXT
-from gpt.message import Message, USER
-from gpt.prompts import TRANSLATION_USER_PROMPT, RESPONSES_USER_PROMPT, LITERAL_TRANSLATIONS_USER_PROMPT
-from gpt.literal_translation import generate_literal_translation
-from gpt.parser import openai_exchange
-from util.timing import timed
+
+from backend.gpt.message import Message
 
 
-@timed
-def generate_translation(sentence: str) -> dict:
-    context = TRANSLATION_CONTEXT
-    context.append(Message(role=USER, content=TRANSLATION_USER_PROMPT + sentence))
-    response = openai_exchange(context)
-    return response
+def openai_exchange(messages: list[Message]) -> dict:
+    logging.info(f"message: {messages[1].content}")
+    openai_response = openai.ChatCompletion.create(
+        model="gpt-3.5-turbo",
+        messages=[message.asdict() for message in messages]
+    )
+    response = openai_response["choices"][0]["message"]["content"]
+    logging.debug(f"Received response: {response}")
+    return parse_response(response)
 
 
-@timed
-def generate_responses(sentence: str, number_suggestions: int = 2) -> dict:
-    context = RESPONSES_CONTEXT
-    prompt = RESPONSES_USER_PROMPT.format(number_suggestions, sentence)
-    context.append(Message(role=USER, content=prompt))
-    response = openai_exchange(context)
-    return response
-
-
-@timed
-def generate_literal_translations(sentence: str) -> dict:
-    return generate_literal_translation(sentence)
+def parse_response(gpt_response: str) -> dict:
+    return json.loads(gpt_response)

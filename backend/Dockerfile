@@ -1,6 +1,5 @@
 FROM python:3.11
 
-ARG MOCK
 ARG OPENAI_API_KEY
 
 WORKDIR /app
@@ -8,6 +7,8 @@ WORKDIR /app
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY . .
+COPY . backend/
+ENV PYTHONPATH=app
+ENV FLASK_APP=backend/app
 
 CMD [ "python", "-m", "flask", "run", "--host=0.0.0.0" ]

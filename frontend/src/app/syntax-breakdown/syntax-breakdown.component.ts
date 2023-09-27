@@ -16,7 +16,6 @@ export class SyntaxBreakdownComponent implements OnInit {
 
     analysisData: {
         sentence: string;
-        literal_translation: string | null;
         morph_analysis: Array<{
             word: string;
             lemma: string;
@@ -57,6 +56,7 @@ export class SyntaxBreakdownComponent implements OnInit {
         morphAnalysisData = await lastValueFrom(analysis$).catch(() => this.error = true);
 
         if (!this.shouldFetchLiteralTranslation(sentence)) {
+            console.warn("Skip fetching of literal translation")
             this.analysisData = morphAnalysisData;
             this.isLoading = false;
             return;
@@ -77,11 +77,15 @@ export class SyntaxBreakdownComponent implements OnInit {
 
         morphAnalysisData.literal_translation = literalTranslationData.literal_translation
         console.log("Successfully consolidated morphological analysis and literal translation.")
+        this.analysisData = morphAnalysisData;
         this.isLoading = false;
     }
 
     shouldFetchLiteralTranslation(sentence: string): boolean {
-        return sentence.split(' ').length > 7;
+        return true;
+        // const sentenceLength = sentence.split(' ').length;
+        // console.log("Sentence length %d for sentence %s", sentenceLength, sentence);
+        // return sentenceLength < 7;
     }
 
 

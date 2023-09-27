@@ -1,7 +1,0 @@
-from gpt.message import Message, SYSTEM
-from gpt.prompts import *
-
-EMPTY_CONTEXT = [Message(role=SYSTEM, content=SYSTEM_PROMPT)]
-TRANSLATION_CONTEXT = [Message(role=SYSTEM, content=TRANSLATION_SYSTEM_PROMPT)]
-RESPONSES_CONTEXT = [Message(role=SYSTEM, content=RESPONSES_SYSTEM_PROMPT)]
-LITERAL_TRANSLATIONS_CONTEXT = [Message(role=SYSTEM, content=LITERAL_TRANSLATIONS_SYSTEM_PROMPT)]

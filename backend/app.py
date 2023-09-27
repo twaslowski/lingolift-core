@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 
-from gpt.gpt_adapter import generate_translation, generate_responses, generate_literal_translations
+from gpt.gpt_service import generate_translation, generate_responses, generate_literal_translations
 from morph_analysis.spacy_adapter import perform_analysis
 
 # setup
