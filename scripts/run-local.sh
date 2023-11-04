@@ -35,7 +35,6 @@ fi
 
 # get current directory path
 ROOT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
-export PYTHONPATH=$PYTHONPATH:$ROOT_DIR/backend
-
-pushd backend
-python -m flask run --host=0.0.0.0 --port=5001 &
+export PYTHONPATH=$(git rev-parse --show-toplevel)
+pushd backend > /dev/null
+python -m flask run --host=0.0.0.0 --port=5001

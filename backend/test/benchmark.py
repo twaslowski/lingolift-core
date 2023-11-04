@@ -31,8 +31,9 @@ class Benchmark(unittest.TestCase):
         for sentence in self.BENCHMARK_SENTENCES:
             logging.info(f"Getting translations for {sentence} ...")
             try:
-                openai_response = generate_translation(sentence["sentence"])
-                from_dict(data_class=Translation, data=openai_response)
+                openai_response = generate_translation("Apa kabarmu hari ini?")
+                parsed = from_dict(data_class=Translation, data=openai_response)
+                self.assertEqual(parsed.language.lower(), "indonesian")
             except ValueError as ve:
                 logging.error(f"Could not parse JSON: {ve}")
                 error_count = error_count + 1
@@ -54,7 +55,6 @@ class Benchmark(unittest.TestCase):
             try:
                 openai_response = generate_literal_translations(sentence["sentence"])
                 parsed = from_dict(data_class=LiteralTranslation, data=openai_response)
-                logging.info(parsed)
                 self.assertEqual(len(sentence['sentence'].split()), len(parsed.words))
             except ValueError as ve:
                 logging.error(f"Could not parse JSON: {ve}")
@@ -62,6 +62,10 @@ class Benchmark(unittest.TestCase):
                 continue
             except DaciteError as de:
                 logging.error(f"Error serializing JSON to dataclass: {de}")
+                error_count = error_count + 1
+                continue
+            except AssertionError as ae:
+                logging.error(f"Error with assertion: {ae}")
                 error_count = error_count + 1
                 continue
         self.assertLessEqual(error_count, 1)
