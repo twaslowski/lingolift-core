@@ -14,7 +14,7 @@ def openai_exchange(messages: list[Message]) -> dict:
     )
     response = openai_response["choices"][0]["message"]["content"]
     logging.debug(f"Received response: {response}")
-    return response
+    return parse_response(response)
 
 
 def parse_response(gpt_response: str) -> dict:

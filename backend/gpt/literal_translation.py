@@ -30,7 +30,7 @@ def generate_literal_translation_for_chunk(sentence: str, chunk: list[str]) -> d
     return response
 
 
-def chunk_sentence(sentence: str, chunk_size: int = 2) -> list[list[str]]:
+def chunk_sentence(sentence: str, chunk_size: int = 1) -> list[list[str]]:
     sentence = list(sentence.split(' '))
     chunks = []
     for i in range(0, len(sentence), chunk_size):
@@ -41,4 +41,4 @@ def chunk_sentence(sentence: str, chunk_size: int = 2) -> list[list[str]]:
 
 
 if __name__ == '__main__':
-    generate_literal_translation("das hier ist ein satz zum testen")
+    print(generate_literal_translation("das hier ist ein satz zum testen"))
