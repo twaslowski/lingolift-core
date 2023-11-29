@@ -1,5 +1,5 @@
 import unittest
-from gpt import gpt_adapter
+from backend.gpt import gpt_adapter
 
 
 class TestGptAdapter(unittest.TestCase):
@@ -30,8 +30,8 @@ class TestGptAdapter(unittest.TestCase):
                 }
             ]
         }"""
-        gpt_adapter._parse_response(happy_path)
-        self.assertTrue(True) # when getting here the previous function has not thrown an exception
+        gpt_adapter.parse_response(happy_path)
+        self.assertTrue(True)  # when getting here the previous function has not thrown an exception
 
     def test_parser_manages_trailing_commas(self):
         happy_path = """{
@@ -59,5 +59,5 @@ class TestGptAdapter(unittest.TestCase):
                 }
             ]
         }"""
-        gpt_adapter._parse_response(happy_path)
-        self.assertTrue(True) # when getting here the previous function has not thrown an exception
+        gpt_adapter.parse_response(happy_path)
+        self.assertTrue(True)  # when getting here the previous function has not thrown an exception

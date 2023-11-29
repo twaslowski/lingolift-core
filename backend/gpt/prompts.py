@@ -7,6 +7,7 @@ TRANSLATION_SYSTEM_PROMPT = """
 Translate sentences from other arbitrary languages into English. Provide the response in the following structure:
 {
   "translation": "a translation of the source sentence",
+  "language": "the language of the source sentence"
 }
 """
 
