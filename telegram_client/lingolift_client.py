@@ -25,17 +25,17 @@ async def get_all(sentence: str) -> dict:
     async with aiohttp.ClientSession() as session:
         translation_task = asyncio.create_task(get_translation(session, sentence))
         suggestions_task = asyncio.create_task(get_suggestions(session, sentence))
-        # literal_translation_task = asyncio.create_task(get_literal_translation(session, sentence))
+        literal_translation_task = asyncio.create_task(get_literal_translation(session, sentence))
 
         # Await the completion of all tasks
         translation_result = await translation_task
         suggestions_result = await suggestions_task
-        # literal_translation_result = await literal_translation_task
+        literal_translation_result = await literal_translation_task
 
         return {
             "translation": translation_result,
             "response_suggestions": suggestions_result,
-            # "words": literal_translation_result
+            "literal_translations": literal_translation_result
         }
 
 

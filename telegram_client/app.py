@@ -29,17 +29,30 @@ async def send_suggestions(update: Update, result: dict) -> None:
                                         f"This translates to: '{suggestion['translation']}'")
 
 
+def format_literal_translations(literal_translations: list) -> str:
+    result = "Here's what those words mean: \n"
+    for word in literal_translations:
+        result += f"{word['word']}: {word['translation']}\n"
+    return result
+
+
+async def handle_error(update: Update, _):
+    await update.get_bot().send_message(text="An unexpected error occurred. Sorry :(", chat_id=update.effective_user.id)
+
+
 async def handle_text_message(update: Update, _) -> None:
+    logging.info(f"Received message: {update.message.text}")
     lingolift_result = await get_all(update.message.text)
     logging.info(f"Got result from lingolift: {lingolift_result}")
     await update.message.reply_text(format_response(update, lingolift_result))
+    await update.message.reply_text(format_literal_translations(lingolift_result['literal_translations']['words']))
     await send_suggestions(update, lingolift_result['response_suggestions'])
 
 
 def init_app() -> Application:
     app = ApplicationBuilder().token(TOKEN).build()
     app.add_handler(MessageHandler(Filters.TEXT, handle_text_message))
-    # app.add_error_handler(handle_error)
+    app.add_error_handler(handle_error)
     return app
 
 

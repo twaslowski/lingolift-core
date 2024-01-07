@@ -6,6 +6,7 @@ from backend.gpt.prompts import LITERAL_TRANSLATIONS_SYSTEM_PROMPT
 
 
 def generate_literal_translation(sentence: str) -> dict:
+    # todo ensure order of returned chunks matches up with the original sentence
     chunks = chunk_sentence(sentence)
     result = {"words": []}
     # Create a ThreadPoolExecutor to process chunks concurrently
@@ -16,7 +17,6 @@ def generate_literal_translation(sentence: str) -> dict:
             translation = future.result()
             for word in translation:
                 result["words"].append(word)
-
     return result
 
 
