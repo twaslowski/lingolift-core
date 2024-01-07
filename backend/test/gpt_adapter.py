@@ -1,5 +1,5 @@
 import unittest
-from backend.gpt import gpt_adapter
+from backend.llm import gpt_adapter
 
 
 class TestGptAdapter(unittest.TestCase):

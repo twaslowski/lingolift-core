@@ -4,7 +4,7 @@ import os
 import json5 as json
 from openai import OpenAI
 
-from backend.gpt.message import Message
+from backend.llm.message import Message
 
 api_key = os.environ['OPENAI_API_KEY']
 client = OpenAI(api_key=api_key)
@@ -24,6 +24,6 @@ def openai_exchange(messages: list[Message], json_mode: bool = False) -> dict:
 
 
 def parse_response(gpt_response: str) -> dict:
-    # sometimes, gpt will hallucinate '```json' at the start of the JSON it returns .-.
+    # sometimes, llm will hallucinate '```json' at the start of the JSON it returns .-.
     cleaned_response = gpt_response.replace('`', '').replace('json', '')
     return json.loads(cleaned_response)

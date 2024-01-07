@@ -1,9 +1,9 @@
 import concurrent
 import re
 
-from backend.gpt.gpt_adapter import openai_exchange
-from backend.gpt.message import Message, USER, SYSTEM
-from backend.gpt.prompts import LITERAL_TRANSLATIONS_SYSTEM_PROMPT
+from backend.llm.gpt_adapter import openai_exchange
+from backend.llm.message import Message, USER, SYSTEM
+from backend.llm.prompts import LITERAL_TRANSLATIONS_SYSTEM_PROMPT
 
 
 def generate_literal_translation(sentence: str) -> dict:
