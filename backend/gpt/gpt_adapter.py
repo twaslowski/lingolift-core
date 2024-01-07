@@ -25,5 +25,5 @@ def openai_exchange(messages: list[Message], json_mode: bool = False) -> dict:
 
 def parse_response(gpt_response: str) -> dict:
     # sometimes, gpt will hallucinate '```json' at the start of the JSON it returns .-.
-    gpt_response.replace('```json', '')
-    return json.loads(gpt_response)
+    cleaned_response = gpt_response.replace('`', '').replace('json', '')
+    return json.loads(cleaned_response)

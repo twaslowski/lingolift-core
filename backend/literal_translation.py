@@ -1,4 +1,5 @@
 import concurrent
+import re
 
 from backend.gpt.gpt_adapter import openai_exchange
 from backend.gpt.message import Message, USER, SYSTEM
@@ -32,7 +33,8 @@ def generate_literal_translation_for_chunk(sentence: str, chunk: list[str]) -> d
 
 
 def chunk_sentence(sentence: str, chunk_size: int = 1) -> list[list[str]]:
-    sentence = list(sentence.split(' '))
+    alphabetic_characters_regex = re.compile('[^a-zA-Z]')
+    sentence = list(alphabetic_characters_regex.sub('', word) for word in sentence.split(' '))
     chunks = []
     for i in range(0, len(sentence), chunk_size):
         # Get a chunk of the sentence and append it to the list of chunks
