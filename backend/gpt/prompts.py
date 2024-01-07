@@ -1,10 +1,6 @@
-SYSTEM_PROMPT = """
-You parent texts from other languages to English. 
-Your answers are strictly structured according to user prompts. 
-"""
-
 TRANSLATION_SYSTEM_PROMPT = """
-Translate sentences from other arbitrary languages into English. Provide the response in the following structure:
+Translate sentences from other arbitrary languages into English and identify the source language.
+Provide the response in the following JSON structure:
 {
   "translation": "a translation of the source sentence",
   "language": "the language of the source sentence"
@@ -17,7 +13,7 @@ Translate the following sentence into English:
 
 RESPONSES_SYSTEM_PROMPT = """
 Generate response-suggestions for sentences in other languages. 
-Provide an English translation for each potential response.
+Provide an English translation for each potential response in the following JSON structure:
 {
   "response_suggestions": [
     {

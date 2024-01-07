@@ -23,7 +23,6 @@ class Benchmark(unittest.TestCase):
 
     def setUp(self) -> None:
         load_dotenv()
-        openai.api_key = os.environ.get("OPENAI_API_KEY")
         logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 
     def test_benchmark_translations(self):
