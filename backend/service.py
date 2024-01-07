@@ -1,4 +1,4 @@
-from backend.gpt.literal_translation import generate_literal_translation
+from backend.literal_translation import generate_literal_translation
 from backend.gpt.message import Message, USER, SYSTEM
 from backend.gpt.gpt_adapter import openai_exchange
 from backend.gpt.prompts import TRANSLATION_USER_PROMPT, RESPONSES_USER_PROMPT, \
