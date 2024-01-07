@@ -1,5 +1,4 @@
 import concurrent
-import logging
 
 from backend.gpt.gpt_adapter import openai_exchange
 from backend.gpt.message import Message, USER, SYSTEM
@@ -22,11 +21,13 @@ def generate_literal_translation(sentence: str) -> dict:
 
 
 def generate_literal_translation_for_chunk(sentence: str, chunk: list[str]) -> dict:
-    logging.info(f"Sending sentence {sentence}, chunk {chunk} to gpt3")
     context = [Message(role=SYSTEM, content=LITERAL_TRANSLATIONS_SYSTEM_PROMPT)]
+    # not using string interpolation here, like in the other functions,
+    # due to the risk of multiple threads accessing the same string object
     prompt = "Translate the word(s) '{}' in the context of the following sentence: '{}'.".format(chunk, sentence)
     context.append(Message(role=USER, content=prompt))
-    response = openai_exchange(context)
+    # openai's json mode enforces an root level object; it doesn't appear to do a JSON list
+    response = openai_exchange(context, json_mode=False)
     return response
 
 

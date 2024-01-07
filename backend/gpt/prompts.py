@@ -35,12 +35,10 @@ Suggest {} response-suggestions for the following sentence: {}
 LITERAL_TRANSLATIONS_SYSTEM_PROMPT = """
 Provide literal translations for words in the context of a sentence.
 You will receive a JSON with a sentence and one or multiple words, and provide a response in the following structure:
-[
-    {
+[{
       "word": "PLACEHOLDER_WORD",
       "translation": "PLACEHOLDER_LITERAL_TRANSLATION"
-    },
-]
+}]
 """
 
 LITERAL_TRANSLATIONS_USER_PROMPT = """
