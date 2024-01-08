@@ -44,8 +44,9 @@ async def handle_text_message(update: Update, _) -> None:
     logging.info(f"Received message: {update.message.text}")
     lingolift_result = await get_all(update.message.text)
     logging.info(f"Got result from lingolift: {lingolift_result}")
+    await update.message.reply_text("Thanks! I've received your sentence, working on the translation now ...")
     await update.message.reply_text(format_response(update, lingolift_result))
-    await update.message.reply_text(format_literal_translations(lingolift_result['literal_translations']['words']))
+    await update.message.reply_text(format_literal_translations(lingolift_result['literal_translations']))
     await send_suggestions(update, lingolift_result['response_suggestions'])
 
 

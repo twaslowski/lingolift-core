@@ -24,5 +24,5 @@ def generate_responses(sentence: str, number_suggestions: int = 2) -> dict:
 
 
 @timed
-def generate_literal_translations(sentence: str) -> dict:
+def generate_literal_translations(sentence: str) -> list[dict]:
     return generate_literal_translation(sentence)

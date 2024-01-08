@@ -6,18 +6,17 @@ from backend.llm.message import Message, USER, SYSTEM
 from backend.llm.prompts import LITERAL_TRANSLATIONS_SYSTEM_PROMPT
 
 
-def generate_literal_translation(sentence: str) -> dict:
-    # todo ensure order of returned chunks matches up with the original sentence
+def generate_literal_translation(sentence: str) -> list[dict]:
     chunks = chunk_sentence(sentence)
-    result = {"words": []}
+    result = []
     # Create a ThreadPoolExecutor to process chunks concurrently
     with concurrent.futures.ThreadPoolExecutor() as executor:
         futures = [executor.submit(generate_literal_translation_for_chunk, sentence, chunk) for chunk in chunks]
 
-        for future in concurrent.futures.as_completed(futures):
+        for future in futures:
             translation = future.result()
             for word in translation:
-                result["words"].append(word)
+                result.append(word)
     return result
 
 
