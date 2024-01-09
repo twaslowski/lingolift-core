@@ -43,8 +43,13 @@ async def handle_error(update: Update, _):
     await update.message.reply_text(text="An unexpected error occurred. Sorry :(")
 
 
-def format_syntax_analysis(syntactical_analysis: dict):
-    return syntactical_analysis
+def format_syntax_analysis(syntactical_analysis: dict) -> str:
+    if syntactical_analysis['error'] is None:
+        return "A syntactical analysis cannot be performed for this language."
+    response_string = "Here's what you should know about the grammar of this sentence:\n"
+    for token in syntactical_analysis:
+        response_string += f"{token['word']} is {token['morph_analysis']}; its base form is {token['lemma']}.\n"
+    return response_string
 
 
 async def handle_text_message(update: Update, _) -> None:
@@ -55,7 +60,7 @@ async def handle_text_message(update: Update, _) -> None:
     # get the translation first. this is the most relevant part to the user.
     # it additionally contains information on the source sentence's language, which is required by other API calls
     translation_result = await get_translation(sentence)
-    logging.info(f"Got translation from lingolift server: {translation_result}")
+    logging.info(f"Received translation from lingolift server: {translation_result}")
     await update.message.reply_text(format_translation(update, translation_result))
 
     # perform all other calls concurrently
@@ -66,6 +71,9 @@ async def handle_text_message(update: Update, _) -> None:
             asyncio.create_task(get_literal_translation(session, sentence)),
             asyncio.create_task(get_syntactical_analysis(session, sentence, language)))
 
+    logging.info(f'Received suggestions from lingolift server: {suggestions}')
+    logging.info(f'Received literal translations from lingolift server: {literal_translation}')
+    logging.info(f'Received syntactical analysis from lingolift server: {syntactical_analysis}')
     # the current pattern is usually to have a function format a string and to send it here
     # however, in this case, we're sending multiple messages from this function for easier end-user copy/paste
     await send_suggestions(update, suggestions)
@@ -76,7 +84,7 @@ async def handle_text_message(update: Update, _) -> None:
 def init_app() -> Application:
     app = ApplicationBuilder().token(TOKEN).build()
     app.add_handler(MessageHandler(Filters.TEXT, handle_text_message))
-    # app.add_error_handler(handle_error)
+    app.add_error_handler(handle_error)
     return app
 
 

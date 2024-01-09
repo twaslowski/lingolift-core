@@ -32,7 +32,7 @@ def generate_literal_translation_for_chunk(sentence: str, chunk: list[str]) -> d
 
 
 def chunk_sentence(sentence: str, chunk_size: int = 1) -> list[list[str]]:
-    alphabetic_characters_regex = re.compile('[^a-zA-Z]')
+    alphabetic_characters_regex = re.compile('[?!,.]')
     sentence = list(alphabetic_characters_regex.sub('', word) for word in sentence.split(' '))
     chunks = []
     for i in range(0, len(sentence), chunk_size):
