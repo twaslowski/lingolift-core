@@ -1,12 +1,15 @@
+import asyncio
 import logging
 import os
 
+import aiohttp
 from dotenv import load_dotenv
 from telegram import Update
 from telegram.ext import ApplicationBuilder, MessageHandler, Application
 from telegram.ext import filters as Filters
 
-from telegram_client.lingolift_client import get_all, get_translation
+from telegram_client.lingolift_client import get_translation, get_suggestions, get_literal_translation, \
+    get_syntactical_analysis
 
 # setup
 load_dotenv()
@@ -37,17 +40,37 @@ def format_literal_translations(literal_translations: list) -> str:
 
 
 async def handle_error(update: Update, _):
-    await update.get_bot().send_message(text="An unexpected error occurred. Sorry :(", chat_id=update.effective_user.id)
+    await update.message.reply_text(text="An unexpected error occurred. Sorry :(")
+
+
+def format_syntax_analysis(syntactical_analysis: dict):
+    return syntactical_analysis
 
 
 async def handle_text_message(update: Update, _) -> None:
-    logging.info(f"Received message: {update.message.text}")
+    sentence = update.message.text
+    logging.info(f"Received message: {sentence}")
     await update.message.reply_text("Thanks! I've received your sentence, working on the translation now ...")
-    translation_result = await get_translation(update.message.text)
+
+    # get the translation first. this is the most relevant part to the user.
+    # it additionally contains information on the source sentence's language, which is required by other API calls
+    translation_result = await get_translation(sentence)
     logging.info(f"Got translation from lingolift server: {translation_result}")
     await update.message.reply_text(format_translation(update, translation_result))
-    # await update.message.reply_text(format_literal_translations(lingolift_result['literal_translations']))
-    # await send_suggestions(update, lingolift_result['response_suggestions'])
+
+    # perform all other calls concurrently
+    async with aiohttp.ClientSession() as session:
+        language = translation_result['language']
+        suggestions, literal_translation, syntactical_analysis = await asyncio.gather(
+            asyncio.create_task(get_suggestions(session, sentence)),
+            asyncio.create_task(get_literal_translation(session, sentence)),
+            asyncio.create_task(get_syntactical_analysis(session, sentence, language)))
+
+    # the current pattern is usually to have a function format a string and to send it here
+    # however, in this case, we're sending multiple messages from this function for easier end-user copy/paste
+    await send_suggestions(update, suggestions)
+    await update.message.reply_text(format_literal_translations(literal_translation))
+    await update.message.reply_text(format_syntax_analysis(syntactical_analysis))
 
 
 def init_app() -> Application:
