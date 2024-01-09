@@ -6,7 +6,7 @@ from telegram import Update
 from telegram.ext import ApplicationBuilder, MessageHandler, Application
 from telegram.ext import filters as Filters
 
-from telegram_client.lingolift_client import get_all
+from telegram_client.lingolift_client import get_all, get_translation
 
 # setup
 load_dotenv()
@@ -16,9 +16,9 @@ TOKEN = os.environ.get("TELEGRAM_TOKEN")
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 
 
-def format_response(update: Update, result: dict) -> str:
-    return f"'{update.message.text}' is {result['translation']['language']} and translates to " \
-           f"'{result['translation']['translation']}' in English.\n"
+def format_translation(update: Update, result: dict) -> str:
+    return f"'{update.message.text}' is {result['language']} and translates to " \
+           f"'{result['translation']}' in English.\n"
     pass
 
 
@@ -42,18 +42,18 @@ async def handle_error(update: Update, _):
 
 async def handle_text_message(update: Update, _) -> None:
     logging.info(f"Received message: {update.message.text}")
-    lingolift_result = await get_all(update.message.text)
-    logging.info(f"Got result from lingolift: {lingolift_result}")
     await update.message.reply_text("Thanks! I've received your sentence, working on the translation now ...")
-    await update.message.reply_text(format_response(update, lingolift_result))
-    await update.message.reply_text(format_literal_translations(lingolift_result['literal_translations']))
-    await send_suggestions(update, lingolift_result['response_suggestions'])
+    translation_result = await get_translation(update.message.text)
+    logging.info(f"Got translation from lingolift server: {translation_result}")
+    await update.message.reply_text(format_translation(update, translation_result))
+    # await update.message.reply_text(format_literal_translations(lingolift_result['literal_translations']))
+    # await send_suggestions(update, lingolift_result['response_suggestions'])
 
 
 def init_app() -> Application:
     app = ApplicationBuilder().token(TOKEN).build()
     app.add_handler(MessageHandler(Filters.TEXT, handle_text_message))
-    app.add_error_handler(handle_error)
+    # app.add_error_handler(handle_error)
     return app
 
 

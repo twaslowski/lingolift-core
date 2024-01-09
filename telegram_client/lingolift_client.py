@@ -2,12 +2,13 @@ import asyncio
 import aiohttp
 from typing import List
 
+import requests as requests
+
 LINGOLIFT_BACKEND_ENDPOINT = "http://localhost:5001"
 
 
-async def get_translation(session, sentence: str) -> str:
-    async with session.post(f"{LINGOLIFT_BACKEND_ENDPOINT}/translate", json={"sentence": sentence}) as response:
-        return await response.json()
+async def get_translation(sentence: str) -> dict:
+    return requests.post(f"{LINGOLIFT_BACKEND_ENDPOINT}/translate", json={"sentence": sentence}).json()
 
 
 async def get_suggestions(session, sentence: str) -> List[str]:

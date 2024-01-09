@@ -2,15 +2,15 @@
 
 backend:
 	@echo "starting backend"
-	@./scripts/run_backend.sh &
+	@./scripts/run_backend.sh
 
-frontend: backend
+frontend:
 	@echo "Starting frontend..."
-	@./scripts/run_frontend.sh &
+	@./scripts/run_frontend.sh
 
-bot: backend
+bot:
 	@echo "Starting bot..."
-	@./scripts/run_bot.sh &
+	@./scripts/run_bot.sh
 
 stop:
 	@kill $(pgrep -f python)
