@@ -23,7 +23,7 @@ def get_translation():
     time.sleep(1)
     response = {
         "translation": "How is it going with you today?",
-        "source_language": "russian",
+        "language": "russian",
     }
     return jsonify(response)
 
