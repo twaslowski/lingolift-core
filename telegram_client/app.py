@@ -32,9 +32,9 @@ async def send_suggestions(update: Update, result: dict) -> None:
                                         f"This translates to: '{suggestion['translation']}'")
 
 
-def format_literal_translations(literal_translations: list) -> str:
+def format_literal_translations(literal_translations: dict) -> str:
     result = "Here's what those words mean: \n"
-    for word in literal_translations:
+    for word in literal_translations['literal_translations']:
         result += f"{word['word']}: {word['translation']}\n"
     return result
 
@@ -49,7 +49,7 @@ def format_syntax_analysis(syntactical_analysis: dict) -> str:
     #     return "A syntactical analysis cannot be performed for this language."
     response_string = """Here are some of the lexical and grammatical properties of the words in the sentence in the 
 CoNLL-U Format. This will be made more understandable in the future :)\n"""
-    for token in syntactical_analysis:
+    for token in syntactical_analysis['syntactical_analysis']:
         response_string += f"{token['word']} is {token['morphology']}; its base form is {token['lemma']}.\n"
     return response_string
 
@@ -79,6 +79,7 @@ async def handle_text_message(update: Update, _) -> None:
     # the current pattern is usually to have a function format a string and to send it here
     # however, in this case, we're sending multiple messages from this function for easier end-user copy/paste
     await send_suggestions(update, suggestions)
+    # todo implement error handling analogous to streamlit_app/app.py
     await update.message.reply_text(format_literal_translations(literal_translation))
     await update.message.reply_text(format_syntax_analysis(syntactical_analysis))
 

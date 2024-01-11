@@ -34,6 +34,7 @@ def main():
             translation = fetch_translation(sentence)
 
             # fetch remaining data
+            # todo implement concurrent fetching with asyncio/aiohttp
             suggestions = fetch_suggestions(sentence)
             literal_translations = fetch_literal_translations(sentence)
             syntactical_analysis = fetch_syntactical_analysis(sentence, "ru")
