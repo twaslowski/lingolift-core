@@ -7,7 +7,7 @@ from backend.llm.message import Message, USER, SYSTEM
 from backend.llm.prompts import LITERAL_TRANSLATIONS_SYSTEM_PROMPT
 
 
-def generate_literal_translation(sentence: str) -> list[dict]:
+def generate_literal_translation(sentence: str) -> dict:
     chunks = chunk_sentence(sentence)
     if len(chunks) > 10:
         logging.error(f"'{sentence}' too long for literal translation")
@@ -21,7 +21,7 @@ def generate_literal_translation(sentence: str) -> list[dict]:
             translation = future.result()
             for word in translation:
                 result.append(word)
-    return result
+    return {"literal_translations": result}
 
 
 def generate_literal_translation_for_chunk(sentence: str, chunk: list[str]) -> dict:

@@ -6,8 +6,9 @@ from dotenv import load_dotenv
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 
+from backend.literal_translation import SentenceTooLongException
 from backend.service import generate_translation, generate_responses, generate_literal_translations
-from morph_analysis.spacy_adapter import perform_analysis
+from morph_analysis.spacy_adapter import perform_analysis, LanguageNotAvailableException
 
 # setup
 load_dotenv()
@@ -20,7 +21,7 @@ app = Flask(__name__)
 CORS(app)
 
 
-@app.route('/translate', methods=['POST'])
+@app.route('/translation', methods=['POST'])
 def get_translation():
     sentence = request.json.get('sentence')
     logging.info(f"Received sentence: {sentence}")
@@ -28,7 +29,7 @@ def get_translation():
     return jsonify(response)
 
 
-@app.route('/responses', methods=['POST'])
+@app.route('/response-suggestion', methods=['POST'])
 def get_responses():
     sentence = request.json.get('sentence')
     # number_suggestions = request.json.get('number_suggestions')
@@ -36,19 +37,25 @@ def get_responses():
     return jsonify(response)
 
 
+@app.route('/literal-translation', methods=['POST'])
+def get_literal_translation():
+    sentence = request.json.get('sentence')
+    try:
+        response = generate_literal_translations(sentence)
+        return jsonify(response)
+    except SentenceTooLongException:
+        return jsonify({'error': 'There are too many unique words in the translated sentence.'}), 400
+
+
 @app.route('/syntactical-analysis', methods=['POST'])
 def get_syntactical_analysis():
     sentence = request.json.get('sentence')
     language = request.json.get('language')
-    analysis = perform_analysis(sentence, language)
-    return jsonify(analysis)
-
-
-@app.route('/literal-translation', methods=['POST'])
-def get_literal_translation():
-    sentence = request.json.get('sentence')
-    response = generate_literal_translations(sentence)
-    return jsonify(response)
+    try:
+        analysis = perform_analysis(sentence, language)
+        return jsonify(analysis)
+    except LanguageNotAvailableException:
+        return jsonify({'error': 'Grammatical analysis is not available for this language.'}), 400
 
 
 if __name__ == "__main__":

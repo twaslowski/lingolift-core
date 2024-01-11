@@ -50,7 +50,7 @@ def format_syntax_analysis(syntactical_analysis: dict) -> str:
     response_string = """Here are some of the lexical and grammatical properties of the words in the sentence in the 
 CoNLL-U Format. This will be made more understandable in the future :)\n"""
     for token in syntactical_analysis:
-        response_string += f"{token['word']} is {token['morph_analysis']}; its base form is {token['lemma']}.\n"
+        response_string += f"{token['word']} is {token['morphology']}; its base form is {token['lemma']}.\n"
     return response_string
 
 

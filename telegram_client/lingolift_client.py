@@ -6,11 +6,11 @@ LINGOLIFT_BACKEND_ENDPOINT = "http://localhost:5001"
 
 
 async def get_translation(sentence: str) -> dict:
-    return requests.post(f"{LINGOLIFT_BACKEND_ENDPOINT}/translate", json={"sentence": sentence}).json()
+    return requests.post(f"{LINGOLIFT_BACKEND_ENDPOINT}/translation", json={"sentence": sentence}).json()
 
 
 async def get_suggestions(session: aiohttp.ClientSession, sentence: str) -> list[str]:
-    async with session.post(f"{LINGOLIFT_BACKEND_ENDPOINT}/responses", json={"sentence": sentence}) as response:
+    async with session.post(f"{LINGOLIFT_BACKEND_ENDPOINT}/response-suggestion", json={"sentence": sentence}) as response:
         return await response.json()
 
 
