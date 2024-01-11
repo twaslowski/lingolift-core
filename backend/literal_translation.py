@@ -1,4 +1,5 @@
 import concurrent
+import logging
 import re
 
 from backend.llm.gpt_adapter import openai_exchange
@@ -8,6 +9,9 @@ from backend.llm.prompts import LITERAL_TRANSLATIONS_SYSTEM_PROMPT
 
 def generate_literal_translation(sentence: str) -> list[dict]:
     chunks = chunk_sentence(sentence)
+    if len(chunks) > 10:
+        logging.error(f"'{sentence}' too long for literal translation")
+        raise SentenceTooLongException
     result = []
     # Create a ThreadPoolExecutor to process chunks concurrently
     with concurrent.futures.ThreadPoolExecutor() as executor:
@@ -38,8 +42,13 @@ def chunk_sentence(sentence: str, chunk_size: int = 1) -> list[list[str]]:
     for i in range(0, len(sentence), chunk_size):
         # Get a chunk of the sentence and append it to the list of chunks
         chunk = sentence[i:i + chunk_size]
-        chunks.append(chunk)
+        if chunk not in chunks:
+            chunks.append(chunk)
     return chunks
+
+
+class SentenceTooLongException(Exception):
+    pass
 
 
 if __name__ == '__main__':
