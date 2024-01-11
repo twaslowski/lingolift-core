@@ -1,8 +1,6 @@
-import asyncio
 import aiohttp
-from typing import List
 
-import requests as requests
+import requests
 
 LINGOLIFT_BACKEND_ENDPOINT = "http://localhost:5001"
 

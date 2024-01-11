@@ -4,7 +4,7 @@ import os
 import json5 as json
 from openai import OpenAI
 
-from backend.llm.message import Message
+from backend.llm.message import Message, USER
 
 api_key = os.environ['OPENAI_API_KEY']
 client = OpenAI(api_key=api_key)

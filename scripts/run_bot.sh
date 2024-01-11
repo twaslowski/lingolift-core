@@ -1,13 +1,16 @@
 #!/bin/bash
 
-if [[ -d venv ]]; then
+if [[ -d telegram_client/venv ]]; then
   echo "virtual environment exists"
 else
-  python3 -m venv venv
+  python3 -m venv telegram_client/venv
 fi
 
 echo "activating virtual environment"
-source venv/bin/activate
+source telegram_client/venv/bin/activate
+
+echo "installing dependencies"
+pip install -r telegram_client/requirements.txt
 
 # check that .env exists
 if [ ! -f ./telegram_client/.env ]; then

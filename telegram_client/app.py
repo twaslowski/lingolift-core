@@ -5,7 +5,7 @@ import os
 import aiohttp
 from dotenv import load_dotenv
 from telegram import Update
-from telegram.ext import ApplicationBuilder, MessageHandler, Application
+from telegram.ext import ApplicationBuilder, MessageHandler, Application, CommandHandler, ContextTypes
 from telegram.ext import filters as Filters
 
 from telegram_client.lingolift_client import get_translation, get_suggestions, get_literal_translation, \
@@ -39,14 +39,16 @@ def format_literal_translations(literal_translations: list) -> str:
     return result
 
 
-async def handle_error(update: Update, _):
+async def handle_error(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    logging.error("Exception while handling an update:", exc_info=context.error)
     await update.message.reply_text(text="An unexpected error occurred. Sorry :(")
 
 
 def format_syntax_analysis(syntactical_analysis: dict) -> str:
-    if syntactical_analysis['error'] is None:
-        return "A syntactical analysis cannot be performed for this language."
-    response_string = "Here's what you should know about the grammar of this sentence:\n"
+    # if syntactical_analysis.get('error') is None:
+    #     return "A syntactical analysis cannot be performed for this language."
+    response_string = """Here are some of the lexical and grammatical properties of the words in the sentence in the 
+CoNLL-U Format. This will be made more understandable in the future :)\n"""
     for token in syntactical_analysis:
         response_string += f"{token['word']} is {token['morph_analysis']}; its base form is {token['lemma']}.\n"
     return response_string
@@ -81,8 +83,15 @@ async def handle_text_message(update: Update, _) -> None:
     await update.message.reply_text(format_syntax_analysis(syntactical_analysis))
 
 
+async def introduction_handler(update: Update, _):
+    await update.message.reply_text(
+        "Welcome! I will provide translations for you if you send me a sentence in a non-English language. Try "
+        "texting me something like 'Donde esta la biblioteca?'")
+
+
 def init_app() -> Application:
     app = ApplicationBuilder().token(TOKEN).build()
+    app.add_handler(CommandHandler("start", introduction_handler))
     app.add_handler(MessageHandler(Filters.TEXT, handle_text_message))
     app.add_error_handler(handle_error)
     return app

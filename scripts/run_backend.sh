@@ -15,14 +15,14 @@ while [[ $# -gt 0 ]]; do
 done
 
 
-if [[ -d venv ]]; then
+if [[ -d backend/venv ]]; then
   echo "virtual environment exists"
 else
-  python3 -m venv venv
+  python3 -m venv backend/venv
 fi
 
 echo "activating virtual environment"
-source venv/bin/activate
+source backend/venv/bin/activate
 
 echo "installing dependencies"
 pip install -r backend/requirements.txt
@@ -35,8 +35,6 @@ else
   echo ".env file exists"
 fi
 
-# get current directory path
-ROOT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 export PYTHONPATH=$(git rev-parse --show-toplevel)
 pushd backend > /dev/null
 python -m flask run --host=0.0.0.0 --port=5001

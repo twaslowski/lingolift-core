@@ -1,6 +1,7 @@
 from backend.literal_translation import generate_literal_translation
 from backend.llm.message import Message, USER, SYSTEM
 from backend.llm.gpt_adapter import openai_exchange
+from backend.llm.ollama_adapter import ollama_exchange
 from backend.llm.prompts import TRANSLATION_USER_PROMPT, RESPONSES_USER_PROMPT, \
     TRANSLATION_SYSTEM_PROMPT, RESPONSES_SYSTEM_PROMPT
 from backend.util.timing import timed
