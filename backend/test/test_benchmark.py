@@ -5,9 +5,9 @@ from dacite import from_dict
 from dacite.exceptions import DaciteError
 from dotenv import load_dotenv
 
-from backend.service import generate_responses, generate_translation, generate_literal_translations
-from backend.test.domain.literal_translation import LiteralTranslation
-from backend.test.domain.response_suggestion import ResponseSuggestion
+from backend.service.generate import generate_responses, generate_translation, generate_literal_translations
+from shared.model.literal_translation import LiteralTranslation
+from shared.model.response_suggestion import ResponseSuggestion
 from backend.test.domain.translation import Translation
 
 

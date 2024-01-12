@@ -32,7 +32,6 @@ referencing==0.32.1
 requests==2.31.0
 rich==13.7.0
 rpds-py==0.16.2
--e git+ssh://git@github.com/TobiasWaslowski/lingolift.git@c2e8642ba8039496f49b15ce3ac2bcdd175c2188#egg=shared&subdirectory=shared
 six==1.16.0
 smmap==5.0.1
 streamlit==1.30.0

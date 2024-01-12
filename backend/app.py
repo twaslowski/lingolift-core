@@ -6,9 +6,9 @@ from dotenv import load_dotenv
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 
-from backend.literal_translation import SentenceTooLongException
-from backend.service import generate_translation, generate_responses, generate_literal_translations
-from morph_analysis.spacy_adapter import perform_analysis, LanguageNotAvailableException
+from backend.service.generate import generate_translation, generate_responses, generate_literal_translations
+from backend.service.literal_translation import SentenceTooLongException
+from backend.service.spacy_adapter import perform_analysis, LanguageNotAvailableException
 
 # setup
 load_dotenv()

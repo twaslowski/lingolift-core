@@ -5,12 +5,13 @@ from typing import Optional
 
 import requests
 import streamlit as st
+
 from shared.model.translation import Translation
 
 TITLE = "lingolift"
 
 
-async def main():
+async def main() -> None:
     st.title(TITLE)
 
     # Initialize chat history
@@ -33,7 +34,7 @@ async def main():
         # Display assistant response in chat message container
         with st.chat_message("assistant"):
             render_message("Translating ...", 0.05)
-            sentence = find_latest_user_message(st.session_state.messages).get('content')
+            sentence = find_latest_user_message(st.session_state.messages)['content']
             translation = fetch_translation(sentence)
             render_message(stringify_translation(sentence, translation), 0.025)
 
@@ -42,7 +43,7 @@ async def main():
                 suggestions = await tg.create_task(fetch_suggestions(sentence))
                 literal_translations = await tg.create_task(fetch_literal_translations(sentence))
                 syntactical_analysis = await tg.create_task(
-                    fetch_syntactical_analysis(sentence, translation['language']))
+                    fetch_syntactical_analysis(sentence, translation.language))
 
             gif_md.empty()
             analysis_rendered = coalesce_analyses(literal_translations, syntactical_analysis)
@@ -69,9 +70,9 @@ def fetch_translation(sentence: str) -> Translation:
     return Translation(**response)
 
 
-def stringify_translation(sentence: str, translation: dict):
+def stringify_translation(sentence: str, translation: Translation) -> str:
     return f"### Translation\n\n" \
-           f"'*{sentence}*' is {translation['language']} and translates to '*{translation['translation']}*'"
+           f"'*{sentence}*' is {translation.translation} and translates to '*{translation.language}*'"
 
 
 async def fetch_suggestions(sentence: str) -> str:
@@ -139,7 +140,7 @@ def find_analysis(word: str, syntactical_analysis: dict) -> dict:
     return {}
 
 
-def find_latest_user_message(messages: list) -> dict:
+def find_latest_user_message(messages: list) -> dict[str, str]:
     """
     Filters all messages in the session state and returns the latest message with message['role'] == 'user'
     :param messages: st.session_state.messages
