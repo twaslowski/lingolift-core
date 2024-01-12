@@ -12,9 +12,14 @@ Flask = "^3.0.0"
 Flask-Cors = "^4.0.0"
 openai = "^1.7.2"
 requests = "2.31.0"
-spacy = "3.6.1"
+spacy = "3.7.2"
 python-dotenv = "^1.0.0"
 json5 = "^0.9.14"
+ru-core-news-sm = {url = "https://github.com/explosion/spacy-models/releases/download/ru_core_news_sm-3.7.0/ru_core_news_sm-3.7.0.tar.gz"}
+de-core-news-sm = {url = "https://github.com/explosion/spacy-models/releases/download/de_core_news_sm-3.7.0/de_core_news_sm-3.7.0.tar.gz"}
+es-core-news-sm = {url = "https://github.com/explosion/spacy-models/releases/download/es_core_news_sm-3.7.0/es_core_news_sm-3.7.0.tar.gz"}
+fr-core-news-md = {url = "https://github.com/explosion/spacy-models/releases/download/fr_core_news_md-3.7.0/fr_core_news_md-3.7.0.tar.gz"}
+pt-core-news-sm = {url = "https://github.com/explosion/spacy-models/releases/download/pt_core_news_sm-3.7.0/pt_core_news_sm-3.7.0.tar.gz"}
 
 
 [build-system]
