@@ -5,6 +5,7 @@ from typing import Optional
 
 import requests
 import streamlit as st
+from shared.model.translation import Translation
 
 TITLE = "lingolift"
 
@@ -61,11 +62,11 @@ async def render_loading_placeholder(interval: float, event: asyncio.Event):
         await asyncio.sleep(interval * 2)
 
 
-def fetch_translation(sentence: str) -> dict:
+def fetch_translation(sentence: str) -> Translation:
     print(f"fetching translation for sentence '{sentence}'")
     response = requests.post("http://localhost:5001/translation", json={"sentence": sentence}).json()
     print(f"received translation for sentence '{sentence}': '{response}'")
-    return response
+    return Translation(**response)
 
 
 def stringify_translation(sentence: str, translation: dict):

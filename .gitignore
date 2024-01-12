@@ -2,6 +2,8 @@
 __pycache__
 venv
 
+*/shared.egg-info
+
 *.env
 *.iml
 .pid
@@ -56,5 +58,3 @@ testem.log
 # System files
 .DS_Store
 Thumbs.db
-
-lightsail-key.pem

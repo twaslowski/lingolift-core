@@ -59,3 +59,4 @@ urllib3==2.0.5
 wasabi==1.1.2
 Werkzeug==2.3.7
 yarl==1.9.2
+../shared
