@@ -6,8 +6,6 @@ from typing import Optional
 import requests
 import streamlit as st
 
-from shared.model.translation import Translation
-
 TITLE = "lingolift"
 
 
@@ -43,7 +41,7 @@ async def main() -> None:
                 suggestions = await tg.create_task(fetch_suggestions(sentence))
                 literal_translations = await tg.create_task(fetch_literal_translations(sentence))
                 syntactical_analysis = await tg.create_task(
-                    fetch_syntactical_analysis(sentence, translation.language))
+                    fetch_syntactical_analysis(sentence, translation['language']))
 
             gif_md.empty()
             analysis_rendered = coalesce_analyses(literal_translations, syntactical_analysis)
@@ -63,16 +61,16 @@ async def render_loading_placeholder(interval: float, event: asyncio.Event):
         await asyncio.sleep(interval * 2)
 
 
-def fetch_translation(sentence: str) -> Translation:
+def fetch_translation(sentence: str) -> dict:
     print(f"fetching translation for sentence '{sentence}'")
     response = requests.post("http://localhost:5001/translation", json={"sentence": sentence}).json()
     print(f"received translation for sentence '{sentence}': '{response}'")
-    return Translation(**response)
+    return response
 
 
-def stringify_translation(sentence: str, translation: Translation) -> str:
+def stringify_translation(sentence: str, translation: dict) -> str:
     return f"### Translation\n\n" \
-           f"'*{sentence}*' is {translation.translation} and translates to '*{translation.language}*'"
+           f"'*{sentence}*' is {translation['translation']} and translates to '*{translation['language']}*'"
 
 
 async def fetch_suggestions(sentence: str) -> str:
