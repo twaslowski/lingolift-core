@@ -11,7 +11,7 @@ from backend.util.timing import timed
 def generate_translation(sentence: str) -> dict:
     context = [Message(role=SYSTEM, content=TRANSLATION_SYSTEM_PROMPT),
                Message(role=USER, content=TRANSLATION_USER_PROMPT + sentence)]
-    response = openai_exchange(context, json_mode=True)
+    response = ollama_exchange(context, json_mode=True)
     return response
 
 
@@ -25,5 +25,5 @@ def generate_responses(sentence: str, number_suggestions: int = 2) -> dict:
 
 
 @timed
-def generate_literal_translations(sentence: str) -> list[dict]:
+def generate_literal_translations(sentence: str) -> dict:
     return generate_literal_translation(sentence)

@@ -1,3 +1,4 @@
+import asyncio
 import time
 from typing import Optional
 
@@ -7,7 +8,7 @@ import streamlit as st
 TITLE = "lingolift"
 
 
-def main():
+async def main():
     st.title(TITLE)
 
     # Initialize chat history
@@ -30,16 +31,17 @@ def main():
         # Display assistant response in chat message container
         with st.chat_message("assistant"):
             render_message("Translating ...", 0.05)
-            sentence = st.session_state.messages[0].get('content')
+            sentence = find_latest_user_message(st.session_state.messages).get('content')
             translation = fetch_translation(sentence)
+            render_message(stringify_translation(sentence, translation), 0.025)
 
-            # fetch remaining data
-            # todo implement concurrent fetching with asyncio/aiohttp
-            suggestions = fetch_suggestions(sentence)
-            literal_translations = fetch_literal_translations(sentence)
-            syntactical_analysis = fetch_syntactical_analysis(sentence, "ru")
+            async with asyncio.TaskGroup() as tg:
+                suggestions = await tg.create_task(fetch_suggestions(sentence))
+                literal_translations = await tg.create_task(fetch_literal_translations(sentence))
+                syntactical_analysis = await tg.create_task(
+                    fetch_syntactical_analysis(sentence, translation['language']))
+
             analysis_rendered = coalesce_analyses(literal_translations, syntactical_analysis)
-            render_message(translation, 0.025)
             render_message(suggestions, 0.025)
             render_message(analysis_rendered, 0.025)
 
@@ -47,32 +49,35 @@ def main():
         st.session_state.messages.append({"role": "assistant", "content": translation})
 
 
-def fetch_translation(sentence: str) -> str:
+def fetch_translation(sentence: str) -> dict:
     print(f"fetching translation for sentence '{sentence}'")
     response = requests.post("http://localhost:5001/translation", json={"sentence": sentence}).json()
     print(f"received translation for sentence '{sentence}': '{response}'")
-    return f"""**Translation**
-
-'*{sentence}*' is {response['language']} and translates to '*{response['translation']}*'"""
+    return response
 
 
-def fetch_suggestions(sentence: str) -> str:
+def stringify_translation(sentence: str, translation: dict):
+    return f"### Translation\n\n" \
+           f"'*{sentence}*' is {translation['language']} and translates to '*{translation['translation']}*'"
+
+
+async def fetch_suggestions(sentence: str) -> str:
     response = requests.post("http://localhost:5001/response-suggestion", json={"sentence": sentence}).json()
     print(f"Received suggestions for sentence '{sentence}': '{response}'")
-    response_string = "**Response suggestions:**\n\n"
+    response_string = "### Response suggestions\n\n"
     for suggestion in response['response_suggestions']:
         response_string += f"*'{suggestion['suggestion']}'*\n\n"
         response_string += f"{suggestion['translation']}\n\n"
     return response_string
 
 
-def fetch_literal_translations(sentence: str) -> Optional[dict]:
+async def fetch_literal_translations(sentence: str) -> Optional[dict]:
     response = requests.post("http://localhost:5001/literal-translation", json={"sentence": sentence}).json()
     print(f"Received literal translations for sentence '{sentence}': '{response}'")
     return response
 
 
-def fetch_syntactical_analysis(sentence: str, language: str) -> Optional[dict]:
+async def fetch_syntactical_analysis(sentence: str, language: str) -> Optional[dict]:
     response = requests.post("http://localhost:5001/syntactical-analysis",
                              json={"sentence": sentence,
                                    "language": language}).json()
@@ -92,7 +97,7 @@ def coalesce_analyses(literal_translations: dict, syntactical_analysis: dict) ->
     """
     if error := literal_translations.get('error'):
         return f"The analysis failed: {error}"
-    response_string = "**Vocabulary and Grammar breakdown**\n\n"
+    response_string = "### Vocabulary and Grammar breakdown\n\n"
     if error := syntactical_analysis.get('error'):
         response_string += f"Morphological analysis failed: {error}; however, the literal translation is available.\n\n"
     for word in literal_translations['literal_translations']:
@@ -108,12 +113,30 @@ def coalesce_analyses(literal_translations: dict, syntactical_analysis: dict) ->
 
 
 def find_analysis(word: str, syntactical_analysis: dict) -> dict:
+    """
+    :param word: Word from the literal translation
+    :param syntactical_analysis: Set of syntactical analyses for words in the sentence
+    :return: The analysis for the word including the lemma, dependencies and morphology, if available.
+    """
     if syntactical_analysis is None:
         return {}
     for entry in syntactical_analysis:
         if entry['word'] == word and entry['morphology'] != '':
             return entry
     return {}
+
+
+def find_latest_user_message(messages: list) -> dict:
+    """
+    Filters all messages in the session state and returns the latest message with message['role'] == 'user'
+    :param messages: st.session_state.messages
+    :return: latest user message
+    """
+    user_messages = [message for message in messages if message['role'] == 'user']
+    if len(user_messages) > 0:
+        return user_messages[-1]
+    else:
+        return {}
 
 
 def render_message(string: str, interval: float):
@@ -125,4 +148,4 @@ def render_message(string: str, interval: float):
 
 
 if __name__ == '__main__':
-    main()
+    asyncio.run(main())

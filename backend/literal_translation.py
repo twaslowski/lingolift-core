@@ -6,10 +6,12 @@ from backend.llm.gpt_adapter import openai_exchange
 from backend.llm.message import Message, USER, SYSTEM
 from backend.llm.prompts import LITERAL_TRANSLATIONS_SYSTEM_PROMPT
 
+LITERAL_TRANSLATION_MAX_UNIQUE_WORDS = 15
+
 
 def generate_literal_translation(sentence: str) -> dict:
     chunks = chunk_sentence(sentence)
-    if len(chunks) > 10:
+    if len(chunks) > LITERAL_TRANSLATION_MAX_UNIQUE_WORDS:
         logging.error(f"'{sentence}' too long for literal translation")
         raise SentenceTooLongException
     result = []

@@ -12,18 +12,18 @@ class LanguageNotAvailableException(Exception):
     pass
 
 
-def perform_analysis(sentence: str, language: str) -> list[dict]:
+def perform_analysis(sentence: str, language: str) -> dict:
     language_key = models.get(language.lower())
     if language_key is None:
         raise LanguageNotAvailableException(f"Language {language} is not available.")
     nlp = spacy.load(language_key)
     doc = nlp(sentence)
-    return [{
+    return {'syntactical_analysis': [{
         "word": str(token.text),
         "lemma": str(token.lemma_),
         "morphology": str(token.morph),
         "dependencies": str(token.head),
-    } for token in doc if str(token.morph) != '']
+    } for token in doc if str(token.morph) != '']}
 
 
 if __name__ == '__main__':
