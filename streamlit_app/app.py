@@ -5,6 +5,7 @@ from typing import Optional
 
 import requests
 import streamlit as st
+from shared.model.translation import Translation
 
 TITLE = "lingolift"
 
@@ -41,7 +42,7 @@ async def main() -> None:
                 suggestions = await tg.create_task(fetch_suggestions(sentence))
                 literal_translations = await tg.create_task(fetch_literal_translations(sentence))
                 syntactical_analysis = await tg.create_task(
-                    fetch_syntactical_analysis(sentence, translation['language']))
+                    fetch_syntactical_analysis(sentence, translation.language))
 
             gif_md.empty()
             analysis_rendered = coalesce_analyses(literal_translations, syntactical_analysis)
@@ -61,16 +62,16 @@ async def render_loading_placeholder(interval: float, event: asyncio.Event):
         await asyncio.sleep(interval * 2)
 
 
-def fetch_translation(sentence: str) -> dict:
+def fetch_translation(sentence: str) -> Translation:
     print(f"fetching translation for sentence '{sentence}'")
     response = requests.post("http://localhost:5001/translation", json={"sentence": sentence}).json()
     print(f"received translation for sentence '{sentence}': '{response}'")
-    return response
+    return Translation(**response)
 
 
-def stringify_translation(sentence: str, translation: dict) -> str:
+def stringify_translation(sentence: str, translation: Translation) -> str:
     return f"### Translation\n\n" \
-           f"'*{sentence}*' is {translation['translation']} and translates to '*{translation['language']}*'"
+           f"'*{sentence}*' is {translation.language} and translates to '*{translation.translation}*'"
 
 
 async def fetch_suggestions(sentence: str) -> str:
@@ -161,7 +162,7 @@ def render_message(string: str, interval: float):
 
 def display_loading_gif():
     """### gif from local file"""
-    file_ = open("streamlit_app/resources/loading.gif", "rb")
+    file_ = open("resources/loading.gif", "rb")
     contents = file_.read()
     data_url = base64.b64encode(contents).decode("utf-8")
     file_.close()
