@@ -32,31 +32,28 @@ def get_translation():
 def get_literal_translation():
     time.sleep(2)
     response = {
-        "literal_translation":
+        "literal_translations": [
             {
-                "words": [
-                    {
-                        "translation": "How",
-                        "word": "Как"
-                    },
-                    {
-                        "translation": "at",
-                        "word": "у"
-                    },
-                    {
-                        "translation": "you",
-                        "word": "тебя"
-                    },
-                    {
-                        "translation": "today",
-                        "word": "сегодня"
-                    },
-                    {
-                        "translation": "matters",
-                        "word": "дела"
-                    }
-                ]
+                "translation": "How",
+                "word": "Как"
+            },
+            {
+                "translation": "at",
+                "word": "у"
+            },
+            {
+                "translation": "you",
+                "word": "тебя"
+            },
+            {
+                "translation": "today",
+                "word": "сегодня"
+            },
+            {
+                "translation": "matters",
+                "word": "дела"
             }
+        ]
     }
     return jsonify(response)
 

@@ -1,4 +1,5 @@
 import asyncio
+import base64
 import time
 from typing import Optional
 
@@ -35,18 +36,29 @@ async def main():
             translation = fetch_translation(sentence)
             render_message(stringify_translation(sentence, translation), 0.025)
 
+            gif_md = display_loading_gif()
             async with asyncio.TaskGroup() as tg:
                 suggestions = await tg.create_task(fetch_suggestions(sentence))
                 literal_translations = await tg.create_task(fetch_literal_translations(sentence))
                 syntactical_analysis = await tg.create_task(
                     fetch_syntactical_analysis(sentence, translation['language']))
 
+            gif_md.empty()
             analysis_rendered = coalesce_analyses(literal_translations, syntactical_analysis)
             render_message(suggestions, 0.025)
             render_message(analysis_rendered, 0.025)
 
         # Add assistant response to chat history
         st.session_state.messages.append({"role": "assistant", "content": translation})
+
+
+async def render_loading_placeholder(interval: float, event: asyncio.Event):
+    placeholder = st.empty()
+    while not event.is_set():
+        placeholder.markdown("▌")
+        await asyncio.sleep(interval * 2)
+        placeholder.markdown("")
+        await asyncio.sleep(interval * 2)
 
 
 def fetch_translation(sentence: str) -> dict:
@@ -145,6 +157,19 @@ def render_message(string: str, interval: float):
         placeholder.markdown(string[:i] + "▌")
         time.sleep(interval)
     placeholder.markdown(string)
+
+
+def display_loading_gif():
+    """### gif from local file"""
+    file_ = open("streamlit_app/resources/loading.gif", "rb")
+    contents = file_.read()
+    data_url = base64.b64encode(contents).decode("utf-8")
+    file_.close()
+
+    return st.markdown(
+        f'<img src="data:image/gif;base64,{data_url}" height=30px alt="loading gif">',
+        unsafe_allow_html=True,
+    )
 
 
 if __name__ == '__main__':
