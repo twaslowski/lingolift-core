@@ -1,12 +1,10 @@
-from dataclasses import dataclass
+from pydantic import BaseModel
 
 
-@dataclass
-class Words:
+class Words(BaseModel):
     word: str
     translation: str
 
 
-@dataclass
-class LiteralTranslation:
-    words: list[Words]
+class LiteralTranslation(BaseModel):
+    literal_translations: list[Words]

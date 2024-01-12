@@ -8,7 +8,8 @@ from dotenv import load_dotenv
 from backend.service.generate import generate_responses, generate_translation, generate_literal_translations
 from shared.model.literal_translation import LiteralTranslation
 from shared.model.response_suggestion import ResponseSuggestion
-from backend.test.domain.translation import Translation
+
+from shared.model.translation import Translation
 
 
 class Benchmark(unittest.TestCase):
@@ -29,7 +30,7 @@ class Benchmark(unittest.TestCase):
             logging.info(f"Getting translations for {sentence} ...")
             try:
                 openai_response = generate_translation(sentence["sentence"])
-                parsed = from_dict(data_class=Translation, data=openai_response)
+                parsed = Translation(**openai_response)
                 self.assertEqual(parsed.language.lower(), sentence['language'])
             except ValueError as ve:
                 logging.error(f"Could not parse JSON: {ve}")
@@ -51,8 +52,8 @@ class Benchmark(unittest.TestCase):
             logging.info(f"Getting literal translations for {sentence} ...")
             try:
                 openai_response = generate_literal_translations(sentence["sentence"])
-                parsed = from_dict(data_class=LiteralTranslation, data=openai_response)
-                self.assertEqual(len(sentence['sentence'].split()), len(parsed.words))
+                parsed = LiteralTranslation(**openai_response)
+                self.assertEqual(len(sentence['sentence'].split()), len(parsed.literal_translations))
             except ValueError as ve:
                 logging.error(f"Could not parse JSON: {ve}")
                 error_count = error_count + 1
@@ -78,7 +79,7 @@ class Benchmark(unittest.TestCase):
                 if len(openai_response['response_suggestions']) is not expected_number_of_suggestions:
                     bad_answer_count = bad_answer_count + 1
                 for response in openai_response['response_suggestions']:
-                    from_dict(data_class=ResponseSuggestion, data=response)
+                    parsed = ResponseSuggestion(**response)
             except ValueError as ve:
                 logging.error(f"Could not parse JSON: {ve}")
                 error_count = error_count + 1
