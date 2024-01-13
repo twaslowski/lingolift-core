@@ -28,4 +28,5 @@ class LiteralTranslationTest(unittest.TestCase):
 
     def test_sentence_above_threshold_size_should_raise_exception(self):
         with self.assertRaises(SentenceTooLongException):
-            generate_literal_translation("this sentence is too long because it contains too many unique words")
+            generate_literal_translation("this sentence is too long because it "
+                                         "contains too many unique words a b c d e gf ")

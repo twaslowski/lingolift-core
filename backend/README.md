@@ -49,10 +49,7 @@ The applications endpoints are tested (`test_app.py`) and benchmarks for LLMs ex
 This allows for verifying the structural integrity and quality of LLM responses and will safely allow anyone
 to migrate to different inference engines if required.
 
-You can run tests with `make test`.
-
-todo: you actually can't right now. ensure that you can.
-todo: separate unit tests from integration tests (e.g. literal_translation chunking tests vs openai benchmarks)
+You can run unit tests with `make test`, and more complex integration tests with `make integration-test`.
 
 ## Endpoint Documentation
 
