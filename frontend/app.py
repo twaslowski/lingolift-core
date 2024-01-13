@@ -6,7 +6,7 @@ import streamlit as st
 import time
 from shared.model.error import LingoliftError  # type: ignore[import-untyped]
 from shared.model.literal_translation import LiteralTranslation  # type: ignore[import-untyped]
-from shared.model.response_suggestion import Suggestions  # type: ignore[import-untyped]
+from shared.model.response_suggestion import ResponseSuggestion  # type: ignore[import-untyped]
 from shared.model.syntactical_analysis import SyntacticalAnalysis  # type: ignore[import-untyped]
 from shared.model.translation import Translation  # type: ignore[import-untyped]
 
@@ -84,9 +84,9 @@ def stringify_translation(sentence: str, translation: Translation) -> str:
 async def fetch_suggestions(sentence: str) -> str:
     response = requests.post("http://localhost:5001/response-suggestion", json={"sentence": sentence}).json()
     print(f"Received suggestions for sentence '{sentence}': '{response}'")
-    suggestions = Suggestions(**response)
     response_string = "### Response suggestions\n\n"
-    for suggestion in suggestions.response_suggestions:
+    response_suggestions = [ResponseSuggestion(**r) for r in response]
+    for suggestion in response_suggestions:
         response_string += f"*'{suggestion.suggestion}'*\n\n"
         response_string += f"{suggestion.translation}\n\n"
     return response_string

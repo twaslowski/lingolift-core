@@ -1,4 +1,4 @@
-.PHONY: test run mockserver
+.PHONY: test run mockserver integration-test lint
 
 run:
 	@poetry run flask run --host=0.0.0.0 --port=5001

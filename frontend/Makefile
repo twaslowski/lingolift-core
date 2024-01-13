@@ -1,4 +1,4 @@
-.PHONY: test run
+.PHONY: test run lint
 
 test:
 	@poetry run pytest
