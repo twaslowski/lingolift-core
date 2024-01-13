@@ -1,3 +1,5 @@
+import requests
+
 from shared.model.error import LingoliftError
 from shared.model.literal_translation import LiteralTranslation
 from shared.model.response_suggestion import ResponseSuggestion
@@ -26,9 +28,9 @@ async def fetch_syntactical_analysis(sentence: str, language: str) -> list[Synta
     if response.status_code != 200:
         return LingoliftError(**response.json())
     else:
-        translations = response.json()
-        print(f"Received syntactical analysis for sentence '{sentence}': '{translations}'")
-        return [SyntacticalAnalysis(**syntactical_analysis) for syntactical_analysis in response]
+        analyses = response.json()
+        print(f"Received syntactical analysis for sentence '{sentence}': '{analyses}'")
+        return [SyntacticalAnalysis(**analysis) for analysis in analyses]
 
 
 async def fetch_response_suggestions(sentence: str) -> list[ResponseSuggestion] | LingoliftError:

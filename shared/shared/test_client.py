@@ -3,6 +3,8 @@ from unittest.mock import Mock
 
 import requests
 
+from shared import client
+
 
 class TestClient(TestCase):
     """
@@ -17,10 +19,16 @@ class TestClient(TestCase):
         requests.post = Mock()
 
     def test_translation_happy_path(self):
-        requests.post.json.side_effect = {
-            "translation": "where is the library?",
-            "language": "spanish"
+        # when posting to /translation, we receive a well-formed translation json with a 200 OK status code
+        requests.post = Mock()
+        requests.post.return_value.status_code = 200
+        requests.post.return_value.json.return_value = {
+            "translation": "translation",
+            "language": "language"
         }
+        translation = client.fetch_translation("some sentence")
+        self.assertEqual(translation.translation, "translation")
+        self.assertEqual(translation.language, "language")
 
     def test_translation_unexpected_error(self):
         pass
