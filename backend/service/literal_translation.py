@@ -12,6 +12,16 @@ LITERAL_TRANSLATION_MAX_UNIQUE_WORDS = 15
 
 
 def generate_literal_translation(sentence: str) -> list[LiteralTranslation]:
+    """
+    Translates all words of the sentence in parallel by sending them to the inference engine.
+    Notably, this is done via an LLM instead of e.g. DeepL for disambiguation purposes. Asking the LLM to specifically
+    translate words in the context of a sentence ensures that ambiguous words will be translated as intended.
+    Uses a ThreadPoolExecutor() to perform requests in parallel as to speed up the generation of translations as much
+    as possible.
+    In order to
+    :param sentence:
+    :return:
+    """
     chunks = chunk_sentence(sentence)
     if len(chunks) > LITERAL_TRANSLATION_MAX_UNIQUE_WORDS:
         logging.error(f"'{sentence}' too long for literal translation")
@@ -29,12 +39,17 @@ def generate_literal_translation(sentence: str) -> list[LiteralTranslation]:
 
 
 def generate_literal_translation_for_chunk(sentence: str, chunk: list[str]) -> list[LiteralTranslation]:
+    """
+    Submits a given chunk – a list of words – to the inference engine for translation.
+    :param sentence: The base sentence containing the translated words
+    :param chunk: Words to be translated
+    :return:
+    """
     context = [Message(role=SYSTEM, content=LITERAL_TRANSLATIONS_SYSTEM_PROMPT)]
-    # not using string interpolation here, like in the other functions,
-    # due to the risk of multiple threads accessing the same string object
+    # Not using string interpolation here, like in the other functions, due to multithreading issues
     prompt = "Translate the word(s) '{}' in the context of the following sentence: '{}'.".format(chunk, sentence)
     context.append(Message(role=USER, content=prompt))
-    # openai's json mode enforces an root level object; it doesn't appear to do a JSON list
+    # OpenAI's JSON mode enforces a root level object; I want to return a list here, therefore JSON mode doesn't work
     response = openai_exchange(context, json_mode=False)
     return [LiteralTranslation(**word) for word in response]
 
