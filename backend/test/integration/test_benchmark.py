@@ -72,7 +72,7 @@ class Benchmark(unittest.TestCase):
             logging.info(f"Getting response suggestions for {sentence} ...")
             try:
                 openai_response = generate_responses(sentence["sentence"], expected_number_of_suggestions)
-                if len(openai_response['response_suggestions']) is not expected_number_of_suggestions:
+                if len(openai_response) is not expected_number_of_suggestions:
                     bad_answer_count = bad_answer_count + 1
             except ValidationError as de:
                 logging.error(f"Error serializing JSON to dataclass: {de}")

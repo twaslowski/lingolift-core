@@ -31,11 +31,11 @@ def get_translation():
 
 
 @app.route('/response-suggestion', methods=['POST'])
-def get_responses():
+def get_response_suggestions():
     sentence = request.json.get('sentence')
     # number_suggestions = request.json.get('number_suggestions')
     response = generate_responses(sentence)
-    return jsonify(response)
+    return jsonify([r.model_dump for r in response])
 
 
 @app.route('/literal-translation', methods=['POST'])
