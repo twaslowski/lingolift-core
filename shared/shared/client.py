@@ -22,8 +22,7 @@ async def fetch_literal_translations(sentence: str) -> list[LiteralTranslation] 
 
 async def fetch_syntactical_analysis(sentence: str, language: str) -> list[SyntacticalAnalysis] | LingoliftError:
     response = requests.post("http://localhost:5001/syntactical-analysis",
-                             json={"sentence": sentence,
-                                   "language": language})
+                             json={"sentence": sentence, "language": language})
     if response.status_code != 200:
         return LingoliftError(**response.json())
     else:

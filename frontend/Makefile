@@ -1,4 +1,4 @@
-.PHONY: test run lint
+.PHONY: test run lint shared
 
 test:
 	@poetry run pytest
@@ -8,3 +8,6 @@ run:
 
 lint:
 	@poetry run mypy .
+
+shared:
+	@poetry remove shared && poetry add ../shared/
