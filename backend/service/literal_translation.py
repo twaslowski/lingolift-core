@@ -5,11 +5,12 @@ import re
 from backend.llm.gpt_adapter import openai_exchange
 from backend.llm.message import Message, USER, SYSTEM
 from backend.llm.prompts import LITERAL_TRANSLATIONS_SYSTEM_PROMPT
+from shared.model.literal_translation import LiteralTranslation
 
 LITERAL_TRANSLATION_MAX_UNIQUE_WORDS = 15
 
 
-def generate_literal_translation(sentence: str) -> dict:
+def generate_literal_translation(sentence: str) -> list[LiteralTranslation]:
     chunks = chunk_sentence(sentence)
     if len(chunks) > LITERAL_TRANSLATION_MAX_UNIQUE_WORDS:
         logging.error(f"'{sentence}' too long for literal translation")
@@ -23,10 +24,10 @@ def generate_literal_translation(sentence: str) -> dict:
             translation = future.result()
             for word in translation:
                 result.append(word)
-    return {"literal_translations": result}
+    return result
 
 
-def generate_literal_translation_for_chunk(sentence: str, chunk: list[str]) -> dict:
+def generate_literal_translation_for_chunk(sentence: str, chunk: list[str]) -> list[LiteralTranslation]:
     context = [Message(role=SYSTEM, content=LITERAL_TRANSLATIONS_SYSTEM_PROMPT)]
     # not using string interpolation here, like in the other functions,
     # due to the risk of multiple threads accessing the same string object
@@ -34,7 +35,7 @@ def generate_literal_translation_for_chunk(sentence: str, chunk: list[str]) -> d
     context.append(Message(role=USER, content=prompt))
     # openai's json mode enforces an root level object; it doesn't appear to do a JSON list
     response = openai_exchange(context, json_mode=False)
-    return response
+    return [LiteralTranslation(**word) for word in response]
 
 
 def chunk_sentence(sentence: str, chunk_size: int = 1) -> list[list[str]]:
@@ -51,7 +52,3 @@ def chunk_sentence(sentence: str, chunk_size: int = 1) -> list[list[str]]:
 
 class SentenceTooLongException(Exception):
     pass
-
-
-if __name__ == '__main__':
-    print(generate_literal_translation("das hier ist ein satz zum testen"))

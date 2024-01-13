@@ -43,11 +43,10 @@ def get_literal_translation():
     sentence = request.json.get('sentence')
     try:
         response = generate_literal_translations(sentence)
-        return jsonify(response)
+        return jsonify([r.model_dump() for r in response])
     except SentenceTooLongException:
-        return jsonify(LingoliftError(
-            error_message=f"Too many unique words for literal translation; maximum words "
-                          f"{LITERAL_TRANSLATION_MAX_UNIQUE_WORDS}").model_dump()), 400
+        return jsonify(LingoliftError(error_message=f"Too many unique words for literal translation; maximum words "
+                                                    f"{LITERAL_TRANSLATION_MAX_UNIQUE_WORDS}").model_dump()), 400
 
 
 @app.route('/syntactical-analysis', methods=['POST'])
@@ -58,7 +57,8 @@ def get_syntactical_analysis():
         analysis = perform_analysis(sentence, language)
         return jsonify(analysis)
     except LanguageNotAvailableException:
-        return jsonify({'error': 'Grammatical analysis is not available for this language.'}), 400
+        return jsonify(
+            LingoliftError(error_message='Grammatical analysis is not available for this language.').model_dump()), 400
 
 
 if __name__ == "__main__":

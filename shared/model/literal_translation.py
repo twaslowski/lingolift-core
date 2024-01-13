@@ -1,10 +1,6 @@
 from pydantic import BaseModel
 
 
-class Words(BaseModel):
+class LiteralTranslation(BaseModel):
     word: str
     translation: str
-
-
-class LiteralTranslation(BaseModel):
-    literal_translations: list[Words]

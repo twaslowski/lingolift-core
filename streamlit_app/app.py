@@ -69,9 +69,12 @@ async def render_loading_placeholder(interval: float, event: asyncio.Event):
 
 def fetch_translation(sentence: str) -> Translation | LingoliftError:
     print(f"fetching translation for sentence '{sentence}'")
-    response = requests.post("http://localhost:5001/translation", json={"sentence": sentence}).json()
+    response = requests.post("http://localhost:5001/translation", json={"sentence": sentence})
     print(f"received translation for sentence '{sentence}': '{response}'")
-    return Translation(**response)
+    if response.status_code != 200:
+        return LingoliftError(**response.json())
+    else:
+        return Translation(**response.json())
 
 
 def stringify_translation(sentence: str, translation: Translation) -> str:

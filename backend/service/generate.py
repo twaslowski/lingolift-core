@@ -4,16 +4,16 @@ from backend.llm.prompts import TRANSLATION_USER_PROMPT, RESPONSES_USER_PROMPT, 
     TRANSLATION_SYSTEM_PROMPT, RESPONSES_SYSTEM_PROMPT
 from backend.service.literal_translation import generate_literal_translation
 from backend.util.timing import timed
+from shared.model.literal_translation import LiteralTranslation
 from shared.model.translation import Translation
 
 
 @timed
-def generate_translation(sentence: str) -> dict:
+def generate_translation(sentence: str) -> Translation:
     context = [Message(role=SYSTEM, content=TRANSLATION_SYSTEM_PROMPT),
                Message(role=USER, content=TRANSLATION_USER_PROMPT + sentence)]
     response = openai_exchange(context, json_mode=True)
-    Translation.model_validate(response)
-    return response
+    return Translation(**response)
 
 
 @timed
@@ -26,5 +26,5 @@ def generate_responses(sentence: str, number_suggestions: int = 2) -> dict:
 
 
 @timed
-def generate_literal_translations(sentence: str) -> dict:
+def generate_literal_translations(sentence: str) -> list[LiteralTranslation]:
     return generate_literal_translation(sentence)

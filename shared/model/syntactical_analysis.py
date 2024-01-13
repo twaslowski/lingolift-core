@@ -1,6 +1,8 @@
 from pydantic import BaseModel
 
+
 class SyntacticalAnalysis(BaseModel):
-    text: str
+    word: str
     morphology: str
     lemma: str
+    dependencies: str

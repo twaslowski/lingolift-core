@@ -1,17 +1,12 @@
 from unittest import TestCase
 
-import pytest
-import requests
-
 from backend.app import app
 from shared.model.error import LingoliftError
+from shared.model.literal_translation import LiteralTranslation
+from shared.model.syntactical_analysis import SyntacticalAnalysis
 
 
 class TestApp(TestCase):
-
-    @pytest.fixture()
-    def client(self):
-        return app.test_client()
 
     def test_literal_translation_returns_error_if_too_many_unique_words(self):
         client = app.test_client()
@@ -20,4 +15,29 @@ class TestApp(TestCase):
         self.assertEqual(response.status_code, 400)
         print(response.json)
         # implicitely checks that the response is a LingoliftError; no assertion because
+        LingoliftError(**response.json)
+
+    def test_literal_translation_happy_path(self):
+        client = app.test_client()
+        response = client.post("http://localhost:5001/literal-translation", json={
+            "sentence": "test sentence"})
+        self.assertEqual(response.status_code, 200)
+        for r in response.json:
+            LiteralTranslation(**r)
+
+    def test_syntactical_analysis(self):
+        client = app.test_client()
+        response = client.post("http://localhost:5001/syntactical-analysis", json={
+            "sentence": "test sentence",
+            "language": "russian"})
+        self.assertEqual(response.status_code, 200)
+        for a in response.json:
+            SyntacticalAnalysis(**a)
+
+    def test_syntactical_analysis_error(self):
+        client = app.test_client()
+        response = client.post("http://localhost:5001/syntactical-analysis", json={
+            "sentence": "test sentence",
+            "language": "non-existent-language"})
+        self.assertEqual(response.status_code, 400)
         LingoliftError(**response.json)
