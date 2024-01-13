@@ -8,8 +8,7 @@ from telegram import Update
 from telegram.ext import ApplicationBuilder, MessageHandler, Application, CommandHandler, ContextTypes
 from telegram.ext import filters as Filters
 
-from telegram_client.lingolift_client import get_translation, get_suggestions, get_literal_translation, \
-    get_syntactical_analysis
+from lingolift_client import get_translation, get_suggestions, get_literal_translation, get_syntactical_analysis
 
 # setup
 load_dotenv()
