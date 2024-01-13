@@ -1,14 +1,14 @@
 import asyncio
 import base64
 
-import requests
+import requests  # type: ignore[import-untyped]
 import streamlit as st
 import time
-from shared.model.error import LingoliftError
-from shared.model.literal_translation import LiteralTranslation
-from shared.model.response_suggestion import Suggestions
-from shared.model.syntactical_analysis import SyntacticalAnalysis
-from shared.model.translation import Translation
+from shared.model.error import LingoliftError  # type: ignore[import-untyped]
+from shared.model.literal_translation import LiteralTranslation  # type: ignore[import-untyped]
+from shared.model.response_suggestion import Suggestions  # type: ignore[import-untyped]
+from shared.model.syntactical_analysis import SyntacticalAnalysis  # type: ignore[import-untyped]
+from shared.model.translation import Translation  # type: ignore[import-untyped]
 
 TITLE = "lingolift"
 
