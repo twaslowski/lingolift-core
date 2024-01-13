@@ -58,7 +58,7 @@ def get_syntactical_analysis():
         return jsonify(analysis)
     except LanguageNotAvailableException:
         return jsonify(
-            LingoliftError(error_message='Grammatical analysis is not available for this language.').model_dump()), 400
+            LingoliftError(error_message='Grammatical analysis is not available for this language').model_dump()), 400
 
 
 if __name__ == "__main__":
