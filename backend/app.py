@@ -7,8 +7,9 @@ from flask import Flask, jsonify, request
 from flask_cors import CORS
 
 from backend.service.generate import generate_translation, generate_responses, generate_literal_translations
-from backend.service.literal_translation import SentenceTooLongException
+from backend.service.literal_translation import SentenceTooLongException, LITERAL_TRANSLATION_MAX_UNIQUE_WORDS
 from backend.service.spacy_adapter import perform_analysis, LanguageNotAvailableException
+from shared.model.error import LingoliftError
 
 # setup
 load_dotenv()
@@ -44,7 +45,9 @@ def get_literal_translation():
         response = generate_literal_translations(sentence)
         return jsonify(response)
     except SentenceTooLongException:
-        return jsonify({'error': 'There are too many unique words in the translated sentence.'}), 400
+        return jsonify(LingoliftError(
+            error_message=f"Too many unique words for literal translation; maximum words "
+                          f"{LITERAL_TRANSLATION_MAX_UNIQUE_WORDS}").model_dump()), 400
 
 
 @app.route('/syntactical-analysis', methods=['POST'])

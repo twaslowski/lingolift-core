@@ -1,7 +1,9 @@
-from dataclasses import dataclass
+from pydantic import BaseModel
 
 
-@dataclass
-class ResponseSuggestion:
+class ResponseSuggestion(BaseModel):
     suggestion: str
     translation: str
+
+class Suggestions(BaseModel):
+    response_suggestions: list[ResponseSuggestion]

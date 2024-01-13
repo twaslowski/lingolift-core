@@ -6,6 +6,10 @@ from typing import Optional
 import requests
 import streamlit as st
 from shared.model.translation import Translation
+from shared.model.syntactical_analysis import SyntacticalAnalysis
+from shared.model.response_suggestion import Suggestions, ResponseSuggestion
+from shared.model.literal_translation import LiteralTranslation
+from shared.model.error import LingoliftError
 
 TITLE = "lingolift"
 
@@ -25,6 +29,7 @@ async def main() -> None:
     # Accept user input
     if prompt := st.chat_input("What should I translate for you?"):
         # Add user message to chat history
+        # todo this can be refactored to use the Message class from backend
         st.session_state.messages.append({"role": "user", "content": prompt})
         # Display user message in chat message container
         with st.chat_message("user"):
@@ -62,7 +67,7 @@ async def render_loading_placeholder(interval: float, event: asyncio.Event):
         await asyncio.sleep(interval * 2)
 
 
-def fetch_translation(sentence: str) -> Translation:
+def fetch_translation(sentence: str) -> Translation | LingoliftError:
     print(f"fetching translation for sentence '{sentence}'")
     response = requests.post("http://localhost:5001/translation", json={"sentence": sentence}).json()
     print(f"received translation for sentence '{sentence}': '{response}'")
@@ -77,10 +82,11 @@ def stringify_translation(sentence: str, translation: Translation) -> str:
 async def fetch_suggestions(sentence: str) -> str:
     response = requests.post("http://localhost:5001/response-suggestion", json={"sentence": sentence}).json()
     print(f"Received suggestions for sentence '{sentence}': '{response}'")
+    suggestions = Suggestions(**response)
     response_string = "### Response suggestions\n\n"
-    for suggestion in response['response_suggestions']:
-        response_string += f"*'{suggestion['suggestion']}'*\n\n"
-        response_string += f"{suggestion['translation']}\n\n"
+    for suggestion in suggestions.response_suggestions:
+        response_string += f"*'{suggestion.suggestion}'*\n\n"
+        response_string += f"{suggestion.translation}\n\n"
     return response_string
 
 
@@ -90,7 +96,7 @@ async def fetch_literal_translations(sentence: str) -> Optional[dict]:
     return response
 
 
-async def fetch_syntactical_analysis(sentence: str, language: str) -> Optional[dict]:
+async def fetch_syntactical_analysis(sentence: str, language: str) -> SyntacticalAnalysis | None:
     response = requests.post("http://localhost:5001/syntactical-analysis",
                              json={"sentence": sentence,
                                    "language": language}).json()
