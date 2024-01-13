@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "streamlit-app"
+name = "lingolift-frontend"
 version = "0.1.0"
 description = ""
 authors = ["Tobias Waslowski <tobiaswaslowski@gmail.com>"]
