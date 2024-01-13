@@ -143,15 +143,15 @@ def coalesce_analyses(literal_translations: list[LiteralTranslation] | Lingolift
     return response_string
 
 
-def find_analysis(word: str, syntactical_analysis: list[SyntacticalAnalysis]) -> SyntacticalAnalysis | None:
+def find_analysis(word: str, syntactical_analyses: list[SyntacticalAnalysis]) -> SyntacticalAnalysis | None:
     """
     :param word: Word from the literal translation
-    :param syntactical_analysis: Set of syntactical analyses for words in the sentence
+    :param syntactical_analyses: Set of syntactical analyses for words in the sentence
     :return: The analysis for the word including the lemma, dependencies and morphology, if available.
     """
-    if type(syntactical_analysis) == LingoliftError:
+    if type(syntactical_analyses) == LingoliftError:
         return None
-    for analysis in syntactical_analysis:
+    for analysis in syntactical_analyses:
         if analysis.word == word and analysis.morphology != '':
             return analysis
     return None
