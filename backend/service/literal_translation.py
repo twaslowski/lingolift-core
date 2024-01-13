@@ -1,11 +1,12 @@
-import concurrent
+from concurrent.futures import ThreadPoolExecutor
 import logging
 import re
+
+from shared.model.literal_translation import LiteralTranslation
 
 from llm.gpt_adapter import openai_exchange
 from llm.message import Message, USER, SYSTEM
 from llm.prompts import LITERAL_TRANSLATIONS_SYSTEM_PROMPT
-from shared.model.literal_translation import LiteralTranslation
 
 LITERAL_TRANSLATION_MAX_UNIQUE_WORDS = 15
 
@@ -17,7 +18,7 @@ def generate_literal_translation(sentence: str) -> list[LiteralTranslation]:
         raise SentenceTooLongException
     result = []
     # Create a ThreadPoolExecutor to process chunks concurrently
-    with concurrent.futures.ThreadPoolExecutor() as executor:
+    with ThreadPoolExecutor() as executor:
         futures = [executor.submit(generate_literal_translation_for_chunk, sentence, chunk) for chunk in chunks]
 
         for future in futures:
@@ -39,15 +40,24 @@ def generate_literal_translation_for_chunk(sentence: str, chunk: list[str]) -> l
 
 
 def chunk_sentence(sentence: str, chunk_size: int = 1) -> list[list[str]]:
+    """
+    Takes a sentence and converts it into chunks of words that can be submitted to the OpenAI API.
+    Typing notes: For some reason, mypy struggles to understand what I'm doing here, hence the ignores.
+    Refer to the unit tests to verify that this function behaves as intended.
+    :param sentence: Sentence to be translated.
+    :param chunk_size: Defaults to 1, as this turns out to be the most time- and resource-efficient solution.
+    Could probably be hardcoded to 1 entirely.
+    :return:
+    """
     alphabetic_characters_regex = re.compile('[?!,.]')
-    sentence = list(alphabetic_characters_regex.sub('', word) for word in sentence.split(' '))
+    sentence = list(alphabetic_characters_regex.sub('', word) for word in sentence.split(' '))  # type: ignore
     chunks = []
     for i in range(0, len(sentence), chunk_size):
         # Get a chunk of the sentence and append it to the list of chunks
         chunk = sentence[i:i + chunk_size]
         if chunk not in chunks:
             chunks.append(chunk)
-    return chunks
+    return chunks  # type: ignore
 
 
 class SentenceTooLongException(Exception):

@@ -1,7 +1,7 @@
 import json
 import logging
 
-import requests
+import requests  # type: ignore[import-untyped]
 
 from llm.message import Message, USER
 from util.timing import timed
@@ -26,7 +26,7 @@ def ollama_exchange(messages: list[Message], json_mode: bool = False):
 def parse_json(response: str) -> dict:
     start_json_index = response.find('{')
     end_json_index = response.find('}')
-    json_truncated = response[start_json_index:end_json_index+1]
+    json_truncated = response[start_json_index:end_json_index + 1]
     logging.info(f"Truncated JSON: {json_truncated}")
     return json.loads(json_truncated)
 

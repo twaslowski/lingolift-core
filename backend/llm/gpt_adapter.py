@@ -13,7 +13,8 @@ client = OpenAI(api_key=api_key)
 def openai_exchange(messages: list[Message], json_mode: bool = False) -> dict:
     logging.info(f"message: {messages[1].content}")
     response_format = "json_object" if json_mode else "text"
-    completion = client.chat.completions.create(
+    # mypy complains about the usage of the create() function, but clearly it works
+    completion = client.chat.completions.create(  # type: ignore
         model="gpt-3.5-turbo-1106",
         response_format={"type": response_format},
         messages=[message.asdict() for message in messages]

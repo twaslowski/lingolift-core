@@ -12,3 +12,6 @@ test:
 
 integration-test:
 	@poetry run pytest test/integration
+
+lint:
+	@poetry run mypy  --no-namespace-packages --ignore-missing-imports .
