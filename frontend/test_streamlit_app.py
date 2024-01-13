@@ -3,7 +3,7 @@ from unittest import TestCase
 from shared.model.error import LingoliftError
 from shared.model.literal_translation import LiteralTranslation
 from shared.model.syntactical_analysis import SyntacticalAnalysis
-from streamlit_app.app import find_analysis, coalesce_analyses
+from app import find_analysis, coalesce_analyses
 
 
 class TestStreamlitApp(TestCase):

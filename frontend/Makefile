@@ -1,10 +1,7 @@
-phony: test export_pythonpath
+.PHONY: test
 
-test: export_pythonpath
-	@poetry run python -m unittest
+test:
+	@poetry run pytest
 
-run: export_pythonpath
+run:
 	@poetry run streamlit run app.py
-
-export_pythonpath:
-	@export PYTHONPATH=$(git rev-parse --show-toplevel)
