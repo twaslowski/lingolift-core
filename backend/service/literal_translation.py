@@ -2,9 +2,9 @@ import concurrent
 import logging
 import re
 
-from backend.llm.gpt_adapter import openai_exchange
-from backend.llm.message import Message, USER, SYSTEM
-from backend.llm.prompts import LITERAL_TRANSLATIONS_SYSTEM_PROMPT
+from llm.gpt_adapter import openai_exchange
+from llm.message import Message, USER, SYSTEM
+from llm.prompts import LITERAL_TRANSLATIONS_SYSTEM_PROMPT
 from shared.model.literal_translation import LiteralTranslation
 
 LITERAL_TRANSLATION_MAX_UNIQUE_WORDS = 15

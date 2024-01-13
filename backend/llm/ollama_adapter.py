@@ -3,8 +3,8 @@ import logging
 
 import requests
 
-from backend.llm.message import Message, USER
-from backend.util.timing import timed
+from llm.message import Message, USER
+from util.timing import timed
 
 OLLAMA_ENDPOINT = "http://localhost:11434"
 

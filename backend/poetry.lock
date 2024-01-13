@@ -1429,6 +1429,22 @@ testing = ["build[virtualenv]", "filelock (>=3.4.0)", "flake8-2020", "ini2toml[l
 testing-integration = ["build[virtualenv] (>=1.0.3)", "filelock (>=3.4.0)", "jaraco.envs (>=2.2)", "jaraco.path (>=3.2.0)", "packaging (>=23.1)", "pytest", "pytest-enabler", "pytest-xdist", "tomli", "virtualenv (>=13.0.0)", "wheel"]
 
 [[package]]
+name = "shared"
+version = "0.1.0"
+description = ""
+optional = false
+python-versions = "3.11.6"
+files = []
+develop = false
+
+[package.dependencies]
+pydantic = "^2.5.3"
+
+[package.source]
+type = "directory"
+url = "../shared"
+
+[[package]]
 name = "smart-open"
 version = "6.4.0"
 description = "Utils for streaming large files (S3, HDFS, GCS, Azure Blob Storage, gzip, bz2...)"
@@ -1925,4 +1941,4 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "2.0"
 python-versions = "3.11.6"
-content-hash = "4b49110d56c01c8707ec9a9f132c5b3b00cb929bc103d06a893feeca5e7d638b"
+content-hash = "aa72239b29fe2e1ecca8fd52479e51fd3a8a9463f1c40c97d8576b500bc1207e"

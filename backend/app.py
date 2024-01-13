@@ -6,9 +6,9 @@ from dotenv import load_dotenv
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 
-from backend.service.generate import generate_translation, generate_responses, generate_literal_translations
-from backend.service.literal_translation import SentenceTooLongException, LITERAL_TRANSLATION_MAX_UNIQUE_WORDS
-from backend.service.spacy_adapter import perform_analysis, LanguageNotAvailableException
+from service.generate import generate_translation, generate_responses, generate_literal_translations
+from service.literal_translation import SentenceTooLongException, LITERAL_TRANSLATION_MAX_UNIQUE_WORDS
+from service.spacy_adapter import perform_analysis, LanguageNotAvailableException
 from shared.model.error import LingoliftError
 
 # setup

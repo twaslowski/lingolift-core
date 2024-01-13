@@ -1,15 +1,13 @@
 import logging
 import unittest
 
-from dacite import from_dict
-from dacite.exceptions import DaciteError
 from dotenv import load_dotenv
-
-from backend.service.generate import generate_responses, generate_translation, generate_literal_translations
+from pydantic import ValidationError
 from shared.model.literal_translation import LiteralTranslation
 from shared.model.response_suggestion import ResponseSuggestion
-
 from shared.model.translation import Translation
+
+from service.generate import generate_responses, generate_translation, generate_literal_translations
 
 
 class Benchmark(unittest.TestCase):
@@ -32,12 +30,12 @@ class Benchmark(unittest.TestCase):
                 openai_response = generate_translation(sentence["sentence"])
                 parsed = Translation(**openai_response)
                 self.assertEqual(parsed.language.lower(), sentence['language'])
-            except ValueError as ve:
-                logging.error(f"Could not parse JSON: {ve}")
+            except ValidationError as de:
+                logging.error(f"Error serializing JSON to dataclass: {de}")
                 error_count = error_count + 1
                 continue
-            except DaciteError as de:
-                logging.error(f"Error serializing JSON to dataclass: {de}")
+            except ValueError as ve:
+                logging.error(f"Could not parse JSON: {ve}")
                 error_count = error_count + 1
                 continue
             except AssertionError as ae:
@@ -54,12 +52,12 @@ class Benchmark(unittest.TestCase):
                 openai_response = generate_literal_translations(sentence["sentence"])
                 parsed = LiteralTranslation(**openai_response)
                 self.assertEqual(len(sentence['sentence'].split()), len(parsed.literal_translations))
-            except ValueError as ve:
-                logging.error(f"Could not parse JSON: {ve}")
+            except ValidationError as de:
+                logging.error(f"Error serializing JSON to dataclass: {de}")
                 error_count = error_count + 1
                 continue
-            except DaciteError as de:
-                logging.error(f"Error serializing JSON to dataclass: {de}")
+            except ValueError as ve:
+                logging.error(f"Could not parse JSON: {ve}")
                 error_count = error_count + 1
                 continue
             except AssertionError as ae:
@@ -80,13 +78,13 @@ class Benchmark(unittest.TestCase):
                     bad_answer_count = bad_answer_count + 1
                 for response in openai_response['response_suggestions']:
                     parsed = ResponseSuggestion(**response)
+            except ValidationError as de:
+                logging.error(f"Error serializing JSON to dataclass: {de}")
+                error_count = error_count + 1
             except ValueError as ve:
                 logging.error(f"Could not parse JSON: {ve}")
                 error_count = error_count + 1
                 continue
-            except DaciteError as de:
-                logging.error(f"Error serializing JSON to dataclass: {de}")
-                error_count = error_count + 1
         self.assertLessEqual(error_count, 1)
         self.assertLessEqual(bad_answer_count, 1)
 

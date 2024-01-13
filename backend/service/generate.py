@@ -1,9 +1,9 @@
-from backend.llm.gpt_adapter import openai_exchange
-from backend.llm.message import Message, USER, SYSTEM
-from backend.llm.prompts import TRANSLATION_USER_PROMPT, RESPONSES_USER_PROMPT, \
+from llm.gpt_adapter import openai_exchange
+from llm.message import Message, USER, SYSTEM
+from llm.prompts import TRANSLATION_USER_PROMPT, RESPONSES_USER_PROMPT, \
     TRANSLATION_SYSTEM_PROMPT, RESPONSES_SYSTEM_PROMPT
-from backend.service.literal_translation import generate_literal_translation
-from backend.util.timing import timed
+from service.literal_translation import generate_literal_translation
+from util.timing import timed
 from shared.model.literal_translation import LiteralTranslation
 from shared.model.translation import Translation
 

@@ -7,11 +7,11 @@ mock: export_pythonpath
 	@poetry run flask run mock.py --host=0.0.0.0 --port=5001
 
 test: export_pythonpath
-	# todo
-	@poetry run python -m unittest
+	@pytest
 
 export_pythonpath:
-	@export PYTHONPATH=$(git rev-parse --show-toplevel)
+	# required for shared/ right now, this is a terrible hack though
+	@export PYTHONPATH=./
 
 check_dotenv:
 	# todo

@@ -1,9 +1,10 @@
 from unittest import TestCase
 
-from backend.app import app
 from shared.model.error import LingoliftError
 from shared.model.literal_translation import LiteralTranslation
 from shared.model.syntactical_analysis import SyntacticalAnalysis
+
+from app import app
 
 
 class TestApp(TestCase):
