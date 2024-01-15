@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from shared.model.error import LingoliftError
+from shared.model.error import ApplicationError
 from shared.model.literal_translation import LiteralTranslation
 from shared.model.syntactical_analysis import SyntacticalAnalysis
 
@@ -15,8 +15,8 @@ class TestApp(TestCase):
             "sentence": "this sentence is too long because it contains too many unique words a b c d e f"})
         self.assertEqual(response.status_code, 400)
         print(response.json)
-        # implicitely checks that the response is a LingoliftError; no assertion because
-        LingoliftError(**response.json)
+        # implicitely checks that the response is a ApplicationError; no assertion because
+        ApplicationError(**response.json)
 
     def test_literal_translation_happy_path(self):
         client = app.test_client()
@@ -41,4 +41,4 @@ class TestApp(TestCase):
             "sentence": "test sentence",
             "language": "non-existent-language"})
         self.assertEqual(response.status_code, 400)
-        LingoliftError(**response.json)
+        ApplicationError(**response.json)

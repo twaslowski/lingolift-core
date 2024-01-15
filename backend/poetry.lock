@@ -1438,7 +1438,10 @@ files = []
 develop = false
 
 [package.dependencies]
+mypy = "^1.8.0"
 pydantic = "^2.5.3"
+pytest = "^7.4.4"
+requests = "2.31.0"
 
 [package.source]
 type = "directory"

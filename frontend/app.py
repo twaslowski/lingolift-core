@@ -4,7 +4,7 @@ import base64
 import requests  # type: ignore[import-untyped]
 import streamlit as st
 import time
-from shared.model.error import LingoliftError  # type: ignore[import-untyped]
+from shared.model.error import ApplicationError  # type: ignore[import-untyped]
 from shared.model.literal_translation import LiteralTranslation  # type: ignore[import-untyped]
 from shared.model.response_suggestion import ResponseSuggestion  # type: ignore[import-untyped]
 from shared.model.syntactical_analysis import SyntacticalAnalysis  # type: ignore[import-untyped]
@@ -66,12 +66,12 @@ async def render_loading_placeholder(interval: float, event: asyncio.Event):
         await asyncio.sleep(interval * 2)
 
 
-def fetch_translation(sentence: str) -> Translation | LingoliftError:
+def fetch_translation(sentence: str) -> Translation | ApplicationError:
     print(f"fetching translation for sentence '{sentence}'")
     response = requests.post("http://localhost:5001/translation", json={"sentence": sentence})
     print(f"received translation for sentence '{sentence}': '{response}'")
     if response.status_code != 200:
-        return LingoliftError(**response.json())
+        return ApplicationError(**response.json())
     else:
         return Translation(**response.json())
 
@@ -92,30 +92,30 @@ async def fetch_suggestions(sentence: str) -> str:
     return response_string
 
 
-async def fetch_literal_translations(sentence: str) -> list[LiteralTranslation] | LingoliftError:
+async def fetch_literal_translations(sentence: str) -> list[LiteralTranslation] | ApplicationError:
     response = requests.post("http://localhost:5001/literal-translation", json={"sentence": sentence})
     if response.status_code != 200:
-        return LingoliftError(**response.json())
+        return ApplicationError(**response.json())
     else:
         response = response.json()
         print(f"Received literal translations for sentence '{sentence}': '{response}'")
         return [LiteralTranslation(**literal_translation) for literal_translation in response]
 
 
-async def fetch_syntactical_analysis(sentence: str, language: str) -> list[SyntacticalAnalysis] | LingoliftError:
+async def fetch_syntactical_analysis(sentence: str, language: str) -> list[SyntacticalAnalysis] | ApplicationError:
     response = requests.post("http://localhost:5001/syntactical-analysis",
                              json={"sentence": sentence,
                                    "language": language})
     if response.status_code != 200:
-        return LingoliftError(**response.json())
+        return ApplicationError(**response.json())
     else:
         response = response.json()
         print(f"Received syntactical analysis for sentence '{sentence}': '{response}'")
         return [SyntacticalAnalysis(**syntactical_analysis) for syntactical_analysis in response]
 
 
-def coalesce_analyses(literal_translations: list[LiteralTranslation] | LingoliftError,
-                      syntactical_analysis: list[SyntacticalAnalysis] | LingoliftError) -> str:
+def coalesce_analyses(literal_translations: list[LiteralTranslation] | ApplicationError,
+                      syntactical_analysis: list[SyntacticalAnalysis] | ApplicationError) -> str:
     """
     If both a literal translation of the words in the sentence and the syntactical analysis (i.e. part-of-speech
     tagging) are available, they get coalesced in this function, meaning each word gets displayed alongside its
@@ -125,10 +125,10 @@ def coalesce_analyses(literal_translations: list[LiteralTranslation] | Lingolift
     :param syntactical_analysis:
     :return:
     """
-    if type(literal_translations) == LingoliftError:
+    if type(literal_translations) == ApplicationError:
         return f"The analysis failed: {literal_translations.error_message}"
     response_string = "### Vocabulary and Grammar breakdown\n\n"
-    if type(syntactical_analysis) == LingoliftError:
+    if type(syntactical_analysis) == ApplicationError:
         response_string += f"Morphological analysis failed: {syntactical_analysis.error_message}; " \
                            f"however, the literal translation is available.\n\n"
     for word in literal_translations:
@@ -149,7 +149,7 @@ def find_analysis(word: str, syntactical_analyses: list[SyntacticalAnalysis]) ->
     :param syntactical_analyses: Set of syntactical analyses for words in the sentence
     :return: The analysis for the word including the lemma, dependencies and morphology, if available.
     """
-    if type(syntactical_analyses) == LingoliftError:
+    if type(syntactical_analyses) == ApplicationError:
         return None
     for analysis in syntactical_analyses:
         if analysis.word == word and analysis.morphology != '':

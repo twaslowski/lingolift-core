@@ -1,5 +1,5 @@
 from pydantic import BaseModel
 
 
-class LingoliftError(BaseModel):
+class ApplicationError(BaseModel):
     error_message: str
