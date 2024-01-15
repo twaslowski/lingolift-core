@@ -27,7 +27,7 @@ def get_translation():
     sentence = request.json.get('sentence')
     logging.info(f"Received sentence: {sentence}")
     response = generate_translation(sentence)
-    return jsonify(response)
+    return jsonify(response.model_dump())
 
 
 @app.route('/response-suggestion', methods=['POST'])
@@ -35,7 +35,7 @@ def get_response_suggestions():
     sentence = request.json.get('sentence')
     # number_suggestions = request.json.get('number_suggestions')
     response = generate_responses(sentence)
-    return jsonify([r.model_dump for r in response])
+    return jsonify([r.model_dump() for r in response])
 
 
 @app.route('/literal-translation', methods=['POST'])
@@ -62,4 +62,4 @@ def get_syntactical_analysis():
 
 
 if __name__ == "__main__":
-    app.run(debug=True, ssl_context='adhoc')
+    app.run(debug=True)
