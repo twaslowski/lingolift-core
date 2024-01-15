@@ -1,6 +1,7 @@
 import logging
-import openai
 import os
+
+import openai
 from dotenv import load_dotenv
 from flask import Flask, jsonify, request
 from flask_cors import CORS
@@ -8,7 +9,7 @@ from shared.model.error import ApplicationError
 
 from service.generate import generate_translation, generate_responses, generate_literal_translations
 from service.literal_translation import SentenceTooLongException, LITERAL_TRANSLATION_MAX_UNIQUE_WORDS
-from service.spacy_adapter import perform_analysis, LanguageNotAvailableException
+from service.spacy_adapter import perform_analysis, LanguageNotAvailableException, models
 
 # setup
 load_dotenv()
@@ -46,6 +47,11 @@ def get_literal_translation():
     except SentenceTooLongException:
         return jsonify(ApplicationError(error_message=f"Too many unique words for literal translation; maximum words "
                                                       f"{LITERAL_TRANSLATION_MAX_UNIQUE_WORDS}").model_dump()), 400
+
+
+@app.route('/literal-translation/languages', methods=['GET'])
+def get_literal_translation_languages():
+    return jsonify(list(models.keys())), 200
 
 
 @app.route('/', methods=['POST'])

@@ -2,9 +2,11 @@ import spacy
 from dotenv import load_dotenv
 
 models = {
-    "english": "en_core_web_md",
     "german": "de_core_news_sm",
-    "russian": "ru_core_news_sm"
+    "russian": "ru_core_news_sm",
+    "spanish": "es-core-news-sm",
+    "french": "fr-core-news-md",
+    "portuguese": "pt-core-news-sm",
 }
 
 
