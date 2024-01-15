@@ -1,7 +1,6 @@
 import logging
-import os
-
 import openai
+import os
 from dotenv import load_dotenv
 from flask import Flask, jsonify, request
 from flask_cors import CORS
@@ -47,6 +46,11 @@ def get_literal_translation():
     except SentenceTooLongException:
         return jsonify(ApplicationError(error_message=f"Too many unique words for literal translation; maximum words "
                                                       f"{LITERAL_TRANSLATION_MAX_UNIQUE_WORDS}").model_dump()), 400
+
+
+@app.route('/', methods=['POST'])
+def get_root():
+    return jsonify({'message': 'Hello World!'})
 
 
 @app.route('/syntactical-analysis', methods=['POST'])
