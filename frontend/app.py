@@ -1,6 +1,7 @@
 import asyncio
 import base64
 import time
+from typing import Union, Optional
 
 import requests  # type: ignore[import-untyped]
 import streamlit as st
@@ -81,7 +82,7 @@ def stringify_response_suggestions(response_suggestions: list[ResponseSuggestion
     return response_string
 
 
-async def fetch_literal_translations(sentence: str) -> list[LiteralTranslation] | ApplicationError:
+async def fetch_literal_translations(sentence: str) -> Union[list[LiteralTranslation], ApplicationError]:
     response = requests.post("http://localhost:5001/literal-translation", json={"sentence": sentence})
     if response.status_code != 200:
         return ApplicationError(**response.json())
@@ -91,7 +92,8 @@ async def fetch_literal_translations(sentence: str) -> list[LiteralTranslation] 
         return [LiteralTranslation(**literal_translation) for literal_translation in response]
 
 
-async def fetch_syntactical_analysis(sentence: str, language: str) -> list[SyntacticalAnalysis] | ApplicationError:
+async def fetch_syntactical_analysis(sentence: str, language: str) -> Union[
+    list[SyntacticalAnalysis], ApplicationError]:
     response = requests.post("http://localhost:5001/syntactical-analysis",
                              json={"sentence": sentence,
                                    "language": language})
@@ -103,8 +105,8 @@ async def fetch_syntactical_analysis(sentence: str, language: str) -> list[Synta
         return [SyntacticalAnalysis(**syntactical_analysis) for syntactical_analysis in response]
 
 
-def coalesce_analyses(literal_translations: list[LiteralTranslation] | ApplicationError,
-                      syntactical_analysis: list[SyntacticalAnalysis] | ApplicationError) -> str:
+def coalesce_analyses(literal_translations: Union[list[LiteralTranslation], ApplicationError],
+                      syntactical_analysis: Union[list[SyntacticalAnalysis], ApplicationError]) -> str:
     """
     If both a literal translation of the words in the sentence and the syntactical analysis (i.e. part-of-speech
     tagging) are available, they get coalesced in this function, meaning each word gets displayed alongside its
@@ -132,7 +134,7 @@ def coalesce_analyses(literal_translations: list[LiteralTranslation] | Applicati
     return response_string
 
 
-def find_analysis(word: str, syntactical_analyses: list[SyntacticalAnalysis]) -> SyntacticalAnalysis | None:
+def find_analysis(word: str, syntactical_analyses: list[SyntacticalAnalysis]) -> Optional[SyntacticalAnalysis]:
     """
     :param word: Word from the literal translation
     :param syntactical_analyses: Set of syntactical analyses for words in the sentence

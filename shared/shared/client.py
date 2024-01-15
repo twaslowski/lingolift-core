@@ -1,3 +1,5 @@
+from typing import Union
+
 import requests  # type: ignore[import-untyped]
 
 from shared.model.error import ApplicationError
@@ -25,7 +27,7 @@ class Client:
         self.port = port
         self.url = f"{self.protocol}://{self.endpoint}:{self.port}"
 
-    async def fetch_translation(self, sentence: str) -> Translation | ApplicationError:
+    async def fetch_translation(self, sentence: str) -> Union[Translation, ApplicationError]:
         """
         Interacts with the /translation endpoint of the backend API.
         :param sentence: Sentence to translate
@@ -40,7 +42,7 @@ class Client:
         else:
             return ApplicationError(error_message=TRANSLATIONS_UNEXPECTED_ERROR)
 
-    async def fetch_literal_translations(self, sentence: str) -> list[LiteralTranslation] | ApplicationError:
+    async def fetch_literal_translations(self, sentence: str) -> Union[list[LiteralTranslation], ApplicationError]:
         """
         Interacts with the /literal-translation endpoint of the backend API.
         :param sentence: Sentence for which to fetch literal translations
@@ -57,7 +59,7 @@ class Client:
             return ApplicationError(error_message=LITERAL_TRANSLATIONS_UNEXPECTED_ERROR)
 
     async def fetch_syntactical_analysis(self, sentence: str, language: str) -> \
-            list[SyntacticalAnalysis] | ApplicationError:
+            Union[list[SyntacticalAnalysis], ApplicationError]:
         """
         Interacts with the /syntactical-analysis endpoint of the backend API.
         :param sentence: Sentence for which to fetch syntactical analysis
@@ -74,7 +76,7 @@ class Client:
         else:
             return ApplicationError(error_message=SYNTACTICAL_ANALYSIS_UNEXPECTED_ERROR)
 
-    async def fetch_response_suggestions(self, sentence: str) -> list[ResponseSuggestion] | ApplicationError:
+    async def fetch_response_suggestions(self, sentence: str) -> Union[list[ResponseSuggestion], ApplicationError]:
         """
         Interacts with the /response-suggestion endpoint of the backend API.
         :param sentence: Sentence for which to fetch response suggestions
