@@ -4,20 +4,19 @@ import time
 
 import requests  # type: ignore[import-untyped]
 import streamlit as st
+from shared.client import Client
 from shared.model.error import ApplicationError  # type: ignore[import-untyped]
 from shared.model.literal_translation import LiteralTranslation  # type: ignore[import-untyped]
 from shared.model.response_suggestion import ResponseSuggestion  # type: ignore[import-untyped]
 from shared.model.syntactical_analysis import SyntacticalAnalysis  # type: ignore[import-untyped]
 from shared.model.translation import Translation  # type: ignore[import-untyped]
 
-from shared.client import Client
-
 TITLE = "lingolift"
 
 
 async def main() -> None:
     st.title(TITLE)
-    client = Client("localhost", "5001")
+    client = Client(protocol="http", host="localhost", port="5001")
 
     # Initialize chat history
     if "messages" not in st.session_state:
@@ -39,21 +38,21 @@ async def main() -> None:
 
         # Display assistant response in chat message container
         with st.chat_message("assistant"):
-            render_message("Translating ...", 0.05)
+            render_message("Translating ...", 0.025)
             sentence = find_latest_user_message(st.session_state.messages)['content']
-            translation = client.fetch_translation(sentence)
+            translation = await client.fetch_translation(sentence)
             render_message(stringify_translation(sentence, translation), 0.025)
 
             gif_md = display_loading_gif()
             async with asyncio.TaskGroup() as tg:
-                suggestions = await tg.create_task(fetch_suggestions(sentence))
-                literal_translations = await tg.create_task(fetch_literal_translations(sentence))
+                suggestions = await tg.create_task(client.fetch_response_suggestions(sentence))
+                literal_translations = await tg.create_task(client.fetch_literal_translations(sentence))
                 syntactical_analysis = await tg.create_task(
-                    fetch_syntactical_analysis(sentence, translation.language))
+                    client.fetch_syntactical_analysis(sentence, translation.language))
 
             gif_md.empty()
             analysis_rendered = coalesce_analyses(literal_translations, syntactical_analysis)
-            render_message(suggestions, 0.025)
+            render_message(stringify_response_suggestions(suggestions), 0.025)
             render_message(analysis_rendered, 0.025)
 
         # Add assistant response to chat history
@@ -74,11 +73,8 @@ def stringify_translation(sentence: str, translation: Translation) -> str:
            f"'*{sentence}*' is {translation.language} and translates to '*{translation.translation}*'"
 
 
-async def fetch_suggestions(sentence: str) -> str:
-    response = requests.post("http://localhost:5001/response-suggestion", json={"sentence": sentence}).json()
-    print(f"Received suggestions for sentence '{sentence}': '{response}'")
+def stringify_response_suggestions(response_suggestions: list[ResponseSuggestion]) -> str:
     response_string = "### Response suggestions\n\n"
-    response_suggestions = [ResponseSuggestion(**r) for r in response]
     for suggestion in response_suggestions:
         response_string += f"*'{suggestion.suggestion}'*\n\n"
         response_string += f"{suggestion.translation}\n\n"
