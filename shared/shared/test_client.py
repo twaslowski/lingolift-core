@@ -1,9 +1,10 @@
 from unittest import TestCase
 from unittest.mock import Mock
+import pytest
 
 import requests
 
-from shared import client
+from shared.client import Client, TRANSLATIONS_UNEXPECTED_ERROR
 
 
 class TestClient(TestCase):
@@ -17,6 +18,7 @@ class TestClient(TestCase):
 
     def setUp(self) -> None:
         requests.post = Mock()
+        self.client = Client()
 
     def test_translation_happy_path(self):
         # when posting to /translation, we receive a well-formed translation json with a 200 OK status code
@@ -26,12 +28,16 @@ class TestClient(TestCase):
             "translation": "translation",
             "language": "language"
         }
-        translation = client.fetch_translation("some sentence")
+        translation = self.client.fetch_translation("some sentence")
         self.assertEqual(translation.translation, "translation")
         self.assertEqual(translation.language, "language")
 
     def test_translation_unexpected_error(self):
-        pass
+        requests.post = Mock()
+        requests.post.return_value.status_code = 500
+        requests.post.return_value.json.return_value = None
+        error = self.client.fetch_translation("some sentence")
+        self.assertEqual(error.error_message, TRANSLATIONS_UNEXPECTED_ERROR)
 
     def test_literal_translation_happy_path(self):
         pass
