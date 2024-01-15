@@ -1,7 +1,7 @@
 from unittest import IsolatedAsyncioTestCase
 from unittest.mock import Mock
 
-import requests
+import requests  # type: ignore[import-untyped]
 
 from shared.client import Client, TRANSLATIONS_UNEXPECTED_ERROR, LITERAL_TRANSLATIONS_UNEXPECTED_ERROR, \
     SYNTACTICAL_ANALYSIS_UNEXPECTED_ERROR

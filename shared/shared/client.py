@@ -1,4 +1,4 @@
-import requests
+import requests  # type: ignore[import-untyped]
 
 from shared.model.error import ApplicationError
 from shared.model.literal_translation import LiteralTranslation
