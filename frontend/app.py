@@ -12,12 +12,16 @@ from shared.model.response_suggestion import ResponseSuggestion  # type: ignore[
 from shared.model.syntactical_analysis import SyntacticalAnalysis  # type: ignore[import-untyped]
 from shared.model.translation import Translation  # type: ignore[import-untyped]
 
-TITLE = "lingolift"
+TITLE = "grammr"
 
 
 async def main() -> None:
     st.title(TITLE)
-    client = Client(protocol="http", host="localhost", port="5001")
+
+    backend_protocol = st.secrets.connection.protocol
+    backend_host = st.secrets.connection.host
+    backend_port = st.secrets.connection.port
+    client = Client(backend_protocol, backend_host, backend_port)
 
     # Initialize chat history
     if "messages" not in st.session_state:

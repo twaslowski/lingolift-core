@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "lingolift-frontend"
+name = "frontend"
 version = "0.1.0"
 description = ""
 authors = ["Tobias Waslowski <tobiaswaslowski@gmail.com>"]

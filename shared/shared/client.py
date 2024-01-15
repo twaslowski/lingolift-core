@@ -17,7 +17,7 @@ RESPONSE_SUGGESTIONS_UNEXPECTED_ERROR = "An unexpected error occurred when fetch
 
 class Client:
     """
-    Defines common methods to interact with the lingolift backend API.
+    Defines common methods to interact with the backend API.
     Includes error handling and parsing to the pydantic models.
     """
 
