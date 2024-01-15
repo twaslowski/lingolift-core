@@ -23,7 +23,28 @@ class Client:
         self.port = port
         self.url = f"https://{self.endpoint}:{self.port}"
 
+    async def fetch_translation(self, sentence: str) -> Translation | ApplicationError:
+        """
+        Interacts with the /translation endpoint of the backend API.
+        :param sentence: Sentence to translate
+        :return: Translation object in case of a 200 status code, ApplicationError otherwise
+        """
+        print(f"fetching translation for sentence '{sentence}'")
+        response = requests.post(f"{self.url}/translation", json={"sentence": sentence})
+        print(f"received translation for sentence '{sentence}': '{response}'")
+        match response.status_code:
+            case 200:
+                return Translation(**response.json())
+            # no expected error on the backend side, so no need to handle 400
+            case _:
+                return ApplicationError(error_message=TRANSLATIONS_UNEXPECTED_ERROR)
+
     async def fetch_literal_translations(self, sentence: str) -> list[LiteralTranslation] | ApplicationError:
+        """
+        Interacts with the /literal-translation endpoint of the backend API.
+        :param sentence: Sentence for which to fetch literal translations
+        :return: list of LiteralTranslation objects in case of a 200 status code, ApplicationError otherwise
+        """
         response = requests.post(f"{self.url}/literal-translation", json={"sentence": sentence})
         match response.status_code:
             case 200:
@@ -37,28 +58,36 @@ class Client:
 
     async def fetch_syntactical_analysis(self, sentence: str, language: str) -> \
             list[SyntacticalAnalysis] | ApplicationError:
+        """
+        Interacts with the /syntactical-analysis endpoint of the backend API.
+        :param sentence: Sentence for which to fetch syntactical analysis
+        :param language: Source language of the sentence; required for choosing correct spaCy model
+        :return: list of SyntacticalAnalysis objects in case of a 200 status code, ApplicationError otherwise
+        """
         response = requests.post(f"{self.url}/syntactical-analysis", json={"sentence": sentence, "language": language})
-        if response.status_code != 200:
-            return ApplicationError(**response.json())
-        else:
-            analyses = response.json()
-            print(f"Received syntactical analysis for sentence '{sentence}': '{analyses}'")
-            return [SyntacticalAnalysis(**analysis) for analysis in analyses]
+        match response.status_code:
+            case 200:
+                analyses = response.json()
+                print(f"Received syntactical analysis for sentence '{sentence}': '{analyses}'")
+                return [SyntacticalAnalysis(**analysis) for analysis in analyses]
+            case 400:
+                return ApplicationError(**response.json())
+            case _:
+                return ApplicationError(error_message=SYNTACTICAL_ANALYSIS_UNEXPECTED_ERROR)
 
     async def fetch_response_suggestions(self, sentence: str) -> list[ResponseSuggestion] | ApplicationError:
+        """
+        Interacts with the /response-suggestion endpoint of the backend API.
+        :param sentence: Sentence for which to fetch response suggestions
+        :return: list of ResponseSuggestion objects in case of a 200 status code, ApplicationError otherwise
+        """
         response = requests.post(f"{self.url}/response-suggestion", json={"sentence": sentence})
-        if response.status_code != 200:
-            return ApplicationError(**response.json())
-        else:
-            suggestions = response.json()
-            print(f"Received response suggestions for sentence '{sentence}': '{suggestions}'")
-            return [ResponseSuggestion(**suggestion) for suggestion in suggestions]
-
-    def fetch_translation(self, sentence: str) -> Translation | ApplicationError:
-        print(f"fetching translation for sentence '{sentence}'")
-        response = requests.post(f"{self.url}/translation", json={"sentence": sentence})
-        print(f"received translation for sentence '{sentence}': '{response}'")
-        if response.status_code != 200:
-            return ApplicationError(error_message=TRANSLATIONS_UNEXPECTED_ERROR)
-        else:
-            return Translation(**response.json())
+        match response.status_code:
+            case 200:
+                suggestions = response.json()
+                print(f"Received response suggestions for sentence '{sentence}': '{suggestions}'")
+                return [ResponseSuggestion(**suggestion) for suggestion in suggestions]
+            case 400:
+                return ApplicationError(**response.json())
+            case _:
+                return ApplicationError(error_message=RESPONSE_SUGGESTIONS_UNEXPECTED_ERROR)

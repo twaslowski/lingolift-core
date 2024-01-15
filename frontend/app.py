@@ -1,20 +1,23 @@
 import asyncio
 import base64
+import time
 
 import requests  # type: ignore[import-untyped]
 import streamlit as st
-import time
 from shared.model.error import ApplicationError  # type: ignore[import-untyped]
 from shared.model.literal_translation import LiteralTranslation  # type: ignore[import-untyped]
 from shared.model.response_suggestion import ResponseSuggestion  # type: ignore[import-untyped]
 from shared.model.syntactical_analysis import SyntacticalAnalysis  # type: ignore[import-untyped]
 from shared.model.translation import Translation  # type: ignore[import-untyped]
 
+from shared.client import Client
+
 TITLE = "lingolift"
 
 
 async def main() -> None:
     st.title(TITLE)
+    client = Client("localhost", "5001")
 
     # Initialize chat history
     if "messages" not in st.session_state:
@@ -38,7 +41,7 @@ async def main() -> None:
         with st.chat_message("assistant"):
             render_message("Translating ...", 0.05)
             sentence = find_latest_user_message(st.session_state.messages)['content']
-            translation = fetch_translation(sentence)
+            translation = client.fetch_translation(sentence)
             render_message(stringify_translation(sentence, translation), 0.025)
 
             gif_md = display_loading_gif()
@@ -64,16 +67,6 @@ async def render_loading_placeholder(interval: float, event: asyncio.Event):
         await asyncio.sleep(interval * 2)
         placeholder.markdown("")
         await asyncio.sleep(interval * 2)
-
-
-def fetch_translation(sentence: str) -> Translation | ApplicationError:
-    print(f"fetching translation for sentence '{sentence}'")
-    response = requests.post("http://localhost:5001/translation", json={"sentence": sentence})
-    print(f"received translation for sentence '{sentence}': '{response}'")
-    if response.status_code != 200:
-        return ApplicationError(**response.json())
-    else:
-        return Translation(**response.json())
 
 
 def stringify_translation(sentence: str, translation: Translation) -> str:

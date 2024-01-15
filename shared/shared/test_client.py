@@ -1,13 +1,15 @@
-from unittest import TestCase
+from unittest import IsolatedAsyncioTestCase
 from unittest.mock import Mock
-import pytest
 
 import requests
 
-from shared.client import Client, TRANSLATIONS_UNEXPECTED_ERROR
+from shared.client import Client, TRANSLATIONS_UNEXPECTED_ERROR, LITERAL_TRANSLATIONS_UNEXPECTED_ERROR, \
+    SYNTACTICAL_ANALYSIS_UNEXPECTED_ERROR
+from shared.model.error import ApplicationError
+from shared.model.translation import Translation
 
 
-class TestClient(TestCase):
+class TestClient(IsolatedAsyncioTestCase):
     """
     Tests the shared client methods that are used by both the frontend and the telegram bot.
     This only tests for happy paths (200 status codes),
@@ -20,7 +22,7 @@ class TestClient(TestCase):
         requests.post = Mock()
         self.client = Client()
 
-    def test_translation_happy_path(self):
+    async def test_translation_happy_path(self):
         # when posting to /translation, we receive a well-formed translation json with a 200 OK status code
         requests.post = Mock()
         requests.post.return_value.status_code = 200
@@ -28,34 +30,90 @@ class TestClient(TestCase):
             "translation": "translation",
             "language": "language"
         }
-        translation = self.client.fetch_translation("some sentence")
+        translation = await self.client.fetch_translation("some sentence")
+        self.assertIsInstance(translation, Translation)
         self.assertEqual(translation.translation, "translation")
         self.assertEqual(translation.language, "language")
 
-    def test_translation_unexpected_error(self):
+    async def test_translation_unexpected_error(self):
         requests.post = Mock()
         requests.post.return_value.status_code = 500
         requests.post.return_value.json.return_value = None
-        error = self.client.fetch_translation("some sentence")
+        error = await self.client.fetch_translation("some sentence")
+        self.assertIsInstance(error, ApplicationError)
         self.assertEqual(error.error_message, TRANSLATIONS_UNEXPECTED_ERROR)
 
-    def test_literal_translation_happy_path(self):
-        pass
+    async def test_literal_translation_happy_path(self):
+        requests.post = Mock()
+        requests.post.return_value.status_code = 200
+        requests.post.return_value.json.return_value = [
+            {
+                "word": "some",
+                "translation": "ein"
+            },
+            {
+                "word": "sentence",
+                "translation": "satz"
+            }
+        ]
+        literal_translations = await self.client.fetch_literal_translations("some sentence")
+        self.assertIsInstance(literal_translations, list)
+        self.assertEqual(len(literal_translations), 2)
 
-    def test_literal_translation_expected_error(self):
-        pass
+    async def test_literal_translation_expected_error(self):
+        requests.post = Mock()
+        requests.post.return_value.status_code = 400
+        requests.post.return_value.json.return_value = {
+            "error_message": "Too many unique words for literal translation"
+        }
+        error = await self.client.fetch_literal_translations("some sentence")
+        self.assertIsInstance(error, ApplicationError)
+        self.assertEqual(error.error_message, "Too many unique words for literal translation")
 
-    def test_literal_translation_unexpected_error(self):
-        pass
+    async def test_literal_translation_unexpected_error(self):
+        requests.post = Mock()
+        requests.post.return_value.status_code = 500
+        requests.post.return_value.json.return_value = None
+        error = await self.client.fetch_literal_translations("some sentence")
+        self.assertIsInstance(error, ApplicationError)
+        self.assertEqual(error.error_message, LITERAL_TRANSLATIONS_UNEXPECTED_ERROR)
 
-    def test_syntactical_analysis_happy_path(self):
+    async def test_syntactical_analysis_happy_path(self):
         # test 200
-        pass
+        requests.post = Mock()
+        requests.post.return_value.status_code = 200
+        requests.post.return_value.json.return_value = [
+            {
+                "word": "some",
+                "lemma": "ein",
+                "morphology": "morphology",
+                "dependencies": "dependencies"
+            },
+            {
+                "word": "sentence",
+                "lemma": "satz",
+                "morphology": "morphology",
+                "dependencies": "dependencies"
+            }
+        ]
+        analyses = await self.client.fetch_syntactical_analysis("some sentence", "de")
+        self.assertIsInstance(analyses, list)
+        self.assertEqual(len(analyses), 2)
 
-    def test_syntactical_analysis_expected_error(self):
-        # test expected 400
-        pass
+    async def test_syntactical_analysis_expected_error(self):
+        requests.post = Mock()
+        requests.post.return_value.status_code = 400
+        requests.post.return_value.json.return_value = {
+            "error_message": "Language not available"
+        }
+        error = await self.client.fetch_syntactical_analysis("some sentence", "de")
+        self.assertIsInstance(error, ApplicationError)
+        self.assertEqual(error.error_message, "Language not available")
 
-    def test_syntactical_analysis_unexpected_error(self):
-        # test unexpected status codes
-        pass
+    async def test_syntactical_analysis_unexpected_error(self):
+        requests.post = Mock()
+        requests.post.return_value.status_code = 500
+        requests.post.return_value.json.return_value = None
+        error = await self.client.fetch_syntactical_analysis("some sentence", "de")
+        self.assertIsInstance(error, ApplicationError)
+        self.assertEqual(error.error_message, SYNTACTICAL_ANALYSIS_UNEXPECTED_ERROR)
