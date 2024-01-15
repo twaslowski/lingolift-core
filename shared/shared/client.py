@@ -6,6 +6,7 @@ from shared.model.response_suggestion import ResponseSuggestion
 from shared.model.syntactical_analysis import SyntacticalAnalysis
 from shared.model.translation import Translation
 
+
 TRANSLATIONS_UNEXPECTED_ERROR = "An unexpected error occurred when fetching translations from backend"
 LITERAL_TRANSLATIONS_UNEXPECTED_ERROR = "An unexpected error occurred when fetching translations from backend"
 SYNTACTICAL_ANALYSIS_UNEXPECTED_ERROR = "An unexpected error occurred when fetching syntactical analysis from backend"
@@ -18,10 +19,11 @@ class Client:
     Includes error handling and parsing to the pydantic models.
     """
 
-    def __init__(self, endpoint: str = "localhost", port: str = "5001"):
-        self.endpoint = endpoint
+    def __init__(self, protocol: str = "https", host: str = "localhost", port: str = "5001"):
+        self.protocol = protocol
+        self.endpoint = host
         self.port = port
-        self.url = f"https://{self.endpoint}:{self.port}"
+        self.url = f"{self.protocol}://{self.endpoint}:{self.port}"
 
     async def fetch_translation(self, sentence: str) -> Translation | ApplicationError:
         """
