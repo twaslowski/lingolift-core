@@ -27,7 +27,8 @@ def get_translation():
     time.sleep(1)
     response = {
         "translation": "How is it going with you today?",
-        "language": "russian",
+        "language_name": "russian",
+        "language_code": "RU"
     }
     translation = Translation(**response)
     return jsonify(translation.model_dump())

@@ -43,30 +43,31 @@ async def main() -> None:
 
         # Display assistant response in chat message container
         with st.chat_message("assistant"):
-            render_message("Translating ...", 0.025)
+            with st.spinner("Translating"):
+                try:
+                    sentence = find_latest_user_message(st.session_state.messages)['content']
+                    translation = await client.fetch_translation(sentence)
+                except Exception as e:
+                    render_message(f"An error occurred: {e}", 0.025)
+            render_message(stringify_translation(sentence, translation), 0.025)
 
-            try:
-                sentence = find_latest_user_message(st.session_state.messages)['content']
-                translation = await client.fetch_translation(sentence)
-                render_message(stringify_translation(sentence, translation), 0.025)
-
-                gif_md = display_loading_gif()
+            with st.spinner("Fetching suggestions and syntactical analysis ..."):
                 async with asyncio.TaskGroup() as tg:
-                    suggestions = await tg.create_task(client.fetch_response_suggestions(sentence))
-                    literal_translations = await tg.create_task(client.fetch_literal_translations(sentence))
-                    syntactical_analysis = await tg.create_task(
-                        client.fetch_syntactical_analysis(sentence, translation.language))
+                    try:
+                        suggestions = await tg.create_task(client.fetch_response_suggestions(sentence))
+                        literal_translations = await tg.create_task(client.fetch_literal_translations(sentence))
+                        syntactical_analysis = await tg.create_task(
+                            client.fetch_syntactical_analysis(sentence, translation.language_code))
+                    except Exception as e:
+                        render_message(f"An error occurred: {e}", 0.025)
 
-                gif_md.empty()
-                render_message(stringify_response_suggestions(suggestions), 0.025)
-                analysis_rendered = coalesce_analyses(literal_translations, syntactical_analysis)
-                render_message(analysis_rendered, 0.025)
+            render_message(stringify_response_suggestions(suggestions), 0.025)
+            analysis_rendered = coalesce_analyses(literal_translations, syntactical_analysis)
+            render_message(analysis_rendered, 0.025)
 
-                # Add assistant response to chat history
-                st.session_state.messages.append({"role": "assistant", "content": translation})
-                st.session_state.messages.append({"role": "assistant", "content": suggestions})
-            except Exception as e:
-                render_message(f"An error occurred: {e}", 0.025)
+            # Add assistant response to chat history
+            st.session_state.messages.append({"role": "assistant", "content": translation})
+            st.session_state.messages.append({"role": "assistant", "content": suggestions})
 
 
 async def render_loading_placeholder(interval: float, event: asyncio.Event):
@@ -80,7 +81,7 @@ async def render_loading_placeholder(interval: float, event: asyncio.Event):
 
 def stringify_translation(sentence: str, translation: Translation) -> str:
     return f"### Translation\n\n" \
-           f"'*{sentence}*' is {translation.language.capitalize()} and translates to '*{translation.translation}*'"
+           f"'*{sentence}*' is {translation.language_name.capitalize()} and translates to '*{translation.translation}*'"
 
 
 def stringify_response_suggestions(response_suggestions: list[ResponseSuggestion]) -> str:
@@ -138,7 +139,7 @@ def coalesce_analyses(literal_translations: Union[list[LiteralTranslation], Appl
         response_string += f"*{word.word}*: {word.translation}"
         if analysis:
             if analysis.lemma.lower() != analysis.word.lower():
-                response_string += f" (from {analysis.lemma}, refers to {analysis.dependency}), "
+                response_string += f" (from {analysis.lemma}), "
             else:
                 response_string += ", "
             response_string += f"{analysis.pos_explanation}"

@@ -29,7 +29,7 @@ class Benchmark(unittest.TestCase):
             logging.info(f"Getting translations for {sentence} ...")
             try:
                 openai_response = generate_translation(sentence["sentence"])
-                self.assertEqual(openai_response.language, sentence['language'])
+                self.assertEqual(openai_response.language_code, sentence['language'])
             except ValidationError as de:
                 logging.error(f"Error serializing JSON to dataclass: {de}")
                 error_count = error_count + 1

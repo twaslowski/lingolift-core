@@ -30,12 +30,14 @@ class TestClient(IsolatedAsyncioTestCase):
         requests.post.return_value.status_code = 200
         requests.post.return_value.json.return_value = {
             "translation": "translation",
-            "language": "language"
+            "language_name": "german",
+            "language_code": "de"
         }
         translation = await self.client.fetch_translation("some sentence")
         self.assertIsInstance(translation, Translation)
         self.assertEqual(translation.translation, "translation")
-        self.assertEqual(translation.language, "language")
+        self.assertEqual(translation.language_name, "german")
+        self.assertEqual(translation.language_code, "de")
 
     async def test_translation_unexpected_error(self):
         requests.post = Mock()

@@ -1,3 +1,4 @@
+import iso639
 from shared.model.literal_translation import LiteralTranslation
 from shared.model.response_suggestion import ResponseSuggestion
 from shared.model.translation import Translation
@@ -16,6 +17,7 @@ def generate_translation(sentence: str) -> Translation:
     context = [Message(role=SYSTEM, content=TRANSLATION_SYSTEM_PROMPT),
                Message(role=USER, content=TRANSLATION_USER_PROMPT + sentence)]
     response = openai_exchange(context, json_mode=True)
+    response['language_name'] = iso639.to_name(response['language_code'])
     return Translation(**response)
 
 

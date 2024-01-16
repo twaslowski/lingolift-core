@@ -4,7 +4,7 @@ The source language should be returned as a ISO-3166 alpha-2 code.
 Provide the response in the following JSON structure. For example:
 {
   "translation": "Where is the Library?",
-  "language": "ES"
+  "language_code": "ES"
 }
 """
 
