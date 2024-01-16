@@ -28,12 +28,15 @@ def perform_analysis(sentence: str, language_iso_code: str) -> list[SyntacticalA
     nlp = spacy.load(model)
     doc = nlp(sentence)
 
+    # this is honestly kind of hacky because it doesn't allow for any elegant validation logic;
+    # inlining everything may not be sustainable in the long run
     return [SyntacticalAnalysis(
         word=str(token.text),
         lemma=str(token.lemma_),
         morphology=str(token.morph),
         pos=str(token.pos_),
-        pos_explanation=str(spacy.explain(token.pos_)).capitalize()
+        pos_explanation=str(spacy.explain(token.pos_)).capitalize(),
+        dependency=str([a.text for a in token.ancestors][0]) if [a.text for a in token.ancestors] else ""
     ) for token in doc]
 
 

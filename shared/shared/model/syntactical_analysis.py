@@ -6,4 +6,5 @@ class SyntacticalAnalysis(BaseModel):
     morphology: str
     lemma: str
     pos: str
+    dependency: str
     pos_explanation: str

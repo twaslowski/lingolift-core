@@ -135,11 +135,16 @@ def coalesce_analyses(literal_translations: Union[list[LiteralTranslation], Appl
         analysis = find_analysis(word.word, syntactical_analysis)
         response_string += f"*{word.word}*: {word.translation}"
         if analysis:
-            if analysis.lemma != analysis.word:
-                response_string += f" (from {analysis.lemma}), "
+            if analysis.lemma.lower() != analysis.word.lower():
+                response_string += f" (from {analysis.lemma}, refers to {analysis.dependency}), "
             else:
                 response_string += ", "
-            response_string += f"{analysis.pos_explanation}, {analysis.morphology}\n\n"
+            response_string += f"{analysis.pos_explanation}"
+            if analysis.morphology != "":
+                response_string += f"; "
+                response_string += f"{analysis.morphology}\n\n"
+            else:
+                response_string += "\n\n"
         else:
             response_string += "\n\n"
     return response_string
@@ -154,7 +159,7 @@ def find_analysis(word: str, syntactical_analyses: list[SyntacticalAnalysis]) ->
     if type(syntactical_analyses) == ApplicationError:
         return None
     for analysis in syntactical_analyses:
-        if analysis.word == word and analysis.morphology != '':
+        if analysis.word == word:
             return analysis
     return None
 

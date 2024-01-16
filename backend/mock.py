@@ -82,16 +82,18 @@ def get_responses():
 @app.route('/syntactical-analysis', methods=['POST'])
 def get_syntactical_analysis():
     time.sleep(1)
-    response = [{'word': 'Как', 'morphology': '', 'lemma': 'как', 'pos': 'SCONJ',
+    response = [{'word': 'Как', 'morphology': '', 'lemma': 'как', 'pos': 'SCONJ', 'dependency': 'тебя',
                  'pos_explanation': 'Subordinating conjunction'},
-                {'word': 'у', 'morphology': '', 'lemma': 'у', 'pos': 'ADP', 'pos_explanation': 'Adposition'},
+                {'word': 'у', 'morphology': '', 'lemma': 'у', 'pos': 'ADP', 'dependency': 'тебя',
+                 'pos_explanation': 'Adposition'},
                 {'word': 'тебя', 'morphology': 'Case=Gen|Number=Sing|Person=Second', 'lemma': 'тебя', 'pos': 'PRON',
-                 'pos_explanation': 'Pronoun'},
-                {'word': 'сегодня', 'morphology': 'Degree=Pos', 'lemma': 'сегодня', 'pos': 'ADV',
+                 'dependency': '', 'pos_explanation': 'Pronoun'},
+                {'word': 'сегодня', 'morphology': 'Degree=Pos', 'lemma': 'сегодня', 'pos': 'ADV', 'dependency': 'дела',
                  'pos_explanation': 'Adverb'},
                 {'word': 'дела', 'morphology': 'Animacy=Inan|Case=Gen|Gender=Neut|Number=Sing', 'lemma': 'дело',
-                 'pos': 'NOUN', 'pos_explanation': 'Noun'},
-                {'word': '?', 'morphology': '', 'lemma': '?', 'pos': 'PUNCT', 'pos_explanation': 'Punctuation'}]
+                 'pos': 'NOUN', 'dependency': 'тебя', 'pos_explanation': 'Noun'},
+                {'word': '?', 'morphology': '', 'lemma': '?', 'pos': 'PUNCT', 'dependency': 'тебя',
+                 'pos_explanation': 'Punctuation'}]
     analysis = [SyntacticalAnalysis(**syntactical_analysis) for syntactical_analysis in response]
     return jsonify([syntactical_analysis.model_dump() for syntactical_analysis in analysis])
 
