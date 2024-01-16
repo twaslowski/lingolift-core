@@ -4,7 +4,7 @@ from shared.model.error import ApplicationError
 from shared.model.literal_translation import LiteralTranslation
 from shared.model.syntactical_analysis import SyntacticalAnalysis
 
-from app import app
+from backend import app
 
 
 class TestApp(TestCase):
