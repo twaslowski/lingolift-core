@@ -21,7 +21,7 @@ def openai_exchange(messages: list[Message], json_mode: bool = False) -> dict:
     Note: If this was used in an interactive chat context, this should return a Message() object to track session state.
     However, in this context, we're simply consuming the responses without need for state, so this is fine.
     """
-    logging.info(f"message: {messages[1].content}")
+    logging.info(f"Sending messages to OpenAI API: {messages}")
     response_format = "json_object" if json_mode else "text"
     # mypy complains about the usage of the create() function, but clearly it works
     completion = client.chat.completions.create(  # type: ignore

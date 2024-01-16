@@ -45,3 +45,13 @@ You will receive a JSON with a sentence and one or multiple words, and provide a
 LITERAL_TRANSLATIONS_USER_PROMPT = """
 Translate the word(s) '{}' in the context of the following sentence: '{}'.
 """
+
+LEGIBLE_UPOS_SYSTEM_PROMPT = """
+Given a word with a set of universal part-of-speech tags, provide a concise, one-sentence explanation of it. 
+DO NOT mention a tag, simply explain the morphology of the word. Return your response in the following JSON structure:
+{
+    "explanation": "PLACEHOLDER_EXPLANATION"
+}
+"""
+
+LEGIBLE_UPOS_USER_PROMPT = "Explain the following universal part-of-speech tag: {}"

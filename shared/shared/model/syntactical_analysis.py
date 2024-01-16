@@ -5,4 +5,5 @@ class SyntacticalAnalysis(BaseModel):
     word: str
     morphology: str
     lemma: str
-    dependencies: str
+    pos: str
+    pos_explanation: str

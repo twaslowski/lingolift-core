@@ -7,7 +7,8 @@ from flask import Flask, jsonify, request
 from flask_cors import CORS
 from shared.model.error import ApplicationError
 
-from service.generate import generate_translation, generate_responses, generate_literal_translations
+from service.generate import generate_translation, generate_responses, generate_literal_translations, \
+    generate_legible_upos
 from service.literal_translation import SentenceTooLongException, LITERAL_TRANSLATION_MAX_UNIQUE_WORDS
 from service.spacy_adapter import perform_analysis, LanguageNotAvailableException, models
 
@@ -54,21 +55,22 @@ def get_literal_translation_languages():
     return jsonify(list(models.keys())), 200
 
 
-@app.route('/', methods=['POST'])
-def get_root():
-    return jsonify({'message': 'Hello World!'})
-
-
 @app.route('/syntactical-analysis', methods=['POST'])
 def get_syntactical_analysis():
     sentence = request.json.get('sentence')
     language = request.json.get('language')
     try:
         analysis = perform_analysis(sentence, language)
-        return jsonify(analysis)
-    except LanguageNotAvailableException:
-        return jsonify(
-            ApplicationError(error_message='Grammatical analysis is not available for this language').model_dump()), 400
+        return jsonify([a.model_dump() for a in analysis])
+    except LanguageNotAvailableException as e:
+        return jsonify(ApplicationError(error_message=e.error_message).model_dump()), 400
+
+
+@app.route('/syntactical-analysis/upos', methods=['POST'])
+def get_syntactical_analysis_upos():
+    upos = request.json.get('upos')
+    response = generate_legible_upos(upos)
+    return jsonify(response.model_dump())
 
 
 if __name__ == "__main__":

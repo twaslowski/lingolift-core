@@ -22,8 +22,8 @@ pt-core-news-sm = {url = "https://github.com/explosion/spacy-models/releases/dow
 es-core-news-sm = {url = "https://github.com/explosion/spacy-models/releases/download/es_core_news_sm-3.7.0/es_core_news_sm-3.7.0.tar.gz"}
 mypy = "^1.8.0"
 pytest = "^7.4.4"
-shared = {path = "../shared"}
 iso639 = "^0.1.4"
+shared = {path = "../shared"}
 
 
 [build-system]
