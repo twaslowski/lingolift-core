@@ -47,9 +47,9 @@ async def main() -> None:
                 try:
                     sentence = find_latest_user_message(st.session_state.messages)['content']
                     translation = await client.fetch_translation(sentence)
-                except Exception as e:
-                    render_message(f"An error occurred: {e}", 0.025)
-            render_message(stringify_translation(sentence, translation), 0.025)
+                    render_message(stringify_translation(sentence, translation), 0.025)
+                except ApplicationError:
+                    render_message(f"An error occurred while fetching the translation. Sorry! :(", 0.025)
 
             with st.spinner("Fetching suggestions and syntactical analysis ..."):
                 async with asyncio.TaskGroup() as tg:
