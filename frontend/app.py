@@ -44,24 +44,29 @@ async def main() -> None:
         # Display assistant response in chat message container
         with st.chat_message("assistant"):
             render_message("Translating ...", 0.025)
-            sentence = find_latest_user_message(st.session_state.messages)['content']
-            translation = await client.fetch_translation(sentence)
-            render_message(stringify_translation(sentence, translation), 0.025)
 
-            gif_md = display_loading_gif()
-            async with asyncio.TaskGroup() as tg:
-                suggestions = await tg.create_task(client.fetch_response_suggestions(sentence))
-                literal_translations = await tg.create_task(client.fetch_literal_translations(sentence))
-                syntactical_analysis = await tg.create_task(
-                    client.fetch_syntactical_analysis(sentence, translation.language))
+            try:
+                sentence = find_latest_user_message(st.session_state.messages)['content']
+                translation = await client.fetch_translation(sentence)
+                render_message(stringify_translation(sentence, translation), 0.025)
 
-            gif_md.empty()
-            analysis_rendered = coalesce_analyses(literal_translations, syntactical_analysis)
-            render_message(stringify_response_suggestions(suggestions), 0.025)
-            render_message(analysis_rendered, 0.025)
+                gif_md = display_loading_gif()
+                async with asyncio.TaskGroup() as tg:
+                    suggestions = await tg.create_task(client.fetch_response_suggestions(sentence))
+                    literal_translations = await tg.create_task(client.fetch_literal_translations(sentence))
+                    syntactical_analysis = await tg.create_task(
+                        client.fetch_syntactical_analysis(sentence, translation.language))
 
-        # Add assistant response to chat history
-        st.session_state.messages.append({"role": "assistant", "content": translation})
+                gif_md.empty()
+                analysis_rendered = coalesce_analyses(literal_translations, syntactical_analysis)
+                render_message(stringify_response_suggestions(suggestions), 0.025)
+                render_message(analysis_rendered, 0.025)
+
+                # Add assistant response to chat history
+                st.session_state.messages.append({"role": "assistant", "content": translation})
+                st.session_state.messages.append({"role": "assistant", "content": suggestions})
+            except Exception as e:
+                render_message(f"An error occurred: {e}", 0.025)
 
 
 async def render_loading_placeholder(interval: float, event: asyncio.Event):
