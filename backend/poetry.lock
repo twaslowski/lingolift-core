@@ -1433,7 +1433,7 @@ name = "shared"
 version = "0.1.0"
 description = ""
 optional = false
-python-versions = "3.11.6"
+python-versions = "^3.9"
 files = []
 develop = false
 
@@ -1944,4 +1944,4 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "2.0"
 python-versions = "3.11.6"
-content-hash = "aa72239b29fe2e1ecca8fd52479e51fd3a8a9463f1c40c97d8576b500bc1207e"
+content-hash = "8c5cd4925606ef0f371b23a2cc33624e1ebeea43ca4150ce14e76a47f0200b9a"

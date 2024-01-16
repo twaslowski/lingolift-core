@@ -91,7 +91,7 @@ translated unambiguously.
 
 This endpoint provides what is essential part-of-speech tagging using the spaCy NLP library.
 It is important to provide the language, because spaCy uses different models for each language, which have to be loaded.
-If there is no specific model available for the language, a general-purpose one will be used.
+
 If no model is found to perform the syntactical analysis with, a response with a `400` status code and an error message
 will be returned.
 
@@ -106,31 +106,17 @@ will be returned.
 
     200 0K, [
         {
-            "word": "donde",
+            "dependencies": "biblioteca",
             "lemma": "donde",
-            "morphology": "donde",
-            "dependencies": "donde"
-        },
-        {
-            "word": "esta",
-            "lemma": "donde",
-            "morphology": "donde",
-            "dependencies": "donde"
-        },
+            "morphology": "PronType=Ind",
+            "word": "donde"
+            },
+            {
+            "dependencies": "biblioteca",
+            "lemma": "este",
+            "morphology": "Gender=Fem|Number=Sing|PronType=Dem",
+            "word": "esta"
+            },
         ...
     ]
 
-In case the language is not available:
-
-**Request**
-
-    POST /syntactical-analysis -d {
-        "sentence": "¿Donde esta la biblioteca?",
-        "language": "Tamil" // i don't think even the general-purpose model supports this
-    }
-
-**Response**
-
-    400 BAD REQUEST, {
-        "error_message": "Grammatical analysis is not available for this language"
-    }

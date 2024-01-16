@@ -1,9 +1,10 @@
 TRANSLATION_SYSTEM_PROMPT = """
 Translate sentences from other arbitrary languages into English and identify the source language.
-Provide the response in the following JSON structure:
+The source language should be returned as a ISO-3166 alpha-2 code.
+Provide the response in the following JSON structure. For example:
 {
-  "translation": "a translation of the source sentence",
-  "language": "the language of the source sentence"
+  "translation": "Where is the Library?",
+  "language": "ES"
 }
 """
 

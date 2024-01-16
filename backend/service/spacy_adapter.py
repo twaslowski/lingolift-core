@@ -2,11 +2,11 @@ import spacy
 from dotenv import load_dotenv
 
 models = {
-    "german": "de_core_news_sm",
-    "russian": "ru_core_news_sm",
-    "spanish": "es-core-news-sm",
-    "french": "fr-core-news-md",
-    "portuguese": "pt-core-news-sm",
+    "DE": "de_core_news_sm",
+    "RU": "ru_core_news_sm",
+    "ES": "es_core_news_sm",
+    "FR": "fr_core_news_md",
+    "PT": "pt_core_news_sm",
 }
 
 
@@ -15,7 +15,7 @@ class LanguageNotAvailableException(Exception):
 
 
 def perform_analysis(sentence: str, language: str) -> list[dict]:
-    language_key = models.get(language.lower())
+    language_key = models.get(language.upper())
     if language_key is None:
         raise LanguageNotAvailableException(f"Language {language} is not available.")
     nlp = spacy.load(language_key)

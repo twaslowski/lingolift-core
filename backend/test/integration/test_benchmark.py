@@ -12,10 +12,11 @@ from service.generate import generate_responses, generate_translation, generate_
 
 class Benchmark(unittest.TestCase):
     BENCHMARK_SENTENCES = [
-        {"sentence": "Как у тебя сегодня дела?", "language": "russian"},
-        {"sentence": "Hvordan har du det i dag?", "language": "norwegian"},
-        {"sentence": "Apa kabarmu hari ini?", "language": "indonesian"},
-        {"sentence": "Como você está hoje?", "language": "portuguese"}
+        {"sentence": "Как у тебя сегодня дела?", "language": "RU"},
+        {"sentence": "Wie viel kostet ein Bier?‘", "language": "DE"},
+        {"sentence": "donde esta la biblioteca?", "language": "ES"},
+        {"sentence": "Como você está hoje?", "language": "PT"},
+        {"sentence": "c'est la vie", "language": "FR"}
     ]
 
     def setUp(self) -> None:
@@ -28,7 +29,7 @@ class Benchmark(unittest.TestCase):
             logging.info(f"Getting translations for {sentence} ...")
             try:
                 openai_response = generate_translation(sentence["sentence"])
-                self.assertEqual(openai_response.language.lower(), sentence['language'])
+                self.assertEqual(openai_response.language, sentence['language'])
             except ValidationError as de:
                 logging.error(f"Error serializing JSON to dataclass: {de}")
                 error_count = error_count + 1
