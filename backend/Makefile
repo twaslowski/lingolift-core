@@ -10,7 +10,7 @@ test:
 	@export PYTHONPATH=./; poetry run pytest test/unit
 
 integration-test:
-	@poetry run pytest test/integration
+	@export PYTHONPATH=./; poetry run pytest test/integration
 
 lint:
 	@poetry run mypy  --no-namespace-packages --ignore-missing-imports .

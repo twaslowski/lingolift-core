@@ -16,6 +16,9 @@ models = {
 class LanguageNotAvailableException(Exception):
     error_message: str
 
+    def __init__(self, error_message: str):
+        self.error_message = error_message
+
 
 def perform_analysis(sentence: str, language_iso_code: str) -> list[SyntacticalAnalysis]:
     model = models.get(language_iso_code.upper(), None)

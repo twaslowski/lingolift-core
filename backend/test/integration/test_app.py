@@ -30,7 +30,8 @@ class TestApp(TestCase):
         client = app.test_client()
         response = client.post("http://localhost:5001/syntactical-analysis", json={
             "sentence": "test sentence",
-            "language": "russian"})
+            "language": "RU"}
+                               )
         self.assertEqual(response.status_code, 200)
         for a in response.json:
             SyntacticalAnalysis(**a)
@@ -39,6 +40,16 @@ class TestApp(TestCase):
         client = app.test_client()
         response = client.post("http://localhost:5001/syntactical-analysis", json={
             "sentence": "test sentence",
-            "language": "non-existent-language"})
+            "language": "non-existent-language"}
+                               )
         self.assertEqual(response.status_code, 400)
         ApplicationError(**response.json)
+
+    def test_upos_explanation_error(self):
+        client = app.test_client()
+        response = client.post("http://localhost:5001/syntactical-analysis/upos-explanation", json={
+            "word": "test"
+        })
+        self.assertEqual(response.status_code, 400)
+        error = ApplicationError(**response.json)
+        self.assertIn("Missing required parameter", error.error_message)
