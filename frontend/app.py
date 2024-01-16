@@ -80,7 +80,7 @@ async def render_loading_placeholder(interval: float, event: asyncio.Event):
 
 def stringify_translation(sentence: str, translation: Translation) -> str:
     return f"### Translation\n\n" \
-           f"'*{sentence}*' is {translation.language} and translates to '*{translation.translation}*'"
+           f"'*{sentence}*' is {translation.language.capitalize()} and translates to '*{translation.translation}*'"
 
 
 def stringify_response_suggestions(response_suggestions: list[ResponseSuggestion]) -> str:
@@ -132,12 +132,14 @@ def coalesce_analyses(literal_translations: Union[list[LiteralTranslation], Appl
         response_string += f"Morphological analysis failed: {syntactical_analysis.error_message}; " \
                            f"however, the literal translation is available.\n\n"
     for word in literal_translations:
-        word_analysis = find_analysis(word.word, syntactical_analysis)
+        analysis = find_analysis(word.word, syntactical_analysis)
         response_string += f"*{word.word}*: {word.translation}"
-        if word_analysis:
-            response_string += f" (lemma: {word_analysis.lemma}, " \
-                               f"morphology {word_analysis.morphology}, " \
-                               f"dependencies: {word_analysis.dependencies})\n\n"
+        if analysis:
+            if analysis.lemma != analysis.word:
+                response_string += f" (from {analysis.lemma}), "
+            else:
+                response_string += ", "
+            response_string += f"{analysis.pos_explanation}, {analysis.morphology}\n\n"
         else:
             response_string += "\n\n"
     return response_string

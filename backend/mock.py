@@ -1,10 +1,15 @@
 import logging
-import openai
 import os
 import time
+
+import openai
 from dotenv import load_dotenv
 from flask import Flask, jsonify
 from flask_cors import CORS
+from shared.model.literal_translation import LiteralTranslation
+from shared.model.response_suggestion import ResponseSuggestion
+from shared.model.syntactical_analysis import SyntacticalAnalysis
+from shared.model.translation import Translation
 
 # setup
 load_dotenv()
@@ -24,7 +29,8 @@ def get_translation():
         "translation": "How is it going with you today?",
         "language": "russian",
     }
-    return jsonify(response)
+    translation = Translation(**response)
+    return jsonify(translation.model_dump())
 
 
 @app.route('/literal-translation', methods=['POST'])
@@ -52,7 +58,8 @@ def get_literal_translation():
             "word": "дела"
         }
     ]
-    return jsonify(response)
+    literal_translations = [LiteralTranslation(**literal_translation) for literal_translation in response]
+    return jsonify([literal_translation.model_dump() for literal_translation in literal_translations])
 
 
 @app.route('/response-suggestion', methods=['POST'])
@@ -68,51 +75,25 @@ def get_responses():
             "translation": "Not very well, but I hope everything will be fine. How about you?"
         }
     ]
-    return jsonify(response)
+    suggestions = [ResponseSuggestion(**suggestion) for suggestion in response]
+    return jsonify([suggestion.model_dump() for suggestion in suggestions])
 
 
 @app.route('/syntactical-analysis', methods=['POST'])
 def get_syntactical_analysis():
     time.sleep(1)
-    response = [
-        {
-            "word": "Как",
-            "lemma": "как",
-            "morphology": "",
-            "dependencies": "тебя",
-        },
-        {
-            "word": "у",
-            "lemma": "у",
-            "morphology": "",
-            "dependencies": "тебя",
-        },
-        {
-            "word": "тебя",
-            "lemma": "тебя",
-            "morphology": "Case=Gen|Number=Sing|Person=Second",
-            "dependencies": "тебя",
-        },
-        {
-            "word": "сегодня",
-            "lemma": "сегодня",
-            "morphology": "Degree=Pos",
-            "dependencies": "дела",
-        },
-        {
-            "word": "дела",
-            "lemma": "дело",
-            "morphology": "Animacy=Inan|Case=Gen|Gender=Neut|Number=Sing",
-            "dependencies": "тебя",
-        },
-        {
-            "word": "?",
-            "lemma": "?",
-            "morphology": "",
-            "dependencies": "тебя",
-        }
-    ]
-    return jsonify(response)
+    response = [{'word': 'Как', 'morphology': '', 'lemma': 'как', 'pos': 'SCONJ',
+                 'pos_explanation': 'Subordinating conjunction'},
+                {'word': 'у', 'morphology': '', 'lemma': 'у', 'pos': 'ADP', 'pos_explanation': 'Adposition'},
+                {'word': 'тебя', 'morphology': 'Case=Gen|Number=Sing|Person=Second', 'lemma': 'тебя', 'pos': 'PRON',
+                 'pos_explanation': 'Pronoun'},
+                {'word': 'сегодня', 'morphology': 'Degree=Pos', 'lemma': 'сегодня', 'pos': 'ADV',
+                 'pos_explanation': 'Adverb'},
+                {'word': 'дела', 'morphology': 'Animacy=Inan|Case=Gen|Gender=Neut|Number=Sing', 'lemma': 'дело',
+                 'pos': 'NOUN', 'pos_explanation': 'Noun'},
+                {'word': '?', 'morphology': '', 'lemma': '?', 'pos': 'PUNCT', 'pos_explanation': 'Punctuation'}]
+    analysis = [SyntacticalAnalysis(**syntactical_analysis) for syntactical_analysis in response]
+    return jsonify([syntactical_analysis.model_dump() for syntactical_analysis in analysis])
 
 
 if __name__ == "__main__":
