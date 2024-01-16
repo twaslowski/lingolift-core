@@ -54,4 +54,4 @@ DO NOT mention a tag, simply explain the morphology of the word. Return your res
 }
 """
 
-LEGIBLE_UPOS_USER_PROMPT = "Explain the following universal part-of-speech tag: {}"
+LEGIBLE_UPOS_USER_PROMPT = "Explain the universal part-of-speech tag {} for the following word: {}"

@@ -2,5 +2,5 @@ from pydantic import BaseModel
 
 
 class UposExplanation(BaseModel):
-    upos: str
+    upos_feats: str
     explanation: str

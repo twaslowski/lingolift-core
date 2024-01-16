@@ -58,8 +58,8 @@ async def main() -> None:
                         client.fetch_syntactical_analysis(sentence, translation.language))
 
                 gif_md.empty()
-                analysis_rendered = coalesce_analyses(literal_translations, syntactical_analysis)
                 render_message(stringify_response_suggestions(suggestions), 0.025)
+                analysis_rendered = coalesce_analyses(literal_translations, syntactical_analysis)
                 render_message(analysis_rendered, 0.025)
 
                 # Add assistant response to chat history
@@ -121,6 +121,8 @@ def coalesce_analyses(literal_translations: Union[list[LiteralTranslation], Appl
     tagging) are available, they get coalesced in this function, meaning each word gets displayed alongside its
     translation and its morphological features. If only the literal translation is available, the translations
     are displayed. If neither or only the morphological analysis is available, the function returns an error message.
+    # todo this function is a mess, i need to come up with a smarter way of doing this
+    # potentially including a stringify() method in the SyntacticalAnalysis class might be a solution
     :param literal_translations:
     :param syntactical_analysis:
     :return:

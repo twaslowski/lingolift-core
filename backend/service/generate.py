@@ -34,9 +34,10 @@ def generate_literal_translations(sentence: str) -> list[LiteralTranslation]:
 
 
 @timed
-def generate_legible_upos(upos: str) -> UposExplanation:
+def generate_legible_upos(word: str, upos_feats: str) -> UposExplanation:
     context = [Message(role=USER, content=LEGIBLE_UPOS_SYSTEM_PROMPT),
-               Message(role=SYSTEM, content=LEGIBLE_UPOS_USER_PROMPT.format(upos))]
+               Message(role=SYSTEM, content=LEGIBLE_UPOS_USER_PROMPT.format(upos_feats, word))]
     response = openai_exchange(context)
-    response['upos'] = upos
+    response['upos_feats'] = upos_feats
+    print(response)
     return UposExplanation(**response)

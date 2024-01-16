@@ -4,9 +4,11 @@ from unittest.mock import Mock
 import requests  # type: ignore[import-untyped]
 
 from shared.client import Client, TRANSLATIONS_UNEXPECTED_ERROR, LITERAL_TRANSLATIONS_UNEXPECTED_ERROR, \
-    SYNTACTICAL_ANALYSIS_UNEXPECTED_ERROR
+    SYNTACTICAL_ANALYSIS_UNEXPECTED_ERROR, UPOS_EXPLANATIONS_UNEXPECTED_ERROR
 from shared.model.error import ApplicationError
+from shared.model.syntactical_analysis import SyntacticalAnalysis
 from shared.model.translation import Translation
+from shared.model.upos_explanation import UposExplanation
 
 
 class TestClient(IsolatedAsyncioTestCase):
@@ -87,13 +89,17 @@ class TestClient(IsolatedAsyncioTestCase):
                 "word": "some",
                 "lemma": "ein",
                 "morphology": "morphology",
-                "dependencies": "dependencies"
+                "dependency": "dependencies",
+                "pos": "DET",
+                "pos_explanation": "determiner"
             },
             {
                 "word": "sentence",
                 "lemma": "satz",
                 "morphology": "morphology",
-                "dependencies": "dependencies"
+                "dependency": "dependencies",
+                "pos": "DET",
+                "pos_explanation": "determiner"
             }
         ]
         analyses = await self.client.fetch_syntactical_analysis("some sentence", "de")
@@ -117,3 +123,28 @@ class TestClient(IsolatedAsyncioTestCase):
         error = await self.client.fetch_syntactical_analysis("some sentence", "de")
         self.assertIsInstance(error, ApplicationError)
         self.assertEqual(error.error_message, SYNTACTICAL_ANALYSIS_UNEXPECTED_ERROR)
+
+    async def test_upos_explanation_happy_path(self):
+        requests.post = Mock()
+        requests.post.return_value.status_code = 200
+        analysis = SyntacticalAnalysis(word="word", lemma="lemma",
+                                       pos="DET", morphology="morphology",
+                                       dependency="dependency", pos_explanation="pos_explanation")
+        requests.post.return_value.json.return_value = {
+            "upos_feats": "DET",
+            "explanation": "determiner",
+        }
+        explanation = await self.client.fetch_upos_explanation(analysis)
+        self.assertIsInstance(explanation, UposExplanation)
+        self.assertEqual(explanation.upos_feats, "DET")
+
+    async def test_upos_explanation_unexpected_error(self):
+        requests.post = Mock()
+        requests.post.return_value.status_code = 500
+        requests.post.return_value.json.return_value = None
+        error = await self.client.fetch_upos_explanation(SyntacticalAnalysis(word="word", lemma="lemma",
+                                                                             pos="DET", morphology="morphology",
+                                                                             dependency="dependency",
+                                                                             pos_explanation="pos_explanation"))
+        self.assertIsInstance(error, ApplicationError)
+        self.assertEqual(error.error_message, UPOS_EXPLANATIONS_UNEXPECTED_ERROR)

@@ -66,10 +66,13 @@ def get_syntactical_analysis():
         return jsonify(ApplicationError(error_message=e.error_message).model_dump()), 400
 
 
-@app.route('/syntactical-analysis/upos', methods=['POST'])
+@app.route('/syntactical-analysis/upos-explanation', methods=['POST'])
 def get_syntactical_analysis_upos():
-    upos = request.json.get('upos')
-    response = generate_legible_upos(upos)
+    upos = request.json.get('upos_feats')
+    word = request.json.get('word')
+    if not upos or not word:
+        return jsonify(ApplicationError(error_message="Missing required parameter").model_dump()), 400
+    response = generate_legible_upos(word, upos)
     return jsonify(response.model_dump())
 
 
