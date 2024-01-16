@@ -710,6 +710,16 @@ files = [
 ]
 
 [[package]]
+name = "iso639"
+version = "0.1.4"
+description = "ISO639-2 support for Python."
+optional = false
+python-versions = "*"
+files = [
+    {file = "iso639-0.1.4.tar.gz", hash = "sha256:88b70cf6c64ee9c2c2972292818c8beb32db9ea6f4de1f8471a9b081a3d92e98"},
+]
+
+[[package]]
 name = "itsdangerous"
 version = "2.1.2"
 description = "Safely pass data to untrusted environments and back."
@@ -1944,4 +1954,4 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "2.0"
 python-versions = "3.11.6"
-content-hash = "8c5cd4925606ef0f371b23a2cc33624e1ebeea43ca4150ce14e76a47f0200b9a"
+content-hash = "538a8c443dd1eb5c96cb1f06d08f67f77bb976ed91cfd4d9e5ef4d38ddc75814"
