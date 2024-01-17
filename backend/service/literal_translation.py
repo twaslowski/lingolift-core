@@ -2,6 +2,7 @@ import logging
 import re
 from concurrent.futures import ThreadPoolExecutor
 
+from shared.exception import ApplicationException
 from shared.model.literal_translation import LiteralTranslation
 
 from llm.gpt_adapter import openai_exchange
@@ -25,7 +26,8 @@ def generate_literal_translation(sentence: str) -> list[LiteralTranslation]:
     chunks = chunk_sentence(sentence)
     if len(chunks) > LITERAL_TRANSLATION_MAX_UNIQUE_WORDS:
         logging.error(f"'{sentence}' too long for literal translation")
-        raise SentenceTooLongException
+        raise SentenceTooLongException(f"Too many unique words for literal translation; "
+                                       f"maximum words {LITERAL_TRANSLATION_MAX_UNIQUE_WORDS}")
     result = []
     # Create a ThreadPoolExecutor to process chunks concurrently
     with ThreadPoolExecutor() as executor:
@@ -75,5 +77,5 @@ def chunk_sentence(sentence: str, chunk_size: int = 1) -> list[list[str]]:
     return chunks  # type: ignore
 
 
-class SentenceTooLongException(Exception):
+class SentenceTooLongException(ApplicationException):
     pass

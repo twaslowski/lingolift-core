@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from shared.model.error import ApplicationError
+from shared.exception import ApplicationException
 from shared.model.literal_translation import LiteralTranslation
 from shared.model.syntactical_analysis import SyntacticalAnalysis
 
@@ -15,8 +15,8 @@ class TestApp(TestCase):
             "sentence": "this sentence is too long because it contains too many unique words a b c d e f"})
         self.assertEqual(response.status_code, 400)
         print(response.json)
-        # implicitely checks that the response is a ApplicationError; no assertion because
-        ApplicationError(**response.json)
+        # implicitely checks that the response is a ApplicationException; no assertion because
+        ApplicationException(**response.json)
 
     def test_literal_translation_happy_path(self):
         client = app.test_client()
@@ -43,7 +43,7 @@ class TestApp(TestCase):
             "language": "non-existent-language"}
                                )
         self.assertEqual(response.status_code, 400)
-        ApplicationError(**response.json)
+        ApplicationException(**response.json)
 
     def test_upos_explanation_error(self):
         client = app.test_client()
@@ -51,5 +51,5 @@ class TestApp(TestCase):
             "word": "test"
         })
         self.assertEqual(response.status_code, 400)
-        error = ApplicationError(**response.json)
-        self.assertIn("Missing required parameter", error.error_message)
+        error = ApplicationException(**response.json)
+        self.assertIn("Missing parameter", error.error_message)

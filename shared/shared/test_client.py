@@ -5,7 +5,7 @@ import requests  # type: ignore[import-untyped]
 
 from shared.client import Client, TRANSLATIONS_UNEXPECTED_ERROR, LITERAL_TRANSLATIONS_UNEXPECTED_ERROR, \
     SYNTACTICAL_ANALYSIS_UNEXPECTED_ERROR, UPOS_EXPLANATIONS_UNEXPECTED_ERROR
-from shared.model.error import ApplicationError
+from shared.exception import ApplicationException
 from shared.model.syntactical_analysis import SyntacticalAnalysis
 from shared.model.translation import Translation
 from shared.model.upos_explanation import UposExplanation
@@ -44,7 +44,7 @@ class TestClient(IsolatedAsyncioTestCase):
         requests.post.return_value.status_code = 500
         requests.post.return_value.json.return_value = None
         error = await self.client.fetch_translation("some sentence")
-        self.assertIsInstance(error, ApplicationError)
+        self.assertIsInstance(error, ApplicationException)
         self.assertEqual(error.error_message, TRANSLATIONS_UNEXPECTED_ERROR)
 
     async def test_literal_translation_happy_path(self):
@@ -71,7 +71,7 @@ class TestClient(IsolatedAsyncioTestCase):
             "error_message": "Too many unique words for literal translation"
         }
         error = await self.client.fetch_literal_translations("some sentence")
-        self.assertIsInstance(error, ApplicationError)
+        self.assertIsInstance(error, ApplicationException)
         self.assertEqual(error.error_message, "Too many unique words for literal translation")
 
     async def test_literal_translation_unexpected_error(self):
@@ -79,7 +79,7 @@ class TestClient(IsolatedAsyncioTestCase):
         requests.post.return_value.status_code = 500
         requests.post.return_value.json.return_value = None
         error = await self.client.fetch_literal_translations("some sentence")
-        self.assertIsInstance(error, ApplicationError)
+        self.assertIsInstance(error, ApplicationException)
         self.assertEqual(error.error_message, LITERAL_TRANSLATIONS_UNEXPECTED_ERROR)
 
     async def test_syntactical_analysis_happy_path(self):
@@ -115,7 +115,7 @@ class TestClient(IsolatedAsyncioTestCase):
             "error_message": "Language not available"
         }
         error = await self.client.fetch_syntactical_analysis("some sentence", "de")
-        self.assertIsInstance(error, ApplicationError)
+        self.assertIsInstance(error, ApplicationException)
         self.assertEqual(error.error_message, "Language not available")
 
     async def test_syntactical_analysis_unexpected_error(self):
@@ -123,7 +123,7 @@ class TestClient(IsolatedAsyncioTestCase):
         requests.post.return_value.status_code = 500
         requests.post.return_value.json.return_value = None
         error = await self.client.fetch_syntactical_analysis("some sentence", "de")
-        self.assertIsInstance(error, ApplicationError)
+        self.assertIsInstance(error, ApplicationException)
         self.assertEqual(error.error_message, SYNTACTICAL_ANALYSIS_UNEXPECTED_ERROR)
 
     async def test_upos_explanation_happy_path(self):
@@ -148,5 +148,5 @@ class TestClient(IsolatedAsyncioTestCase):
                                                                              pos="DET", morphology="morphology",
                                                                              dependency="dependency",
                                                                              pos_explanation="pos_explanation"))
-        self.assertIsInstance(error, ApplicationError)
+        self.assertIsInstance(error, ApplicationException)
         self.assertEqual(error.error_message, UPOS_EXPLANATIONS_UNEXPECTED_ERROR)

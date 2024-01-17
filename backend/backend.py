@@ -5,11 +5,11 @@ import openai
 from dotenv import load_dotenv
 from flask import Flask, jsonify, request
 from flask_cors import CORS
-from shared.model.error import ApplicationError
+from shared.exception import ApplicationException, MissingParameterException
 
 from service.generate import generate_translation, generate_responses, generate_literal_translations, \
     generate_legible_upos
-from service.literal_translation import SentenceTooLongException, LITERAL_TRANSLATION_MAX_UNIQUE_WORDS
+from service.literal_translation import SentenceTooLongException
 from service.spacy_adapter import perform_analysis, LanguageNotAvailableException, models
 
 # setup
@@ -45,9 +45,8 @@ def get_literal_translation():
     try:
         response = generate_literal_translations(sentence)
         return jsonify([r.model_dump() for r in response])
-    except SentenceTooLongException:
-        return jsonify(ApplicationError(error_message=f"Too many unique words for literal translation; maximum words "
-                                                      f"{LITERAL_TRANSLATION_MAX_UNIQUE_WORDS}").model_dump()), 400
+    except SentenceTooLongException as e:
+        return jsonify(e.dict()), 400
 
 
 @app.route('/literal-translation/languages', methods=['GET'])
@@ -59,11 +58,13 @@ def get_literal_translation_languages():
 def get_syntactical_analysis():
     sentence = request.json.get('sentence')
     language = request.json.get('language')
+    if not sentence or not language:
+        return jsonify(MissingParameterException("language, sentence").dict()), 400
     try:
         analysis = perform_analysis(sentence, language)
         return jsonify([a.model_dump() for a in analysis])
     except LanguageNotAvailableException as e:
-        return jsonify(ApplicationError(error_message=e.error_message).model_dump()), 400
+        return jsonify(e.dict()), 400
 
 
 @app.route('/syntactical-analysis/upos-explanation', methods=['POST'])
@@ -71,7 +72,7 @@ def get_syntactical_analysis_upos():
     upos = request.json.get('upos_feats')
     word = request.json.get('word')
     if not upos or not word:
-        return jsonify(ApplicationError(error_message="Missing required parameter").model_dump()), 400
+        return jsonify(MissingParameterException("upos_feats, word").dict()), 400
     response = generate_legible_upos(word, upos)
     return jsonify(response.model_dump())
 

@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from shared.model.error import ApplicationError  # type: ignore[import-untyped]
+from shared.exception import ApplicationException  # type: ignore[import-untyped]
 from shared.model.literal_translation import LiteralTranslation  # type: ignore[import-untyped]
 from shared.model.syntactical_analysis import SyntacticalAnalysis  # type: ignore[import-untyped]
 
@@ -33,14 +33,14 @@ class TestStreamlitApp(TestCase):
             SyntacticalAnalysis(word="two", morphology="some-value", lemma="some-value", dependency="some-value",
                                 pos="some-value", pos_explanation="some-value")
         ]
-        literal_translations = ApplicationError(error_message="some error message")
+        literal_translations = ApplicationException(error_message="some error message")
         response_string = coalesce_analyses(literal_translations, analyses)
         # nothing except an error message gets displayed
         self.assertEqual(response_string.count("lemma"), 0)
         self.assertEqual(response_string.count("morphology"), 0)
 
     def test_coalesce_analyses_syntactical_analysis_error(self):
-        analyses = ApplicationError(error_message="some error message")
+        analyses = ApplicationException(error_message="some error message")
         literal_translations = [
             LiteralTranslation(word="one", translation="uno"),
             LiteralTranslation(word="two", translation="dos"),

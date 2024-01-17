@@ -2,7 +2,7 @@ from typing import Union
 
 import requests  # type: ignore[import-untyped]
 
-from shared.model.error import ApplicationError
+from shared.exception import ApplicationException
 from shared.model.literal_translation import LiteralTranslation
 from shared.model.response_suggestion import ResponseSuggestion
 from shared.model.syntactical_analysis import SyntacticalAnalysis
@@ -28,11 +28,11 @@ class Client:
         self.port = port
         self.url = f"{self.protocol}://{self.endpoint}:{self.port}"
 
-    async def fetch_translation(self, sentence: str) -> Union[Translation, ApplicationError]:
+    async def fetch_translation(self, sentence: str) -> Union[Translation, ApplicationException]:
         """
         Interacts with the /translation endpoint of the backend API.
         :param sentence: Sentence to translate
-        :return: Translation object in case of a 200 status code, ApplicationError otherwise
+        :return: Translation object in case of a 200 status code, ApplicationException otherwise
         """
         print(f"fetching translation for sentence '{sentence}'")
         response = requests.post(f"{self.url}/translation", json={"sentence": sentence})
@@ -41,13 +41,13 @@ class Client:
             return Translation(**response.json())
         # no expected error on the backend side, so no need to handle 400
         else:
-            return ApplicationError(error_message=TRANSLATIONS_UNEXPECTED_ERROR)
+            return ApplicationException(error_message=TRANSLATIONS_UNEXPECTED_ERROR)
 
-    async def fetch_literal_translations(self, sentence: str) -> Union[list[LiteralTranslation], ApplicationError]:
+    async def fetch_literal_translations(self, sentence: str) -> Union[list[LiteralTranslation], ApplicationException]:
         """
         Interacts with the /literal-translation endpoint of the backend API.
         :param sentence: Sentence for which to fetch literal translations
-        :return: list of LiteralTranslation objects in case of a 200 status code, ApplicationError otherwise
+        :return: list of LiteralTranslation objects in case of a 200 status code, ApplicationException otherwise
         """
         response = requests.post(f"{self.url}/literal-translation", json={"sentence": sentence})
         if response.status_code == 200:
@@ -55,17 +55,17 @@ class Client:
             print(f"Received literal translations for sentence '{sentence}': '{response}'")
             return [LiteralTranslation(**literal_translation) for literal_translation in response]
         elif response.status_code == 400:
-            return ApplicationError(**response.json())
+            return ApplicationException(**response.json())
         else:
-            return ApplicationError(error_message=LITERAL_TRANSLATIONS_UNEXPECTED_ERROR)
+            return ApplicationException(error_message=LITERAL_TRANSLATIONS_UNEXPECTED_ERROR)
 
     async def fetch_syntactical_analysis(self, sentence: str, language: str) -> \
-            Union[list[SyntacticalAnalysis], ApplicationError]:
+            Union[list[SyntacticalAnalysis], ApplicationException]:
         """
         Interacts with the /syntactical-analysis endpoint of the backend API.
         :param sentence: Sentence for which to fetch syntactical analysis
         :param language: Source language of the sentence; required for choosing correct spaCy model
-        :return: list of SyntacticalAnalysis objects in case of a 200 status code, ApplicationError otherwise
+        :return: list of SyntacticalAnalysis objects in case of a 200 status code, ApplicationException otherwise
         """
         response = requests.post(f"{self.url}/syntactical-analysis", json={"sentence": sentence, "language": language})
         if response.status_code == 200:
@@ -73,15 +73,15 @@ class Client:
             print(f"Received syntactical analysis for sentence '{sentence}': '{analyses}'")
             return [SyntacticalAnalysis(**analysis) for analysis in analyses]
         elif response.status_code == 400:
-            return ApplicationError(**response.json())
+            return ApplicationException(**response.json())
         else:
-            return ApplicationError(error_message=SYNTACTICAL_ANALYSIS_UNEXPECTED_ERROR)
+            return ApplicationException(error_message=SYNTACTICAL_ANALYSIS_UNEXPECTED_ERROR)
 
-    async def fetch_response_suggestions(self, sentence: str) -> Union[list[ResponseSuggestion], ApplicationError]:
+    async def fetch_response_suggestions(self, sentence: str) -> Union[list[ResponseSuggestion], ApplicationException]:
         """
         Interacts with the /response-suggestion endpoint of the backend API.
         :param sentence: Sentence for which to fetch response suggestions
-        :return: list of ResponseSuggestion objects in case of a 200 status code, ApplicationError otherwise
+        :return: list of ResponseSuggestion objects in case of a 200 status code, ApplicationException otherwise
         """
         response = requests.post(f"{self.url}/response-suggestion", json={"sentence": sentence})
         if response.status_code == 200:
@@ -89,16 +89,16 @@ class Client:
             print(f"Received response suggestions for sentence '{sentence}': '{suggestions}'")
             return [ResponseSuggestion(**suggestion) for suggestion in suggestions]
         elif response.status_code == 400:
-            return ApplicationError(**response.json())
+            return ApplicationException(**response.json())
         else:
-            return ApplicationError(error_message=RESPONSE_SUGGESTIONS_UNEXPECTED_ERROR)
+            return ApplicationException(error_message=RESPONSE_SUGGESTIONS_UNEXPECTED_ERROR)
 
     async def fetch_upos_explanation(self, syntactical_analysis: SyntacticalAnalysis) -> \
-            Union[UposExplanation, ApplicationError]:
+            Union[UposExplanation, ApplicationException]:
         """
         Interacts with the /syntactical-analysis/upos-explanation endpoint of the backend API.
         :param syntactical_analysis: SyntacticalAnalysis object for which to fetch upos explanations
-        :return: list of UposExplanation objects in case of a 200 status code, ApplicationError otherwise
+        :return: list of UposExplanation objects in case of a 200 status code, ApplicationException otherwise
         """
         payload = {"upos": syntactical_analysis.pos, "word": syntactical_analysis.word}
         response = requests.post(f"{self.url}/syntactical-analysis/upos-explanation",
@@ -108,4 +108,4 @@ class Client:
             print(f"Received upos explanations for syntactical analysis '{syntactical_analysis}': '{explanations}'")
             return UposExplanation(**explanations)
         else:
-            return ApplicationError(error_message=UPOS_EXPLANATIONS_UNEXPECTED_ERROR)
+            return ApplicationException(error_message=UPOS_EXPLANATIONS_UNEXPECTED_ERROR)

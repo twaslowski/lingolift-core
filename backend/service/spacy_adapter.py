@@ -1,6 +1,7 @@
 import iso639
 import spacy
 from dotenv import load_dotenv
+from shared.exception import ApplicationException
 
 from shared.model.syntactical_analysis import SyntacticalAnalysis
 
@@ -13,11 +14,8 @@ models = {
 }
 
 
-class LanguageNotAvailableException(Exception):
-    error_message: str
-
-    def __init__(self, error_message: str):
-        self.error_message = error_message
+class LanguageNotAvailableException(ApplicationException):
+    pass
 
 
 def perform_analysis(sentence: str, language_iso_code: str) -> list[SyntacticalAnalysis]:

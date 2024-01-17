@@ -6,7 +6,7 @@ from typing import Union, Optional
 import requests  # type: ignore[import-untyped]
 import streamlit as st
 from shared.client import Client
-from shared.model.error import ApplicationError  # type: ignore[import-untyped]
+from shared.exception import ApplicationException
 from shared.model.literal_translation import LiteralTranslation  # type: ignore[import-untyped]
 from shared.model.response_suggestion import ResponseSuggestion  # type: ignore[import-untyped]
 from shared.model.syntactical_analysis import SyntacticalAnalysis  # type: ignore[import-untyped]
@@ -41,6 +41,7 @@ async def main() -> None:
         with st.chat_message("user"):
             st.markdown(prompt)
 
+        # todo this whole flow has to be refactored, with *proper* error handling. fuck me.
         # Display assistant response in chat message container
         with st.chat_message("assistant"):
             with st.spinner("Translating"):
@@ -48,26 +49,27 @@ async def main() -> None:
                     sentence = find_latest_user_message(st.session_state.messages)['content']
                     translation = await client.fetch_translation(sentence)
                     render_message(stringify_translation(sentence, translation), 0.025)
-                except Exception as e:
-                    render_message(f"An error occurred while fetching the translation. Sorry! :(", 0.025)
+                except ApplicationException as e:
+                    st.error(e.error_message)
+                except Exception:
+                    st.error("An unexpected error has occurred.")
 
-            with st.spinner("Fetching suggestions and syntactical analysis ..."):
-                async with asyncio.TaskGroup() as tg:
-                    try:
-                        suggestions = await tg.create_task(client.fetch_response_suggestions(sentence))
-                        literal_translations = await tg.create_task(client.fetch_literal_translations(sentence))
-                        syntactical_analysis = await tg.create_task(
-                            client.fetch_syntactical_analysis(sentence, translation.language_code))
-                    except Exception as e:
-                        render_message(f"An error occurred: {e}", 0.025)
-
-            render_message(stringify_response_suggestions(suggestions), 0.025)
-            analysis_rendered = coalesce_analyses(literal_translations, syntactical_analysis)
-            render_message(analysis_rendered, 0.025)
-
-            # Add assistant response to chat history
-            st.session_state.messages.append({"role": "assistant", "content": translation})
-            st.session_state.messages.append({"role": "assistant", "content": suggestions})
+        #     with st.spinner("Fetching suggestions and syntactical analysis ..."):
+        #         try:
+        #             suggestions, literal_translations, syntactical_analysis = await asyncio.gather(
+        #                 client.fetch_response_suggestions(sentence),
+        #                 client.fetch_literal_translations(sentence),
+        #                 client.fetch_syntactical_analysis(sentence, translation.language_code))
+        #         except Exception as e:
+        #             render_message(f"An error occurred: {e}", 0.025)
+        #
+        # render_message(stringify_response_suggestions(suggestions), 0.025)
+        # analysis_rendered = coalesce_analyses(literal_translations, syntactical_analysis)
+        # render_message(analysis_rendered, 0.025)
+        #
+        # # Add assistant response to chat history
+        # st.session_state.messages.append({"role": "assistant", "content": translation})
+        # st.session_state.messages.append({"role": "assistant", "content": suggestions})
 
 
 async def render_loading_placeholder(interval: float, event: asyncio.Event):
@@ -92,10 +94,10 @@ def stringify_response_suggestions(response_suggestions: list[ResponseSuggestion
     return response_string
 
 
-async def fetch_literal_translations(sentence: str) -> Union[list[LiteralTranslation], ApplicationError]:
+async def fetch_literal_translations(sentence: str) -> Union[list[LiteralTranslation], ApplicationException]:
     response = requests.post("http://localhost:5001/literal-translation", json={"sentence": sentence})
     if response.status_code != 200:
-        return ApplicationError(**response.json())
+        return ApplicationException(**response.json())
     else:
         response = response.json()
         print(f"Received literal translations for sentence '{sentence}': '{response}'")
@@ -103,20 +105,20 @@ async def fetch_literal_translations(sentence: str) -> Union[list[LiteralTransla
 
 
 async def fetch_syntactical_analysis(sentence: str, language: str) -> Union[
-    list[SyntacticalAnalysis], ApplicationError]:
+    list[SyntacticalAnalysis], ApplicationException]:
     response = requests.post("http://localhost:5001/syntactical-analysis",
                              json={"sentence": sentence,
                                    "language": language})
     if response.status_code != 200:
-        return ApplicationError(**response.json())
+        return ApplicationException(**response.json())
     else:
         response = response.json()
         print(f"Received syntactical analysis for sentence '{sentence}': '{response}'")
         return [SyntacticalAnalysis(**syntactical_analysis) for syntactical_analysis in response]
 
 
-def coalesce_analyses(literal_translations: Union[list[LiteralTranslation], ApplicationError],
-                      syntactical_analysis: Union[list[SyntacticalAnalysis], ApplicationError]) -> str:
+def coalesce_analyses(literal_translations: Union[list[LiteralTranslation], ApplicationException],
+                      syntactical_analysis: Union[list[SyntacticalAnalysis], ApplicationException]) -> str:
     """
     If both a literal translation of the words in the sentence and the syntactical analysis (i.e. part-of-speech
     tagging) are available, they get coalesced in this function, meaning each word gets displayed alongside its
@@ -128,10 +130,10 @@ def coalesce_analyses(literal_translations: Union[list[LiteralTranslation], Appl
     :param syntactical_analysis:
     :return:
     """
-    if type(literal_translations) == ApplicationError:
+    if type(literal_translations) == ApplicationException:
         return f"The analysis failed: {literal_translations.error_message}"
     response_string = "### Vocabulary and Grammar breakdown\n\n"
-    if type(syntactical_analysis) == ApplicationError:
+    if type(syntactical_analysis) == ApplicationException:
         response_string += f"Morphological analysis failed: {syntactical_analysis.error_message}; " \
                            f"however, the literal translation is available.\n\n"
     for word in literal_translations:
@@ -159,7 +161,7 @@ def find_analysis(word: str, syntactical_analyses: list[SyntacticalAnalysis]) ->
     :param syntactical_analyses: Set of syntactical analyses for words in the sentence
     :return: The analysis for the word including the lemma, dependencies and morphology, if available.
     """
-    if type(syntactical_analyses) == ApplicationError:
+    if type(syntactical_analyses) == ApplicationException:
         return None
     for analysis in syntactical_analyses:
         if analysis.word == word:
