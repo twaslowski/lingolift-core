@@ -1,5 +1,4 @@
 import logging
-from typing import Union
 
 import requests  # type: ignore[import-untyped]
 
@@ -29,7 +28,7 @@ class Client:
         self.port = port
         self.url = f"{self.protocol}://{self.endpoint}:{self.port}"
 
-    async def fetch_translation(self, sentence: str) -> Union[Translation, ApplicationException]:
+    async def fetch_translation(self, sentence: str) -> Translation:
         """
         Interacts with the /translation endpoint of the backend API.
         :param sentence: Sentence to translate
@@ -46,7 +45,7 @@ class Client:
         else:
             raise ApplicationException(error_message=TRANSLATIONS_UNEXPECTED_ERROR)
 
-    async def fetch_literal_translations(self, sentence: str) -> Union[list[LiteralTranslation], ApplicationException]:
+    async def fetch_literal_translations(self, sentence: str) -> list[LiteralTranslation]:
         """
         Interacts with the /literal-translation endpoint of the backend API.
         :param sentence: Sentence for which to fetch literal translations
@@ -63,8 +62,7 @@ class Client:
         else:
             raise ApplicationException(error_message=LITERAL_TRANSLATIONS_UNEXPECTED_ERROR)
 
-    async def fetch_syntactical_analysis(self, sentence: str, language: str) -> \
-            Union[list[SyntacticalAnalysis], ApplicationException]:
+    async def fetch_syntactical_analysis(self, sentence: str, language: str) -> list[SyntacticalAnalysis]:
         """
         Interacts with the /syntactical-analysis endpoint of the backend API.
         :param sentence: Sentence for which to fetch syntactical analysis
@@ -82,7 +80,7 @@ class Client:
         else:
             raise ApplicationException(error_message=SYNTACTICAL_ANALYSIS_UNEXPECTED_ERROR)
 
-    async def fetch_response_suggestions(self, sentence: str) -> Union[list[ResponseSuggestion], ApplicationException]:
+    async def fetch_response_suggestions(self, sentence: str) -> list[ResponseSuggestion]:
         """
         Interacts with the /response-suggestion endpoint of the backend API.
         :param sentence: Sentence for which to fetch response suggestions
@@ -100,8 +98,7 @@ class Client:
         else:
             raise ApplicationException(error_message=RESPONSE_SUGGESTIONS_UNEXPECTED_ERROR)
 
-    async def fetch_upos_explanation(self, syntactical_analysis: SyntacticalAnalysis) -> \
-            Union[UposExplanation, ApplicationException]:
+    async def fetch_upos_explanation(self, syntactical_analysis: SyntacticalAnalysis) -> UposExplanation:
         """
         Interacts with the /syntactical-analysis/upos-explanation endpoint of the backend API.
         :param syntactical_analysis: SyntacticalAnalysis object for which to fetch upos explanations

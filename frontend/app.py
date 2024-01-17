@@ -1,8 +1,6 @@
 import asyncio
-import base64
 import logging
 import time
-from typing import Union, Optional
 
 import requests  # type: ignore[import-untyped]
 import streamlit as st
@@ -12,6 +10,7 @@ from shared.model.literal_translation import LiteralTranslation  # type: ignore[
 from shared.model.response_suggestion import ResponseSuggestion  # type: ignore[import-untyped]
 from shared.model.syntactical_analysis import SyntacticalAnalysis  # type: ignore[import-untyped]
 from shared.model.translation import Translation  # type: ignore[import-untyped]
+from shared.rendering import Stringifier, MarkupLanguage
 
 TITLE = "grammr"
 
@@ -23,6 +22,7 @@ async def main() -> None:
     backend_host = st.secrets.connection.host
     backend_port = st.secrets.connection.port
     client = Client(backend_protocol, backend_host, backend_port)
+    stringifier = Stringifier(MarkupLanguage.MARKDOWN)
 
     # Initialize chat history
     if "messages" not in st.session_state:
@@ -41,15 +41,16 @@ async def main() -> None:
         with st.chat_message("user"):
             st.markdown(prompt)
 
+        # the syntactical analysis only ever happens when the translation has been fetched successfully
         translation = None
-        # todo this whole flow has to be refactored, with *proper* error handling. fuck me.
+
         # Display assistant response in chat message container
         with st.chat_message("assistant"):
             try:
                 with st.spinner("Translating"):
                     sentence = find_latest_user_message(st.session_state.messages)['content']
                     translation = await client.fetch_translation(sentence)
-                translation_stringified = stringify_translation(sentence, translation)
+                translation_stringified = stringifier.stringify_translation(sentence, translation)
                 render_message(translation_stringified, 0.025)
                 st.session_state.messages.append({"role": "assistant", "content": translation_stringified})
             except ApplicationException as e:
@@ -69,11 +70,13 @@ async def main() -> None:
                             client.fetch_syntactical_analysis(sentence, translation.language_code),
                             return_exceptions=True)
 
-                    # render translations and syntactical analysis in one string
-                    analysis_stringified = coalesce_analyses(literal_translations, syntactical_analysis)
-                    response_suggestions_stringified = stringify_response_suggestions(suggestions)
+                    # stringify analysis, literal translation and suggestions
+                    analysis_stringified = stringifier.coalesce_analyses(literal_translations, syntactical_analysis)
+                    response_suggestions_stringified = stringifier.stringify_suggestions(suggestions)
+
+                    # render them to the chat
                     render_message(analysis_stringified, 0.025)
-                    render_message(stringify_response_suggestions(suggestions), 0.025)
+                    render_message(response_suggestions_stringified, 0.025)
 
                     # add messages to chat history
                     st.session_state.messages.append({"role": "assistant", "content": analysis_stringified})
@@ -83,87 +86,6 @@ async def main() -> None:
                 except Exception as e:
                     logging.error("Error: ", e)
                     st.error("An unexpected error has occurred.")
-
-
-async def render_loading_placeholder(interval: float, event: asyncio.Event):
-    placeholder = st.empty()
-    while not event.is_set():
-        placeholder.markdown("▌")
-        await asyncio.sleep(interval * 2)
-        placeholder.markdown("")
-        await asyncio.sleep(interval * 2)
-
-
-def stringify_translation(sentence: str, translation: Translation) -> str:
-    return f"### Translation\n\n" \
-           f"'*{sentence}*' is {translation.language_name.capitalize()} and translates to '*{translation.translation}*'"
-
-
-def stringify_response_suggestions(response_suggestions: list[ResponseSuggestion]) -> str:
-    response_string = "### Response suggestions\n\n"
-    for suggestion in response_suggestions:
-        response_string += f"*'{suggestion.suggestion}'*\n\n"
-        response_string += f"{suggestion.translation}\n\n"
-    return response_string
-
-
-async def fetch_literal_translations(sentence: str) -> Union[list[LiteralTranslation], ApplicationException]:
-    response = requests.post("http://localhost:5001/literal-translation", json={"sentence": sentence})
-    if response.status_code != 200:
-        return ApplicationException(**response.json())
-    else:
-        response = response.json()
-        print(f"Received literal translations for sentence '{sentence}': '{response}'")
-        return [LiteralTranslation(**literal_translation) for literal_translation in response]
-
-
-async def fetch_syntactical_analysis(sentence: str, language: str) -> Union[
-    list[SyntacticalAnalysis], ApplicationException]:
-    response = requests.post("http://localhost:5001/syntactical-analysis",
-                             json={"sentence": sentence,
-                                   "language": language})
-    if response.status_code != 200:
-        return ApplicationException(**response.json())
-    else:
-        response = response.json()
-        print(f"Received syntactical analysis for sentence '{sentence}': '{response}'")
-        return [SyntacticalAnalysis(**syntactical_analysis) for syntactical_analysis in response]
-
-
-def coalesce_analyses(literal_translations: list[LiteralTranslation],
-                      syntactical_analysis: list[SyntacticalAnalysis]) -> str:
-    """
-    If both a literal translation of the words in the sentence and the syntactical analysis (i.e. part-of-speech
-    tagging) are available, they get coalesced in this function, meaning each word gets displayed alongside its
-    translation and its morphological features. If only the literal translation is available, the translations
-    are displayed. If neither or only the morphological analysis is available, the function returns an error message.
-    :param literal_translations:
-    :param syntactical_analysis:
-    :return:
-    """
-    response_string = "### Vocabulary and Grammar breakdown\n\n"
-    for word in literal_translations:
-        analysis = find_analysis(word.word, syntactical_analysis)
-        response_string += f"*{word.word}*: {word.translation}"
-        if analysis:
-            response_string += f"; {analysis.stringify()}\n\n"
-        else:
-            response_string += "\n\n"
-    return response_string
-
-
-def find_analysis(word: str, syntactical_analyses: list[SyntacticalAnalysis]) -> Optional[SyntacticalAnalysis]:
-    """
-    :param word: Word from the literal translation
-    :param syntactical_analyses: Set of syntactical analyses for words in the sentence
-    :return: The analysis for the word including the lemma, dependencies and morphology, if available.
-    """
-    if type(syntactical_analyses) == ApplicationException:
-        return None
-    for analysis in syntactical_analyses:
-        if analysis.word == word:
-            return analysis
-    return None
 
 
 def find_latest_user_message(messages: list) -> dict[str, str]:
@@ -185,19 +107,6 @@ def render_message(string: str, interval: float):
         placeholder.markdown(string[:i] + "▌")
         time.sleep(interval)
     placeholder.markdown(string)
-
-
-def display_loading_gif():
-    """### gif from local file"""
-    file_ = open("resources/loading.gif", "rb")
-    contents = file_.read()
-    data_url = base64.b64encode(contents).decode("utf-8")
-    file_.close()
-
-    return st.markdown(
-        f'<img src="data:image/gif;base64,{data_url}" height=30px alt="loading gif">',
-        unsafe_allow_html=True,
-    )
 
 
 if __name__ == '__main__':

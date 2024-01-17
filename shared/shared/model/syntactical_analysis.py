@@ -1,3 +1,5 @@
+from typing import List
+
 from pydantic import BaseModel
 
 
@@ -22,7 +24,7 @@ class SyntacticalAnalysis(BaseModel):
             return ''
 
     def stringify(self) -> str:
-        features = []
+        features: List[str] = []
         add_feature(features, self.stringify_lemma())
         add_feature(features, self.pos_explanation)
         add_feature(features, self.stringify_morphology())
