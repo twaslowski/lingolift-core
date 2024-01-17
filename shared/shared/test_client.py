@@ -43,9 +43,8 @@ class TestClient(IsolatedAsyncioTestCase):
         requests.post = Mock()
         requests.post.return_value.status_code = 500
         requests.post.return_value.json.return_value = None
-        error = await self.client.fetch_translation("some sentence")
-        self.assertIsInstance(error, ApplicationException)
-        self.assertEqual(error.error_message, TRANSLATIONS_UNEXPECTED_ERROR)
+        with self.assertRaises(ApplicationException):
+            await self.client.fetch_translation("some sentence")
 
     async def test_literal_translation_happy_path(self):
         requests.post = Mock()
@@ -70,17 +69,16 @@ class TestClient(IsolatedAsyncioTestCase):
         requests.post.return_value.json.return_value = {
             "error_message": "Too many unique words for literal translation"
         }
-        error = await self.client.fetch_literal_translations("some sentence")
-        self.assertIsInstance(error, ApplicationException)
-        self.assertEqual(error.error_message, "Too many unique words for literal translation")
+        with self.assertRaises(ApplicationException):
+            await self.client.fetch_literal_translations("some sentence")
 
     async def test_literal_translation_unexpected_error(self):
         requests.post = Mock()
         requests.post.return_value.status_code = 500
         requests.post.return_value.json.return_value = None
-        error = await self.client.fetch_literal_translations("some sentence")
-        self.assertIsInstance(error, ApplicationException)
-        self.assertEqual(error.error_message, LITERAL_TRANSLATIONS_UNEXPECTED_ERROR)
+        with self.assertRaises(ApplicationException) as e:
+            await self.client.fetch_literal_translations("some sentence")
+            self.assertEqual(e.exception.error_message, LITERAL_TRANSLATIONS_UNEXPECTED_ERROR)
 
     async def test_syntactical_analysis_happy_path(self):
         # test 200
@@ -114,17 +112,17 @@ class TestClient(IsolatedAsyncioTestCase):
         requests.post.return_value.json.return_value = {
             "error_message": "Language not available"
         }
-        error = await self.client.fetch_syntactical_analysis("some sentence", "de")
-        self.assertIsInstance(error, ApplicationException)
-        self.assertEqual(error.error_message, "Language not available")
+        with self.assertRaises(ApplicationException) as e:
+            await self.client.fetch_syntactical_analysis("some sentence", "de")
+            self.assertEqual(e.exception.error_message, "Language not available")
 
     async def test_syntactical_analysis_unexpected_error(self):
         requests.post = Mock()
         requests.post.return_value.status_code = 500
         requests.post.return_value.json.return_value = None
-        error = await self.client.fetch_syntactical_analysis("some sentence", "de")
-        self.assertIsInstance(error, ApplicationException)
-        self.assertEqual(error.error_message, SYNTACTICAL_ANALYSIS_UNEXPECTED_ERROR)
+        with self.assertRaises(ApplicationException) as e:
+            await self.client.fetch_syntactical_analysis("some sentence", "de")
+            self.assertEqual(e.exception.error_message, SYNTACTICAL_ANALYSIS_UNEXPECTED_ERROR)
 
     async def test_upos_explanation_happy_path(self):
         requests.post = Mock()
@@ -144,9 +142,9 @@ class TestClient(IsolatedAsyncioTestCase):
         requests.post = Mock()
         requests.post.return_value.status_code = 500
         requests.post.return_value.json.return_value = None
-        error = await self.client.fetch_upos_explanation(SyntacticalAnalysis(word="word", lemma="lemma",
+        with self.assertRaises(ApplicationException) as e:
+            await self.client.fetch_upos_explanation(SyntacticalAnalysis(word="word", lemma="lemma",
                                                                              pos="DET", morphology="morphology",
                                                                              dependency="dependency",
                                                                              pos_explanation="pos_explanation"))
-        self.assertIsInstance(error, ApplicationException)
-        self.assertEqual(error.error_message, UPOS_EXPLANATIONS_UNEXPECTED_ERROR)
+            self.assertEqual(e.exception.error_message, UPOS_EXPLANATIONS_UNEXPECTED_ERROR)

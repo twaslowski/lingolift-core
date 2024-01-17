@@ -1,5 +1,6 @@
 import asyncio
 import base64
+import logging
 import time
 from typing import Union, Optional
 
@@ -35,41 +36,52 @@ async def main() -> None:
     # Accept user input
     if prompt := st.chat_input("What should I translate for you?"):
         # Add user message to chat history
-        # todo this can be refactored to use the Message class from backend
         st.session_state.messages.append({"role": "user", "content": prompt})
         # Display user message in chat message container
         with st.chat_message("user"):
             st.markdown(prompt)
 
+        translation = None
         # todo this whole flow has to be refactored, with *proper* error handling. fuck me.
         # Display assistant response in chat message container
         with st.chat_message("assistant"):
-            with st.spinner("Translating"):
-                try:
+            try:
+                with st.spinner("Translating"):
                     sentence = find_latest_user_message(st.session_state.messages)['content']
                     translation = await client.fetch_translation(sentence)
-                    render_message(stringify_translation(sentence, translation), 0.025)
+                translation_stringified = stringify_translation(sentence, translation)
+                render_message(translation_stringified, 0.025)
+                st.session_state.messages.append({"role": "assistant", "content": translation_stringified})
+            except ApplicationException as e:
+                st.error(e.error_message)
+            # broader exception clause not covered in client, e.g. if client is entirely unreachable
+            except Exception as e:
+                logging.error("Error: ", e)
+                st.error("An unexpected error has occurred.")
+
+        if translation is not None:
+            with st.chat_message("assistant"):
+                try:
+                    with st.spinner("Fetching suggestions and syntactical analysis ..."):
+                        suggestions, literal_translations, syntactical_analysis = await asyncio.gather(
+                            client.fetch_response_suggestions(sentence),
+                            client.fetch_literal_translations(sentence),
+                            client.fetch_syntactical_analysis(sentence, translation.language_code))
+
+                    # render translations and syntactical analysis in one string
+                    analysis_stringified = coalesce_analyses(literal_translations, syntactical_analysis)
+                    response_suggestions_stringified = stringify_response_suggestions(suggestions)
+                    render_message(analysis_stringified, 0.025)
+                    render_message(stringify_response_suggestions(suggestions), 0.025)
+
+                    # add messages to chat history
+                    st.session_state.messages.append({"role": "assistant", "content": analysis_stringified})
+                    st.session_state.messages.append({"role": "assistant", "content": response_suggestions_stringified})
                 except ApplicationException as e:
                     st.error(e.error_message)
-                except Exception:
+                except Exception as e:
+                    logging.error("Error: ", e)
                     st.error("An unexpected error has occurred.")
-
-        #     with st.spinner("Fetching suggestions and syntactical analysis ..."):
-        #         try:
-        #             suggestions, literal_translations, syntactical_analysis = await asyncio.gather(
-        #                 client.fetch_response_suggestions(sentence),
-        #                 client.fetch_literal_translations(sentence),
-        #                 client.fetch_syntactical_analysis(sentence, translation.language_code))
-        #         except Exception as e:
-        #             render_message(f"An error occurred: {e}", 0.025)
-        #
-        # render_message(stringify_response_suggestions(suggestions), 0.025)
-        # analysis_rendered = coalesce_analyses(literal_translations, syntactical_analysis)
-        # render_message(analysis_rendered, 0.025)
-        #
-        # # Add assistant response to chat history
-        # st.session_state.messages.append({"role": "assistant", "content": translation})
-        # st.session_state.messages.append({"role": "assistant", "content": suggestions})
 
 
 async def render_loading_placeholder(interval: float, event: asyncio.Event):

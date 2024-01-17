@@ -1,6 +1,7 @@
 import logging
 import os
 
+import iso639
 import openai
 from dotenv import load_dotenv
 from flask import Flask, jsonify, request
@@ -27,8 +28,11 @@ CORS(app)
 def get_translation():
     sentence = request.json.get('sentence')
     logging.info(f"Received sentence: {sentence}")
-    response = generate_translation(sentence)
-    return jsonify(response.model_dump())
+    try:
+        response = generate_translation(sentence)
+        return jsonify(response.model_dump())
+    except iso639.NonExistentLanguageError:
+        return jsonify(ApplicationException(f"Language for sentence {sentence} could not be identified.").dict()), 400
 
 
 @app.route('/response-suggestion', methods=['POST'])
