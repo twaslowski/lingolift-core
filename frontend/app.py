@@ -66,7 +66,8 @@ async def main() -> None:
                         suggestions, literal_translations, syntactical_analysis = await asyncio.gather(
                             client.fetch_response_suggestions(sentence),
                             client.fetch_literal_translations(sentence),
-                            client.fetch_syntactical_analysis(sentence, translation.language_code))
+                            client.fetch_syntactical_analysis(sentence, translation.language_code),
+                            return_exceptions=True)
 
                     # render translations and syntactical analysis in one string
                     analysis_stringified = coalesce_analyses(literal_translations, syntactical_analysis)
@@ -129,39 +130,23 @@ async def fetch_syntactical_analysis(sentence: str, language: str) -> Union[
         return [SyntacticalAnalysis(**syntactical_analysis) for syntactical_analysis in response]
 
 
-def coalesce_analyses(literal_translations: Union[list[LiteralTranslation], ApplicationException],
-                      syntactical_analysis: Union[list[SyntacticalAnalysis], ApplicationException]) -> str:
+def coalesce_analyses(literal_translations: list[LiteralTranslation],
+                      syntactical_analysis: list[SyntacticalAnalysis]) -> str:
     """
     If both a literal translation of the words in the sentence and the syntactical analysis (i.e. part-of-speech
     tagging) are available, they get coalesced in this function, meaning each word gets displayed alongside its
     translation and its morphological features. If only the literal translation is available, the translations
     are displayed. If neither or only the morphological analysis is available, the function returns an error message.
-    # todo this function is a mess, i need to come up with a smarter way of doing this
-    # potentially including a stringify() method in the SyntacticalAnalysis class might be a solution
     :param literal_translations:
     :param syntactical_analysis:
     :return:
     """
-    if type(literal_translations) == ApplicationException:
-        return f"The analysis failed: {literal_translations.error_message}"
     response_string = "### Vocabulary and Grammar breakdown\n\n"
-    if type(syntactical_analysis) == ApplicationException:
-        response_string += f"Morphological analysis failed: {syntactical_analysis.error_message}; " \
-                           f"however, the literal translation is available.\n\n"
     for word in literal_translations:
         analysis = find_analysis(word.word, syntactical_analysis)
         response_string += f"*{word.word}*: {word.translation}"
         if analysis:
-            if analysis.lemma.lower() != analysis.word.lower():
-                response_string += f" (from {analysis.lemma}), "
-            else:
-                response_string += ", "
-            response_string += f"{analysis.pos_explanation}"
-            if analysis.morphology != "":
-                response_string += f"; "
-                response_string += f"{analysis.morphology}\n\n"
-            else:
-                response_string += "\n\n"
+            response_string += f"; {analysis.stringify()}\n\n"
         else:
             response_string += "\n\n"
     return response_string
@@ -216,4 +201,5 @@ def display_loading_gif():
 
 
 if __name__ == '__main__':
+    logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
     asyncio.run(main())

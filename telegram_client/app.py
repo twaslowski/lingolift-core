@@ -1,11 +1,12 @@
 import asyncio
 import logging
 import os
+from typing import Optional, Union
 
 import telegram.constants
 from dotenv import load_dotenv
 from shared.client import Client
-from shared.model.error import ApplicationError
+from shared.exception import ApplicationException
 from shared.model.literal_translation import LiteralTranslation
 from shared.model.response_suggestion import ResponseSuggestion
 from shared.model.syntactical_analysis import SyntacticalAnalysis
@@ -25,30 +26,44 @@ logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s
 async def handle_text_message(update: Update, _) -> None:
     sentence = update.message.text
     logging.info(f"Received message: {sentence}")
-    await reply(update, "Thanks! I've received your sentence, working on the translation now ...", markdown=False)
+    await reply(update, "Thanks! I've received your sentence, working on the translation now ...", html=False)
 
-    translation = await client.fetch_translation(sentence)
+    try:
+        translation = await client.fetch_translation(sentence)
+    except ApplicationException as e:
+        await reply(update, f"Sorry, I couldn't translate your sentence: {e.error_message}")
+        return
+
     translation_response = stringify_translation(sentence, translation)
     await reply(update, translation_response)
 
-    # perform all other calls concurrently
-    async with asyncio.TaskGroup() as tg:
-        suggestions = await tg.create_task(client.fetch_response_suggestions(sentence))
-        literal_translations = await tg.create_task(client.fetch_literal_translations(sentence))
-        syntactical_analysis = await tg.create_task(client.fetch_syntactical_analysis(sentence, translation.language))
+    await reply(update, "Fetching syntactical analysis for your sentence ...", html=False)
 
-    await reply(update, stringify_suggestions(suggestions))
+    try:
+        # perform all other calls concurrently
+        suggestions, literal_translations, syntactical_analysis = await asyncio.gather(
+            client.fetch_response_suggestions(sentence),
+            client.fetch_literal_translations(sentence),
+            client.fetch_syntactical_analysis(sentence, translation.language_code),
+            return_exceptions=True
+        )
+
+    except ApplicationException as e:
+        await reply(update, f"Something went wrong when fetching the syntactical analysis: {e.error_message}")
+        return
+
     analysis_rendered = coalesce_analyses(literal_translations, syntactical_analysis)
     await reply(update, analysis_rendered)
+    await reply(update, stringify_suggestions(suggestions))
 
 
-async def reply(update: Update, message: str, markdown: bool = True):
-    parse_mode = telegram.constants.ParseMode.HTML if markdown else None
+async def reply(update: Update, message: str, html: bool = True):
+    parse_mode = telegram.constants.ParseMode.HTML if html else None
     await update.message.reply_text(message, parse_mode=parse_mode)
 
 
 def stringify_translation(sentence: str, translation: Translation) -> str:
-    return f"<b>'{sentence}'</b> is <b>{translation.language}</b> and translates to " \
+    return f"<b>'{sentence}'</b> is <b>{translation.language_name}</b> and translates to " \
            f"<b>'{translation.translation}'</b> in English.\n"
     pass
 
@@ -61,42 +76,41 @@ def stringify_suggestions(suggestions: list[ResponseSuggestion]) -> str:
     return response_string
 
 
-def coalesce_analyses(literal_translations: list[LiteralTranslation] | ApplicationError,
-                      syntactical_analysis: list[SyntacticalAnalysis] | ApplicationError) -> str:
+def coalesce_analyses(literal_translations: list[LiteralTranslation],
+                      syntactical_analysis: Union[list[SyntacticalAnalysis], ApplicationException]) -> str:
     """
     If both a literal translation of the words in the sentence and the syntactical analysis (i.e. part-of-speech
     tagging) are available, they get coalesced in this function, meaning each word gets displayed alongside its
     translation and its morphological features. If only the literal translation is available, the translations
     are displayed. If neither or only the morphological analysis is available, the function returns an error message.
+
+    ATTENTION: asyncio.gather() can return Exceptions. This way, literal translations can be displayed, even when
+    the syntactical-analysis endpoints errors (e.g. due to the language model not being available).
+    This object gets passed to find_analysis(), which handles this error.
+    # todo this is kind of ugly, is there a better mechanism of handling this?
     :param literal_translations:
     :param syntactical_analysis:
     :return:
     """
-    if type(literal_translations) == ApplicationError:
-        return f"The analysis failed: {literal_translations.error_message}"
     response_string = "<b>Vocabulary and Grammar breakdown</b>\n"
-    if type(syntactical_analysis) == ApplicationError:
-        response_string += f"Morphological analysis failed: {syntactical_analysis.error_message}; " \
-                           f"however, the literal translation is available.\n"
     for word in literal_translations:
         word_analysis = find_analysis(word.word, syntactical_analysis)
         response_string += f"<b>{word.word}</b>: {word.translation}"
         if word_analysis:
-            response_string += f" (lemma: {word_analysis.lemma}, " \
-                               f"morphology {word_analysis.morphology}, " \
-                               f"dependencies: {word_analysis.dependencies})\n"
+            response_string += f"; {word_analysis.stringify()}\n"
         else:
             response_string += "\n"
     return response_string
 
 
-def find_analysis(word: str, syntactical_analyses: list[SyntacticalAnalysis]) -> SyntacticalAnalysis | None:
+def find_analysis(word: str, syntactical_analyses: Union[list[SyntacticalAnalysis], ApplicationException]) -> \
+        Optional[SyntacticalAnalysis]:
     """
     :param word: Word from the literal translation
     :param syntactical_analyses: Set of syntactical analyses for words in the sentence
     :return: The analysis for the word including the lemma, dependencies and morphology, if available.
     """
-    if type(syntactical_analyses) == ApplicationError:
+    if type(syntactical_analyses) == ApplicationException:
         return None
     for analysis in syntactical_analyses:
         if analysis.word == word and analysis.morphology != '':

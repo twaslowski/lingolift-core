@@ -3,7 +3,7 @@ from unittest.mock import Mock
 
 import requests  # type: ignore[import-untyped]
 
-from shared.client import Client, TRANSLATIONS_UNEXPECTED_ERROR, LITERAL_TRANSLATIONS_UNEXPECTED_ERROR, \
+from shared.client import Client, LITERAL_TRANSLATIONS_UNEXPECTED_ERROR, \
     SYNTACTICAL_ANALYSIS_UNEXPECTED_ERROR, UPOS_EXPLANATIONS_UNEXPECTED_ERROR
 from shared.exception import ApplicationException
 from shared.model.syntactical_analysis import SyntacticalAnalysis
@@ -144,7 +144,7 @@ class TestClient(IsolatedAsyncioTestCase):
         requests.post.return_value.json.return_value = None
         with self.assertRaises(ApplicationException) as e:
             await self.client.fetch_upos_explanation(SyntacticalAnalysis(word="word", lemma="lemma",
-                                                                             pos="DET", morphology="morphology",
-                                                                             dependency="dependency",
-                                                                             pos_explanation="pos_explanation"))
+                                                                         pos="DET", morphology="morphology",
+                                                                         dependency="dependency",
+                                                                         pos_explanation="pos_explanation"))
             self.assertEqual(e.exception.error_message, UPOS_EXPLANATIONS_UNEXPECTED_ERROR)

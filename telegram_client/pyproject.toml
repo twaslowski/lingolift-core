@@ -6,11 +6,12 @@ authors = ["Tobias Waslowski <tobiaswaslowski@gmail.com>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "3.11.6"
+python = "^3.9"
 python-telegram-bot = "^20.7"
 aiohttp = "^3.9.1"
 python-dotenv = "^1.0.0"
 requests = "^2.31.0"
+pytest = "^7.4.4"
 shared = {path = "../shared"}
 
 
