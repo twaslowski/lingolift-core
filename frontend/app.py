@@ -7,7 +7,7 @@ import streamlit as st
 from shared.client import Client
 from shared.exception import ApplicationException
 from shared.model.literal_translation import LiteralTranslation  # type: ignore[import-untyped]
-from shared.model.response_suggestion import ResponseSuggestion  # type: ignore[import-untyped]
+from shared.model.response_suggestion import should_generate_response_suggestions  # type: ignore[import-untyped]
 from shared.model.syntactical_analysis import SyntacticalAnalysis  # type: ignore[import-untyped]
 from shared.model.translation import Translation  # type: ignore[import-untyped]
 from shared.rendering import Stringifier, MarkupLanguage
@@ -51,8 +51,7 @@ async def main() -> None:
                     sentence = find_latest_user_message(st.session_state.messages)['content']
                     translation = await client.fetch_translation(sentence)
                 translation_stringified = stringifier.stringify_translation(sentence, translation)
-                render_message(translation_stringified, 0.025)
-                st.session_state.messages.append({"role": "assistant", "content": translation_stringified})
+                render_message(translation_stringified)
             except ApplicationException as e:
                 st.error(e.error_message)
             # broader exception clause not covered in client, e.g. if client is entirely unreachable
@@ -64,23 +63,30 @@ async def main() -> None:
             with st.chat_message("assistant"):
                 try:
                     with st.spinner("Fetching suggestions and syntactical analysis ..."):
-                        suggestions, literal_translations, syntactical_analysis = await asyncio.gather(
-                            client.fetch_response_suggestions(sentence),
+                        generate_suggestions = should_generate_response_suggestions(sentence, translation.translation)
+                        # determine if suggestions should be generated in the first place
+                        if generate_suggestions:
+                            suggestions_future = asyncio.create_task(client.fetch_response_suggestions(sentence))
+
+                        # fetch literal translations and syntactical analysis in parallel
+                        literal_translations, syntactical_analysis = await asyncio.gather(
                             client.fetch_literal_translations(sentence),
                             client.fetch_syntactical_analysis(sentence, translation.language_code),
                             return_exceptions=True)
 
-                    # stringify analysis, literal translation and suggestions
+                    # render syntactical analysis
                     analysis_stringified = stringifier.coalesce_analyses(literal_translations, syntactical_analysis)
-                    response_suggestions_stringified = stringifier.stringify_suggestions(suggestions)
+                    render_message(analysis_stringified)
 
-                    # render them to the chat
-                    render_message(analysis_stringified, 0.025)
-                    render_message(response_suggestions_stringified, 0.025)
+                    # at this point, the suggestions should be available
+                    if generate_suggestions:
+                        suggestions = await suggestions_future
+                        response_suggestions_stringified = stringifier.stringify_suggestions(suggestions)
+                        render_message(response_suggestions_stringified)
+                    else:
+                        render_message("Your sentence does not appear to be a question; "
+                                       "therefore, no response suggestions will be generated.")
 
-                    # add messages to chat history
-                    st.session_state.messages.append({"role": "assistant", "content": analysis_stringified})
-                    st.session_state.messages.append({"role": "assistant", "content": response_suggestions_stringified})
                 except ApplicationException as e:
                     st.error(e.error_message)
                 except Exception as e:
@@ -101,12 +107,13 @@ def find_latest_user_message(messages: list) -> dict[str, str]:
         return {}
 
 
-def render_message(string: str, interval: float):
+def render_message(string: str, interval: float = 0.025):
     placeholder = st.empty()
     for i in range(len(string)):
         placeholder.markdown(string[:i] + "▌")
         time.sleep(interval)
     placeholder.markdown(string)
+    st.session_state.messages.append({"role": "assistant", "content": string})
 
 
 if __name__ == '__main__':

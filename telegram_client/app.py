@@ -66,8 +66,8 @@ async def handle_error(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def introduction_handler(update: Update, _):
     await update.message.reply_text(
-        "Welcome! I will provide translations for you if you send me a sentence in a non-English language. Try "
-        "texting me something like '¿Donde esta la biblioteca?'")
+        "Welcome! I will provide translations for you if you send me a sentence in a non-English language. "
+        "Try texting me something like '¿Donde esta la biblioteca?'")
 
 
 def init_app() -> Application:
