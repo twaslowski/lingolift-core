@@ -42,7 +42,7 @@ You can run unit tests with `make test`, and more complex integration tests with
 
 ## Endpoint Documentation
 
-There are four endpoints available as of now:
+There are several endpoints that cover different functionalities required by the frontend.
 
 ### Translation
 

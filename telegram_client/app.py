@@ -87,7 +87,6 @@ def coalesce_analyses(literal_translations: list[LiteralTranslation],
     ATTENTION: asyncio.gather() can return Exceptions. This way, literal translations can be displayed, even when
     the syntactical-analysis endpoints errors (e.g. due to the language model not being available).
     This object gets passed to find_analysis(), which handles this error.
-    # todo this is kind of ugly, is there a better mechanism of handling this?
     :param literal_translations:
     :param syntactical_analysis:
     :return:
