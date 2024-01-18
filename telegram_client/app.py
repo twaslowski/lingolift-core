@@ -14,19 +14,30 @@ from telegram.ext import filters as Filters
 # setup
 load_dotenv()
 
+# create global-scoped client
+protocol = os.environ.get("BACKEND_PROTOCOL")
+host = os.environ.get("BACKEND_HOST")
+port = os.environ.get("BACKEND_PORT")
+client = Client(protocol, host, port)
+
+stringifier = Stringifier(MarkupLanguage.HTML)
+
 # configure logging
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
+
+MESSAGE_RECEIVED = "Thanks! I've received your sentence, working on the translation now ..."
+TRANSLATION_ERROR = "Sorry, I couldn't translate your sentence: {}"
 
 
 async def handle_text_message(update: Update, _) -> None:
     sentence = update.message.text
     logging.info(f"Received message: {sentence}")
-    await reply(update, "Thanks! I've received your sentence, working on the translation now ...", html=False)
+    await reply(update, MESSAGE_RECEIVED, html=False)
 
     try:
         translation = await client.fetch_translation(sentence)
     except ApplicationException as e:
-        await reply(update, f"Sorry, I couldn't translate your sentence: {e.error_message}")
+        await reply(update, TRANSLATION_ERROR.format(e.error_message))
         return
 
     translation_response = stringifier.stringify_translation(sentence, translation)
@@ -78,14 +89,6 @@ def init_app() -> Application:
 
 
 if __name__ == '__main__':
-    # create global-scoped client
-    protocol = os.environ.get("BACKEND_PROTOCOL")
-    host = os.environ.get("BACKEND_HOST")
-    port = os.environ.get("BACKEND_PORT")
-    client = Client(protocol, host, port)
-
-    stringifier = Stringifier(MarkupLanguage.HTML)
-
     # create app
     application = init_app()
     logging.info("Starting application")

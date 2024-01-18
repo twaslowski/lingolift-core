@@ -23,6 +23,12 @@ For more information on how to run this application, check out the respective pa
 
 ## Further Reading
 
+The /syntactical-analysis endpoint creates an analysis of the sentence with spaCy using Universal POS tags.
+There are some challenges around rendering this information, which largely belongs to the complex domain of
+computational linguistics, in a way that is comprehensible to an average end-user.
+
+If you're interested in reading about POS tagging and NLP in a broader sense, you can check out the following links:
+
 https://universaldependencies.org/format.html#morphological-annotation
 
 https://universaldependencies.org/u/feat/Degree.html
