@@ -16,12 +16,19 @@ TITLE = "grammr"
 
 
 async def main() -> None:
-    st.title(TITLE)
-
     backend_protocol = st.secrets.connection.protocol
     backend_host = st.secrets.connection.host
     backend_port = st.secrets.connection.port
     client = Client(backend_protocol, backend_host, backend_port)
+
+    if await backend_is_healthy(client):
+        st.title(TITLE)
+        await chat(client)
+    else:
+        st.error("The backend is not available. Please try again later.")
+
+
+async def chat(client):
     stringifier = Stringifier(MarkupLanguage.MARKDOWN)
 
     # Initialize chat history
@@ -114,6 +121,17 @@ def render_message(string: str, interval: float = 0.025):
         time.sleep(interval)
     placeholder.markdown(string)
     st.session_state.messages.append({"role": "assistant", "content": string})
+
+
+async def backend_is_healthy(client: Client):
+    try:
+        response = await client.fetch_health()
+        if response.status_code == 200:
+            logging.info("Backend is healthy")
+            return True
+    except Exception as e:
+        logging.error("Error upon health check ", e)
+        return False
 
 
 if __name__ == '__main__':
