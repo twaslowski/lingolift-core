@@ -13,11 +13,9 @@ from telegram.ext import filters as Filters
 
 # setup
 load_dotenv()
-TOKEN = os.environ.get("TELEGRAM_TOKEN")
 
 # configure logging
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
-stringifier = Stringifier(MarkupLanguage.HTML)
 
 
 async def handle_text_message(update: Update, _) -> None:
@@ -71,7 +69,8 @@ async def introduction_handler(update: Update, _):
 
 
 def init_app() -> Application:
-    app = ApplicationBuilder().token(TOKEN).build()
+    token = os.environ.get("TELEGRAM_TOKEN")
+    app = ApplicationBuilder().token(token).build()
     app.add_handler(CommandHandler("start", introduction_handler))
     app.add_handler(MessageHandler(Filters.TEXT, handle_text_message))
     app.add_error_handler(handle_error)
@@ -79,7 +78,15 @@ def init_app() -> Application:
 
 
 if __name__ == '__main__':
-    client = Client(protocol="http")
+    # create global-scoped client
+    protocol = os.environ.get("BACKEND_PROTOCOL")
+    host = os.environ.get("BACKEND_HOST")
+    port = os.environ.get("BACKEND_PORT")
+    client = Client(protocol, host, port)
+
+    stringifier = Stringifier(MarkupLanguage.HTML)
+
+    # create app
     application = init_app()
     logging.info("Starting application")
     application.run_polling()
