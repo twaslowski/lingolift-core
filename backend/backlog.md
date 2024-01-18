@@ -11,6 +11,7 @@ and parsed as ApplicationExceptions() in the shared client~~
 will help develop confidence in the (largely untestable) frontend as well.
   - This actually works surprisingly well.
 - Frontend: Make it clean. For more complex features, we'll probably have to move to something more powerful anyhow, but keeping this clean for a while is probably important so we can add more features.
+- Backend: Move it to Lambda? I considered this previously, but straight-up running the backend on lambda with a thin wrapper does not work, as the collective spaCy models end up using more memory than is allowed (150M). However, creating several small lambdas _would_ improve reliability and CI/CD options. I already invested a bunch of time making my Raspberry Pi reachable from the internet to host the flask server, but ultimately this scales way better.
 
 ## Features
 
@@ -20,3 +21,5 @@ will help develop confidence in the (largely untestable) frontend as well.
   also handle the language identification parts of the application.~~
   - The above approach is profoundly overcomplicated. Checking if `'?' in translation.sentence or '?' in translation.translation` will likely cover 95% of usecases. If this is a priority, an approach of looking for interrogative words/phrases would probably be an easy way to achieve higher reliability.
 - Explain morphological features more clearly. Requires work on the upos_explanation endpoint.
+- Morphologizer. Hard to narrow down exactly in which ways this might work in an educationally valuable way, but spaCy allows for it – let's see if this is something that actually makes sense.
+
