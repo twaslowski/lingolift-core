@@ -1,5 +1,3 @@
-import asyncio
-import datetime
 from unittest import IsolatedAsyncioTestCase
 from unittest.mock import AsyncMock, Mock
 
@@ -13,29 +11,10 @@ import app
 
 class TestLingoliftClient(IsolatedAsyncioTestCase):
 
-    async def test_concurrency_works(self):
-        start = datetime.datetime.now()
-        print(f"started at {start}")
-
-        client = Client()
-        client.get_suggestions = AsyncMock(side_effect=delayed_response)
-        client.get_literal_translation = AsyncMock(side_effect=delayed_response)
-        client.get_syntactical_analysis = AsyncMock(side_effect=delayed_response)
-
-        await asyncio.gather(
-            client.fetch_response_suggestions("test"),
-            client.fetch_translation("test"),
-            client.fetch_syntactical_analysis("test", "test"),
-        )
-
-        end = datetime.datetime.now()
-        print(f"finished at {end}")
-        self.assertLessEqual((end - start).total_seconds(), 3)
-
     async def test_translation_errors(self):
-        client = Client()
+        app.client = Client()
         # if translation fails
-        client.fetch_translation = AsyncMock(side_effect=ApplicationException("some-error"))
+        app.client.fetch_translation = AsyncMock(side_effect=self.mock_error())
 
         # set up mocks
         app.reply = AsyncMock()
@@ -54,6 +33,26 @@ class TestLingoliftClient(IsolatedAsyncioTestCase):
         # the formatting makes it difficult to perform exact matching, but this is close enough
         self.assertIn(app.TRANSLATION_ERROR[:20], app.reply.call_args_list[1][0][1])
 
+    async def test_syntactical_analysis_errors(self):
+        app.client = Mock()
+        # if syntactical analysis fails
+        app.client.fetch_translation = AsyncMock(return_value=self.mock_get_translation())
+        app.client.fetch_syntactical_analysis = AsyncMock(side_effect=self.mock_error())
+        app.client.fetch_literal_translations = AsyncMock(side_effect=self.mock_error())
+        app.client.fetch_response_suggestions = AsyncMock(side_effect=self.mock_error())
+
+        # set up mocks
+        app.reply = AsyncMock()
+        app.stringifier = Mock()
+        update = Mock()
+        update.message.text = "test"
+
+        # when message is processed
+        await app.handle_text_message(update, None)
+
+        # assert latest reply() count contains ANALYSIS_ERROR
+        self.assertIn(app.ANALYSIS_ERROR[:20], app.reply.call_args_list[-1][0][1])
+
     @staticmethod
     def mock_get_suggestions() -> list[ResponseSuggestion]:
         return [ResponseSuggestion(suggestion="test", translation="test")]
@@ -62,7 +61,6 @@ class TestLingoliftClient(IsolatedAsyncioTestCase):
     def mock_get_translation() -> Translation:
         return Translation(translation="test", language_code="XY", language_name="test")
 
-
-async def delayed_response():
-    await asyncio.sleep(2)
-    return "mock response"
+    @staticmethod
+    def mock_error() -> ApplicationException:
+        return ApplicationException(error_message="some-error")

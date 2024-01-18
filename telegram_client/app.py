@@ -27,6 +27,7 @@ logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s
 
 MESSAGE_RECEIVED = "Thanks! I've received your sentence, working on the translation now ..."
 TRANSLATION_ERROR = "Sorry, I couldn't translate your sentence: {}"
+ANALYSIS_ERROR = "Something went wrong when processing the syntactical analysis: {}"
 
 
 async def handle_text_message(update: Update, _) -> None:
@@ -45,22 +46,32 @@ async def handle_text_message(update: Update, _) -> None:
 
     await reply(update, "Fetching syntactical analysis for your sentence ...", html=False)
 
-    try:
-        # perform all other calls concurrently
-        suggestions, literal_translations, syntactical_analysis = await asyncio.gather(
-            client.fetch_response_suggestions(sentence),
-            client.fetch_literal_translations(sentence),
-            client.fetch_syntactical_analysis(sentence, translation.language_code),
-            return_exceptions=True
-        )
+    # perform all other calls concurrently
+    suggestions, literal_translations, syntactical_analysis = await gather_calls(sentence, translation)
 
-    except ApplicationException as e:
-        await reply(update, f"Something went wrong when fetching the syntactical analysis: {e.error_message}")
+    if type(literal_translations) is ApplicationException:
+        await reply(update, ANALYSIS_ERROR.format(literal_translations.error_message))
         return
 
+    # if literal translation is available; error handling for syntactical analysis is done in find_analysis()
     analysis_rendered = stringifier.coalesce_analyses(literal_translations, syntactical_analysis)
     await reply(update, analysis_rendered)
+
+    if type(suggestions) is ApplicationException:
+        await reply(update, ANALYSIS_ERROR.format(suggestions.error_message))
+        return
+
+    # else
     await reply(update, stringifier.stringify_suggestions(suggestions))
+
+
+async def gather_calls(sentence, translation):
+    return await asyncio.gather(
+        client.fetch_response_suggestions(sentence),
+        client.fetch_literal_translations(sentence),
+        client.fetch_syntactical_analysis(sentence, translation.language_code),
+        return_exceptions=True
+    )
 
 
 async def reply(update: Update, message: str, html: bool = True):
