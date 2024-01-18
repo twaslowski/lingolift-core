@@ -114,3 +114,10 @@ class Client:
             return UposExplanation(**explanations)
         else:
             raise ApplicationException(error_message=UPOS_EXPLANATIONS_UNEXPECTED_ERROR)
+
+    async def fetch_health(self) -> requests.Response:
+        """
+        Interacts with the /health endpoint of the backend API.
+        :return: requests.Response object
+        """
+        return requests.get(f"{self.url}/health")
