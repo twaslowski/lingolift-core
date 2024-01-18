@@ -99,5 +99,10 @@ def get_syntactical_analysis():
     return jsonify([syntactical_analysis.model_dump() for syntactical_analysis in analysis])
 
 
+@app.route('/health', methods=['GET'])
+def get_health():
+    return jsonify({"status": "healthy"}), 200
+
+
 if __name__ == "__main__":
     app.run(debug=True)

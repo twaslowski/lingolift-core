@@ -20,16 +20,18 @@ async def main() -> None:
     backend_host = st.secrets.connection.host
     backend_port = st.secrets.connection.port
     client = Client(backend_protocol, backend_host, backend_port)
+    stringifier = Stringifier(MarkupLanguage.MARKDOWN)
 
     if await backend_is_healthy(client):
         st.title(TITLE)
-        await chat(client)
+        await chat(client, stringifier)
     else:
         st.error("The backend is not available. Please try again later.")
+    # st.markdown(stringifier.disclaimer())
 
 
-async def chat(client):
-    stringifier = Stringifier(MarkupLanguage.MARKDOWN)
+async def chat(client: Client, stringifier: Stringifier):
+    intro = st.markdown(stringifier.introductory_text())
 
     # Initialize chat history
     if "messages" not in st.session_state:
@@ -42,6 +44,7 @@ async def chat(client):
 
     # Accept user input
     if prompt := st.chat_input("What should I translate for you?"):
+        intro.empty()
         # Add user message to chat history
         st.session_state.messages.append({"role": "user", "content": prompt})
         # Display user message in chat message container

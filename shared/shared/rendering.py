@@ -1,6 +1,8 @@
 from enum import Enum
 from typing import Optional
 
+import emoji
+
 from shared.exception import ApplicationException
 from shared.model.literal_translation import LiteralTranslation
 from shared.model.response_suggestion import ResponseSuggestion
@@ -16,6 +18,27 @@ class MarkupLanguage(Enum):
 class Stringifier:
     def __init__(self, markup_language: MarkupLanguage):
         self.markup_language = markup_language
+
+    def introductory_text(self) -> str:
+        return f"""
+        Hi! I'm the Grammr Bot. I will support you in learning a new language  
+        {emoji.emojize(':smiling_face_with_open_hands:')}. {self.linebreak()}
+        If you send me a sentence in a foreign language, I will ...
+        - translate it for you {emoji.emojize(':open_book:')}{self.linebreak()}
+        - {self.hyperlink('provide you with some insights into the grammar of the sentence ',
+                          'https://universaldependencies.org/format.html#morphological-annotation')}
+                          {emoji.emojize(':nerd_face:')}
+                          {self.linebreak()}
+        - help you respond with some suggestions {emoji.emojize(':pen:')}{self.linebreak()}
+        
+        Alright, let's get started! Text me something – for example, '¿Donde esta la biblioteca?'.
+        """
+
+    def disclaimer(self) -> str:
+        return f"""I'm currently under active development. You can
+        {self.hyperlink('view my source code on GitHub', 'https://github.com/TobiasWaslowski/lingolift/')} if you want,
+        or {self.hyperlink('contact my creator', 'https://www.linkedin.com/in/twaslowski/')}
+        if you have any questions or remarks."""
 
     def coalesce_analyses(self, literal_translations: list[LiteralTranslation],
                           syntactical_analysis: list[SyntacticalAnalysis]) -> str:
@@ -90,3 +113,9 @@ class Stringifier:
             return "\n\n"
         elif self.markup_language == MarkupLanguage.HTML:
             return "\n"
+
+    def hyperlink(self, text: str, link: str) -> str:
+        if self.markup_language == MarkupLanguage.MARKDOWN:
+            return f"[{text}]({link})"
+        elif self.markup_language == MarkupLanguage.HTML:
+            return f"<a href='{link}'>{text}</a>"

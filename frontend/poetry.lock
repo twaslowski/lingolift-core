@@ -212,6 +212,20 @@ files = [
 ]
 
 [[package]]
+name = "emoji"
+version = "2.9.0"
+description = "Emoji for Python"
+optional = false
+python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
+files = [
+    {file = "emoji-2.9.0-py2.py3-none-any.whl", hash = "sha256:17b0d53e1d9f787307a4c65aa19badb0a1ffdbc89b3a3cd851fc77821cdaced2"},
+    {file = "emoji-2.9.0.tar.gz", hash = "sha256:5f4a15b7caa9c67fc11be9d90a822e3fa26aeb4e5b7bd2ded754b394d9c47869"},
+]
+
+[package.extras]
+dev = ["coverage", "coveralls", "pytest"]
+
+[[package]]
 name = "exceptiongroup"
 version = "1.2.0"
 description = "Backport of PEP 654 (exception groups)"
@@ -1192,6 +1206,7 @@ files = []
 develop = false
 
 [package.dependencies]
+emoji = "^2.9.0"
 mypy = "^1.8.0"
 pydantic = "^2.5.3"
 pytest = "^7.4.4"
