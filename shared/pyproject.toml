@@ -9,9 +9,14 @@ readme = "README.md"
 python = "^3.9"
 pydantic = "^2.5.3"
 requests = "2.31.0"
+emoji = "^2.9.0"
+
+[tool.poetry.group.dev]
+optional = true
+
+[tool.poetry.group.dev.dependencies]
 mypy = "^1.8.0"
 pytest = "^7.4.4"
-emoji = "^2.9.0"
 
 [build-system]
 requires = ["poetry-core"]

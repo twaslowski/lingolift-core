@@ -31,7 +31,7 @@ def get_translation():
     try:
         response = generate_translation(sentence)
         return jsonify(response.model_dump())
-    except iso639.NonExistentLanguageError:
+    except iso639.LanguageNotFoundError:
         return jsonify(ApplicationException(f"Language for sentence {sentence} could not be identified.").dict()), 400
 
 

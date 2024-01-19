@@ -134,13 +134,13 @@ files = [
 
 [[package]]
 name = "emoji"
-version = "2.9.0"
+version = "2.10.0"
 description = "Emoji for Python"
 optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
 files = [
-    {file = "emoji-2.9.0-py2.py3-none-any.whl", hash = "sha256:17b0d53e1d9f787307a4c65aa19badb0a1ffdbc89b3a3cd851fc77821cdaced2"},
-    {file = "emoji-2.9.0.tar.gz", hash = "sha256:5f4a15b7caa9c67fc11be9d90a822e3fa26aeb4e5b7bd2ded754b394d9c47869"},
+    {file = "emoji-2.10.0-py2.py3-none-any.whl", hash = "sha256:aed4332caa23553a7218f032c08b0a325ae53b010f7fb98ad272c0f7841bc1d3"},
+    {file = "emoji-2.10.0.tar.gz", hash = "sha256:7e68435eecd2c428c3b4aaa5f72d61a5b1a36c81a5138681cba13d19d94aa3a0"},
 ]
 
 [package.extras]
@@ -486,4 +486,4 @@ zstd = ["zstandard (>=0.18.0)"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9"
-content-hash = "5da46b692143aae4c435b153468c91684913351d4f4ea8d3bb088bde55032a42"
+content-hash = "1cd5625172b73870585d661a40bcfc3f7ed45f7da494afb44a9445820a5b0764"
