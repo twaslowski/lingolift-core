@@ -17,4 +17,4 @@ COPY util ./util/
 # Install the Python dependencies and package them in a zip file
 RUN python3 -m pip install -r requirements.txt
 
-CMD [ "lambda_function.translation_handler" ]
+CMD [ "lambda_function.$FUNCTION_handler" ]

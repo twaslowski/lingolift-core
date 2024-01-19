@@ -22,7 +22,7 @@ build: clean
 	@mkdir -p package
 	@poetry export --without webserver --without spacy --without dev -f requirements.txt -o package/requirements.txt --without-hashes
 	@touch package/lambda_function.py
-	@docker build -t translation-lambda .
+	@docker build -t translation-lambda --build-arg FUNCTION=translation .
 
 docker-clean:
 	@docker stop translation-lambda
