@@ -17,7 +17,7 @@ def generate_translation(sentence: str) -> Translation:
     context = [Message(role=SYSTEM, content=TRANSLATION_SYSTEM_PROMPT),
                Message(role=USER, content=TRANSLATION_USER_PROMPT + sentence)]
     response = openai_exchange(context, json_mode=True)
-    response['language_name'] = iso639.Language.from_part1(response['language_code'])
+    response['language_name'] = iso639.Language.from_part1(response['language_code'].lower()).name
     return Translation(**response)
 
 

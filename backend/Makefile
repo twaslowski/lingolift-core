@@ -20,12 +20,13 @@ shared:
 
 build: clean
 	@mkdir -p package
-	@poetry export --only lambda -f requirements.txt -o package/requirements.txt --without-hashes
-	@docker build -t lambda-layer-builder .
-	@docker run --name lambda-layer-builder-container lambda-layer-builder
-	@docker cp lambda-layer-builder-container:/var/task/dependencies.zip package
-	@docker rm lambda-layer-builder-container
+	@poetry export --without webserver --without spacy --without dev -f requirements.txt -o package/requirements.txt --without-hashes
+	@touch package/lambda_function.py
+	@docker build -t translation-lambda .
 
+docker-clean:
+	@docker stop translation-lambda
+	@docker rm -f translation-lambda
 
 make clean:
 	@rm -rf package*
