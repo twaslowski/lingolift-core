@@ -12,10 +12,21 @@ will help develop confidence in the (largely untestable) frontend as well.
   - This actually works surprisingly well.
 - Frontend: Make it clean. For more complex features, we'll probably have to move to something more powerful anyhow, but keeping this clean for a while is probably important so we can add more features.
 - Backend: Move it to Lambda? I considered this previously, but straight-up running the backend on lambda with a thin wrapper does not work, as the collective spaCy models end up using more memory than is allowed (150M). However, creating several small lambdas _would_ improve reliability and CI/CD options. I already invested a bunch of time making my Raspberry Pi reachable from the internet to host the flask server, but ultimately this scales way better.
-  - I tried this; turns out it's a nightmare. There is a well-known issue where Pydantic has to be compiled for the correct platform;
+  - ~~I tried this; turns out it's a nightmare. There is a well-known issue where Pydantic has to be compiled for the correct platform;
   however, even with stuff like `pip install --platform manylinux2014_x86_64` I couldn't figure it out.
   Dockerizing would be another option, but that comes with more headaches plus having to handle Docker images in ECR.
-  For now, I'll focus on 
+  For now, I'll focus on~~
+  - Dockerizing this is the way to go. The Pydantic issue turns out to be extremely hard to fix and to debug;
+  I ended up building all the dependencies in a Docker container to emulate the x86_64 architecture that the
+  lambda runtime uses, and at that point you might as well just use Docker. Managing ECR is a bit of a pain, but
+  it's not too bad.
+- Implement IAC. This will enable CI/CD usage, which I really need. DynDNS on my Raspberry Pi is turning out to be
+incredibly unreliable, so this is top priority.
+  - Create ECR
+  - Create Lambda
+- Implement CI/CD. 
+  - Solve AWS Authentication from the pipeline
+  - Setup Github Actions
 
 ## Features
 
