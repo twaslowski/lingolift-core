@@ -29,6 +29,8 @@
 - Implement CI/CD. ✅
     - Solve AWS Authentication from the pipeline ✅
     - Setup Github Actions ✅
+- Figure out a smart way of arbitrarily creating Lambdas. Creating a Terraform module would be a good way to go;
+however, coupling them together makes techdebt issue #1 more difficult to handle.
 
 ## Tech Debt
 
