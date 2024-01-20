@@ -1,8 +1,8 @@
 name: Docker Image CI
   
 permissions:
-  contents: 'read'
-  id-token: 'write'
+  contents: read
+  id-token: write
 
 on:
   push:
