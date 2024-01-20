@@ -12,7 +12,7 @@ on:
 
 jobs:
   create-infrastructure:
-    needs: [build-and-push-docker]
+    # needs: [build-and-push-docker]
     runs-on: ubuntu-latest
     steps:
       - name: checkout
@@ -28,6 +28,7 @@ jobs:
           TF_VAR_openai_api_token=$OPENAI_API_TOKEN cd backend/terraform && terraform apply -auto-approve
 
   build-and-push-docker:
+    needs: [create-infrastructure]
     runs-on: ubuntu-latest
     steps:
       - name: checkout
@@ -45,7 +46,11 @@ jobs:
           cd backend && poetry install
 
       - name: Build the Docker image
-        run: cd backend && ./docker-util.sh build translation
+        run: |
+          pushd backend
+          ./docker-util.sh build translation
+          ./docker-util.sh build literal_translation
+          ./docker-util.sh build response_suggestion
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
