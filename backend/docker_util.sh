@@ -22,7 +22,7 @@ function _build() {
   FUNCTION=$1
   sed "s/\$FUNCTION/$FUNCTION/g" Dockerfile.template > Dockerfile
 
-  docker build -t "$FUNCTION"-lambda .
+  docker build -t "$FUNCTION"-lambda --platform linux/x86_64 .
 }
 
 function _run() {
@@ -32,6 +32,13 @@ function _run() {
 
 function _clean() {
   docker rm -f "$FUNCTION"-lambda
+}
+
+function _push() {
+  FUNCTION=$1
+  aws ecr get-login-password --region eu-central-1 | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.eu-central-1.amazonaws.com
+  docker tag "$FUNCTION-lambda:latest" "$AWS_ACCOUNT_ID.dkr.ecr.eu-central-1.amazonaws.com/$FUNCTION-lambda:latest"
+  docker push "$AWS_ACCOUNT_ID.dkr.ecr.eu-central-1.amazonaws.com/$FUNCTION-lambda:latest"
 }
 
 # perform action with function

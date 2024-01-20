@@ -5,6 +5,7 @@ backend/package*
 
 */shared.egg-info
 
+**/.envrc
 *.env
 *.iml
 .pid
