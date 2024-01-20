@@ -1,7 +1,7 @@
 module "lambda_function_container_image" {
   source = "terraform-aws-modules/lambda/aws"
 
-  function_name = "translation-lambda"
+  function_name = "${var.name}-lambda"
   description   = "Provides the translation endpoint for the grammr application"
 
   create_package = false
@@ -12,8 +12,4 @@ module "lambda_function_container_image" {
   environment_variables = {
     "OPENAI_API_KEY" = var.openai_api_key
   }
-}
-
-variable "openai_api_key" {
-  type = string
 }

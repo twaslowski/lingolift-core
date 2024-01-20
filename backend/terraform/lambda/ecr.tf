@@ -1,7 +1,7 @@
 module "ecr" {
   source = "terraform-aws-modules/ecr/aws"
 
-  repository_name = "translation-lambda"
+  repository_name = "${var.name}-lambda"
 
   repository_read_write_access_arns = [data.aws_caller_identity.current.arn]
   repository_lifecycle_policy       = local.repository_lifecycle_policy
