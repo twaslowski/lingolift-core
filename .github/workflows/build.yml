@@ -14,8 +14,10 @@ jobs:
   build-docker:
     runs-on: ubuntu-latest
     steps:
-      - name: Install dependencies
+      - name: checkout
         uses: actions/checkout@v3
+
+      - name: Install dependencies
         run: |
           sudo apt update
           sudo apt install pipx
@@ -27,24 +29,28 @@ jobs:
           cd backend && poetry install
 
       - name: Build the Docker image
-        uses: actions/checkout@v3
         run: cd backend && ./docker-util.sh build translation
 
   push-docker:
     runs-on: ubuntu-latest
     steps:
+      - name: checkout
+        uses: actions/checkout@v3
+
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: arn:aws:iam::246770851643:role/github-actions
           aws-region: eu-central-1
+
       - name: Build the Docker image
-        uses: actions/checkout@v3
         run: cd backend && ./docker-util.sh build translation
 
   create-infrastructure:
     runs-on: ubuntu-latest
     steps:
+      - name: checkout
+        uses: actions/checkout@v3
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
