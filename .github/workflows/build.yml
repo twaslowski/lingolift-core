@@ -42,7 +42,7 @@ jobs:
 
 
   create-infrastructure:
-    depends-on: [build-and-push-docker]
+    needs: [build-and-push-docker]
     runs-on: ubuntu-latest
     steps:
       - name: checkout
