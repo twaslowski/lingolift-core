@@ -19,6 +19,7 @@ function _package() {
 }
 
 function _build() {
+  _package
   FUNCTION=$1
   sed "s/\$FUNCTION/$FUNCTION/g" Dockerfile.template > Dockerfile
 
