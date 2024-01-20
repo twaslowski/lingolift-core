@@ -24,6 +24,7 @@ function _build() {
   sed "s/\$FUNCTION/$FUNCTION/g" Dockerfile.template > Dockerfile
 
   docker build -t "$FUNCTION"-lambda --platform linux/x86_64 .
+  _post
 }
 
 function _run() {
