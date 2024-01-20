@@ -4,16 +4,16 @@ module "translation-lambda" {
   name = "translation"
 }
 
-module "translation-lambda" {
+module "literal_translation-lambda" {
   source = "./lambda"
   openai_api_key = var.openai_api_key
-  name = "literal-translation"
+  name = "literal_translation"
 }
 
-module "translation-lambda" {
+module "response_suggestion-lambda" {
   source = "./lambda"
   openai_api_key = var.openai_api_key
-  name = "response-suggestion"
+  name = "response_suggestion"
 }
 variable "openai_api_key" {
   type = string
