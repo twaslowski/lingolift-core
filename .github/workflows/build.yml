@@ -1,4 +1,8 @@
 name: Docker Image CI
+  
+permissions:
+  contents: 'read'
+  id-token: 'write'
 
 on:
   push:
@@ -7,14 +11,9 @@ on:
     branches: [ "main" ]
 
 jobs:
-  permissions:
-    contents: 'read'
-    id-token: 'write'
-
   build:
     runs-on: ubuntu-latest
     steps:
-
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
