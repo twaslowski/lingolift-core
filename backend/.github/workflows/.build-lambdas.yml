@@ -1,0 +1,26 @@
+name: Docker Image CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::246770851643:role/github-actions
+          aws-region: eu-central-1
+      - uses: actions/checkout@v3
+      - name: Build the Docker image
+        run: |
+          pushd backend
+          ./docker-util.sh build translation
+          ./docker-util.sh push translation
+          cd terraform && terraform apply -auto-approve
