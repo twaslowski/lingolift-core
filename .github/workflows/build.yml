@@ -24,8 +24,8 @@ jobs:
           aws-region: eu-central-1
       - name: Create Terraform Infrastructure
         run: |
-          terraform init
-          TF_VAR_openai_api_token=$OPENAI_API_TOKEN cd backend/terraform && terraform apply -auto-approve
+          pushd backend/terraform terraform init
+          TF_VAR_openai_api_token=$OPENAI_API_TOKEN terraform apply -auto-approve
 
   build-and-push-docker:
     needs: [create-infrastructure]
