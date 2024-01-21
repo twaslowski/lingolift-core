@@ -18,10 +18,5 @@ class LambdaClient:
             InvocationType='RequestResponse',
             Payload=json.dumps({"sentence": sentence})
         )
-        return response
-
-
-if __name__ == '__main__':
-    client = LambdaClient("AKIATS5FQL45YHEW4FR2", "DW1yxaBDVT8URxfgzBm8th7ZFpYRjClRtauAst3W", "eu-central-1")
-    print(client.fetch_translation("Wie viel kostet ein Bier?"))
-
+        print(response)
+        return json.loads(response['Payload'].read())

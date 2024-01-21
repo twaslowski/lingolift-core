@@ -27,7 +27,7 @@ jobs:
       - name: Create Terraform Infrastructure
         run: |
           pushd backend/terraform && terraform init
-          TF_VAR_openai_api_key=$OPENAI_API_KEY terraform apply -auto-approve
+          terraform apply -auto-approve
 
   build-and-push-docker:
     needs: [create-infrastructure]
