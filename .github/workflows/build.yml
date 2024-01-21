@@ -60,6 +60,7 @@ jobs:
 
       - name: Push the Docker images
         run: |
+          pushd backend
           ./docker-util.sh push translation
           ./docker-util.sh push literal_translation
           ./docker-util.sh push response_suggestion
