@@ -40,7 +40,7 @@ jobs:
           sudo apt install pipx
           pipx ensurepath
           pipx install poetry
-      
+
       - name: Poetry setup
         run: |
           cd backend && poetry install
@@ -58,5 +58,8 @@ jobs:
           role-to-assume: arn:aws:iam::246770851643:role/github-actions
           aws-region: eu-central-1
 
-      - name: Build the Docker image
-        run: cd backend && ./docker-util.sh build translation
+      - name: Push the Docker images
+        run: |
+          ./docker-util.sh push translation
+          ./docker-util.sh push literal_translation
+          ./docker-util.sh push response_suggestion
