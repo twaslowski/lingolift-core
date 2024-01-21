@@ -30,7 +30,9 @@
     - Solve AWS Authentication from the pipeline ✅
     - Setup Github Actions ✅
 - Figure out a smart way of arbitrarily creating Lambdas. Creating a Terraform module would be a good way to go;
-however, coupling them together makes techdebt issue #1 more difficult to handle.
+however, coupling them together makes techdebt issue #1 more difficult to handle. ✅ 
+- I need to figure out error handling in the lambdas. Using `context.fail()` or returníng bad Status Codes might
+be good ways of achieving this.
 
 ## Tech Debt
 

@@ -20,3 +20,12 @@ class LambdaClient:
         )
         print(response)
         return json.loads(response['Payload'].read())
+
+
+if __name__ == '__main__':
+    import os
+    access_key_id = os.getenv("ACCESS_KEY_ID")
+    secret_access_key = os.getenv("SECRET_ACCESS_KEY")
+    region = "eu-central-1"
+    client = LambdaClient(access_key_id, secret_access_key, region)
+    print(client.fetch_translation("askdasd"))
