@@ -8,6 +8,7 @@ module "lambda_function_container_image" {
 
   image_uri    = "${module.ecr.repository_url}:latest"
   package_type = "Image"
+  architectures = ["arm64"]
 
   environment_variables = {
     "OPENAI_API_KEY" = var.openai_api_key

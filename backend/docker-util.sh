@@ -23,13 +23,13 @@ function _build() {
   FUNCTION=$1
   sed "s/\$FUNCTION/$FUNCTION/g" Dockerfile.template > Dockerfile
 
-  docker build -t "$FUNCTION"-lambda --platform linux/x86_64 .
+  docker build -t "$FUNCTION"-lambda --platform linux/arm64 .
   _post
 }
 
 function _run() {
   FUNCTION=$1
-  docker run -p 9000:8080 "$FUNCTION"-lambda:latest --name "$FUNCTION"-lambda
+  docker run -p 9000:8080 "$FUNCTION"-lambda:latest --env OPENAI_API_KEY=$OPENAI_API_KEY --name "$FUNCTION"-lambda
 }
 
 function _clean() {
