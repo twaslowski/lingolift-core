@@ -111,4 +111,4 @@ if __name__ == '__main__':
     client = LambdaClient(os.getenv("ACCESS_KEY_ID"),
                           os.getenv("SECRET_ACCESS_KEY"),
                           "eu-central-1")
-    logging.info(asyncio.run(client.fetch_literal_translations("Wie viel kostet das Bier?")))
+    logging.info(asyncio.run(client.fetch_translation("Wie viel kostet das Bier?")))
