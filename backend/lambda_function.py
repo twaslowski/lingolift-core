@@ -1,4 +1,12 @@
+import json
+
+import iso639
+from shared.exception import ApplicationException
+
 from service.generate import generate_translation, generate_literal_translations, generate_responses
+import logging
+
+logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 
 
 def translation_handler(event, _):
@@ -6,9 +14,16 @@ def translation_handler(event, _):
     logging.info(f"Received sentence: {sentence}")
     try:
         response = generate_translation(sentence)
-        return response.model_dump()
+        return {
+            "status_code": 200,
+            "body": json.dumps(response.model_dump())
+        }
     except iso639.LanguageNotFoundError:
-        return ApplicationException(f"Language for sentence {sentence} could not be identified.").dict(), 400
+        return {
+            "status_code": 400,
+            "body": json.dumps(
+                ApplicationException(f"Language for sentence {sentence} could not be identified.").dict())
+        }
 
 
 def response_suggestion_handler(event, _):
