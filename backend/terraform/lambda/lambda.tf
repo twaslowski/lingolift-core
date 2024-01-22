@@ -10,6 +10,7 @@ module "lambda_function_container_image" {
   image_uri    = "${module.ecr.repository_url}:latest"
   package_type = "Image"
   architectures = ["x86_64"]
+  trigger_on_package_timestamp = true
 
   environment_variables = {
     "OPENAI_API_KEY" = var.openai_api_key

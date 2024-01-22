@@ -11,26 +11,7 @@ on:
     branches: [ "main" ]
 
 jobs:
-  create-infrastructure:
-    # needs: [build-and-push-docker]
-    runs-on: ubuntu-latest
-    env:
-      TF_VAR_openai_api_key: ${{ secrets.OPENAI_API_KEY }}
-    steps:
-      - name: checkout
-        uses: actions/checkout@v3
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          role-to-assume: arn:aws:iam::246770851643:role/github-actions
-          aws-region: eu-central-1
-      - name: Create Terraform Infrastructure
-        run: |
-          pushd backend/terraform && terraform init
-          terraform apply -auto-approve
-
   build-and-push-docker:
-    needs: [create-infrastructure]
     runs-on: ubuntu-latest
     steps:
       - name: checkout
@@ -68,3 +49,21 @@ jobs:
           ./docker-util.sh push translation
           ./docker-util.sh push literal_translation
           ./docker-util.sh push response_suggestion
+
+  create-infrastructure:
+    needs: [build-and-push-docker]
+    runs-on: ubuntu-latest
+    env:
+      TF_VAR_openai_api_key: ${{ secrets.OPENAI_API_KEY }}
+    steps:
+      - name: checkout
+        uses: actions/checkout@v3
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::246770851643:role/github-actions
+          aws-region: eu-central-1
+      - name: Create Terraform Infrastructure
+        run: |
+          pushd backend/terraform && terraform init
+          terraform apply -auto-approve
