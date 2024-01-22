@@ -77,3 +77,6 @@ class LambdaClient:
             raise ApplicationException("Could not parse response from backend.")
         except Exception:
             raise ApplicationException("Unknown error occurred.")
+
+    def fetch_syntactical_analysis(self, sentence: str, language: str):
+        raise ApplicationException("Not implemented yet.")
