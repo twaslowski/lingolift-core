@@ -4,30 +4,11 @@ module "ecr" {
   repository_name                 = "${var.name}-lambda"
   repository_image_tag_mutability = "MUTABLE"
 
-  repository_read_write_access_arns = [data.aws_caller_identity.current.arn]
-  repository_lifecycle_policy       = local.repository_lifecycle_policy
-
-
-  attach_repository_policy = true
-  registry_policy = jsonencode({
-    Action = [
-      "ecr:BatchGetImage",
-      "ecr:GetDownloadUrlForLayer",
-      "ecr:SetRepositoryPolicy",
-      "ecr:DeleteRepositoryPolicy",
-      "ecr:GetRepositoryPolicy",
-    ]
-    Condition = {
-      StringLike = {
-        "aws:sourceArn" = "arn:aws:lambda:eu-central-1:${data.aws_caller_identity.current.account_id}:function:*"
-      }
-    }
-    Effect    = "Allow"
-    Principal = {
-      Service = "lambda.amazonaws.com"
-    }
-    Sid = "LambdaECRImageRetrievalPolicy"
-  })
+  repository_read_write_access_arns = [
+    data.aws_caller_identity.current.arn,
+    module.lambda_function_container_image.lambda_role_arn
+  ]
+  repository_lifecycle_policy = local.repository_lifecycle_policy
 }
 
 locals {
