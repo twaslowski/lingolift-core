@@ -24,13 +24,15 @@ jobs:
           pipx ensurepath
           pipx install poetry
 
-      - name: Poetry setup
+      - name: set up backend
         run: |
           cd backend && poetry install --with dev --with spacy
+          make test
           
-      - name: Tests
+      - name: set up shared
         run: |
-          cd backend && make test
+          cd shared && poetry install --with dev
+          make test
 
       - name: Build the Docker image
         run: |
