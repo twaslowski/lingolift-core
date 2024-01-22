@@ -63,7 +63,7 @@ class LambdaClient:
 
     async def fetch_response_suggestions(self, sentence: str):
         response = self.lambda_client.invoke(
-            FunctionName="respoonse_suggestion-lambda",
+            FunctionName="response_suggestion-lambda",
             InvocationType='RequestResponse',
             Payload=json.dumps({"sentence": sentence})
         )
