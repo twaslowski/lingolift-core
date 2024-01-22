@@ -27,6 +27,17 @@ function _build() {
   _post
 }
 
+function _build_spacy() {
+  mkdir -p package
+  poetry export --with spacy -f requirements.txt -o package/requirements.txt --without-hashes
+
+  FUNCTION=syntactical_analysis
+  sed "s/\$FUNCTION/$FUNCTION/g" Dockerfile.template > Dockerfile
+
+  docker build -t "$FUNCTION"-lambda --platform linux/x86_64 .
+  _post
+}
+
 function _run() {
   FUNCTION=$1
   docker run -p 9000:8080 "$FUNCTION"-lambda:latest --env OPENAI_API_KEY=$OPENAI_API_KEY --name "$FUNCTION"-lambda

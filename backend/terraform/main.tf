@@ -10,6 +10,12 @@ module "literal_translation-lambda" {
   name           = "literal_translation"
 }
 
+module "syntactical_analysis-lambda" {
+  source         = "./lambda"
+  openai_api_key = "not-needed"
+  name           = "syntactical_analysis"
+}
+
 module "response_suggestion-lambda" {
   source         = "./lambda"
   openai_api_key = var.openai_api_key

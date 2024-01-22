@@ -1,13 +1,14 @@
+import asyncio
 import json
 import logging
 
 import boto3
 
-from exception import ApplicationException
-from model.syntactical_analysis import SyntacticalAnalysis
-from model.translation import Translation
-from model.literal_translation import LiteralTranslation
-from model.response_suggestion import ResponseSuggestion
+from shared.exception import ApplicationException
+from shared.model.syntactical_analysis import SyntacticalAnalysis
+from shared.model.translation import Translation
+from shared.model.literal_translation import LiteralTranslation
+from shared.model.response_suggestion import ResponseSuggestion
 
 
 class LambdaClient:
@@ -27,8 +28,6 @@ class LambdaClient:
         )
         response_body = response.get('Payload').read()
         logging.info(f"Received lambda response: {response_body}")
-        # todo this is very rudimentary exception handling
-        # The status code solution specifically is very rough. An introduction of an API Gateway would make this easier.
         try:
             payload = json.loads(response_body)
             status_code = payload.get('status_code')
@@ -36,7 +35,8 @@ class LambdaClient:
                 body = json.loads(payload.get('body'))
                 return Translation(**body)
             else:
-                raise ApplicationException(**payload.get('body'))
+                error = json.loads(payload.get('body'))
+                raise ApplicationException(**error)
         except json.JSONDecodeError:
             raise ApplicationException("Could not parse response from backend.")
         except Exception:
@@ -48,9 +48,10 @@ class LambdaClient:
             InvocationType='RequestResponse',
             Payload=json.dumps({"sentence": sentence})
         )
-        print(response.get('Payload').read())
+        response_body = response.get('Payload').read()
+        logging.info(f"Received lambda response: {response_body}")
         try:
-            payload = json.loads(response['Payload'].read())
+            payload = json.loads(response_body)
             status_code = payload.get('status_code')
             if status_code == 200:
                 return [LiteralTranslation(**literal_translation) for literal_translation in
@@ -68,9 +69,10 @@ class LambdaClient:
             InvocationType='RequestResponse',
             Payload=json.dumps({"sentence": sentence})
         )
-        print(response.get('Payload').read())
+        response_body = response.get('Payload').read()
+        logging.info(f"Received lambda response: {response_body}")
         try:
-            payload = json.loads(response['Payload'].read())
+            payload = json.loads(response_body)
             status_code = payload.get('status_code')
             if status_code == 200:
                 return [ResponseSuggestion(**suggestion) for suggestion in json.loads(payload.get('body'))]
@@ -81,18 +83,19 @@ class LambdaClient:
         except Exception:
             raise ApplicationException("Unknown error occurred.")
 
-    def fetch_syntactical_analysis(self, sentence: str, language: str):
+    async def fetch_syntactical_analysis(self, sentence: str, language: str):
         response = self.lambda_client.invoke(
             FunctionName="syntactical_analysis-lambda",
             InvocationType='RequestResponse',
             Payload=json.dumps({"sentence": sentence, "language": language})
         )
-        print(response.get('Payload').read())
+        response_body = response.get('Payload').read()
+        logging.info(f"Received lambda response: {response_body}")
         try:
-            payload = json.loads(response['Payload'].read())
+            payload = json.loads(response_body)
             status_code = payload.get('status_code')
             if status_code == 200:
-                return [SyntacticalAnalysis(**a) for a in json.loads(payload.get('body').decode())]
+                return [SyntacticalAnalysis(**a) for a in json.loads(response_body).get('body')]
             else:
                 raise ApplicationException(**payload.get('body'))
         except json.JSONDecodeError:
@@ -108,4 +111,4 @@ if __name__ == '__main__':
     client = LambdaClient(os.getenv("ACCESS_KEY_ID"),
                           os.getenv("SECRET_ACCESS_KEY"),
                           "eu-central-1")
-    print(client.fetch_syntactical_analysis("Wie geht es dir?", "DE"))
+    logging.info(asyncio.run(client.fetch_literal_translations("Wie viel kostet das Bier?")))
