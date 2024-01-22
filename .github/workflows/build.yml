@@ -11,44 +11,44 @@ on:
     branches: [ "main" ]
 
 jobs:
-  build-and-push-docker:
-    runs-on: ubuntu-latest
-    steps:
-      - name: checkout
-        uses: actions/checkout@v3
-
-      - name: Install dependencies
-        run: |
-          sudo apt update
-          sudo apt install pipx
-          pipx ensurepath
-          pipx install poetry
-
-      - name: Poetry setup
-        run: |
-          cd backend && poetry install
-
-      - name: Build the Docker image
-        run: |
-          pushd backend
-          ./docker-util.sh build translation
-          ./docker-util.sh build literal_translation
-          ./docker-util.sh build response_suggestion
-
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          role-to-assume: arn:aws:iam::246770851643:role/github-actions
-          aws-region: eu-central-1
-
-      - name: Push the Docker images
-        env:
-          AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
-        run: |
-          pushd backend
-          ./docker-util.sh push translation
-          ./docker-util.sh push literal_translation
-          ./docker-util.sh push response_suggestion
+#  build-and-push-docker:
+#    runs-on: ubuntu-latest
+#    steps:
+#      - name: checkout
+#        uses: actions/checkout@v3
+#
+#      - name: Install dependencies
+#        run: |
+#          sudo apt update
+#          sudo apt install pipx
+#          pipx ensurepath
+#          pipx install poetry
+#
+#      - name: Poetry setup
+#        run: |
+#          cd backend && poetry install
+#
+#      - name: Build the Docker image
+#        run: |
+#          pushd backend
+#          ./docker-util.sh build translation
+#          ./docker-util.sh build literal_translation
+#          ./docker-util.sh build response_suggestion
+#
+#      - name: Configure AWS Credentials
+#        uses: aws-actions/configure-aws-credentials@v4
+#        with:
+#          role-to-assume: arn:aws:iam::246770851643:role/github-actions
+#          aws-region: eu-central-1
+#
+#      - name: Push the Docker images
+#        env:
+#          AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
+#        run: |
+#          pushd backend
+#          ./docker-util.sh push translation
+#          ./docker-util.sh push literal_translation
+#          ./docker-util.sh push response_suggestion
 
   create-infrastructure:
     needs: [build-and-push-docker]
