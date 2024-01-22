@@ -8,7 +8,7 @@ from flask import Flask, jsonify, request
 from flask_cors import CORS
 from shared.exception import ApplicationException, MissingParameterException
 
-from service.generate import generate_translation, generate_responses, generate_literal_translations, \
+from service.generate import generate_translation, generate_response_suggestions, generate_literal_translations, \
     generate_legible_upos
 from service.literal_translation import SentenceTooLongException
 from service.spacy_adapter import perform_analysis, LanguageNotAvailableException, models
@@ -39,7 +39,7 @@ def get_translation():
 def get_response_suggestions():
     sentence = request.json.get('sentence')
     # number_suggestions = request.json.get('number_suggestions')
-    response = generate_responses(sentence)
+    response = generate_response_suggestions(sentence)
     return jsonify([r.model_dump() for r in response])
 
 

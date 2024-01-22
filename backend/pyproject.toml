@@ -44,6 +44,7 @@ optional = true
 pip = "^23.3.2"
 mypy = "^1.8.0"
 pytest = "^7.4.4"
+pytest-mock = "^3.12.0"
 
 [build-system]
 requires = ["poetry-core"]

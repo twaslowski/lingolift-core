@@ -12,7 +12,6 @@ from service.literal_translation import generate_literal_translation
 from util.timing import timed
 
 
-@timed
 def generate_translation(sentence: str) -> Translation:
     context = [Message(role=SYSTEM, content=TRANSLATION_SYSTEM_PROMPT),
                Message(role=USER, content=TRANSLATION_USER_PROMPT + sentence)]
@@ -22,7 +21,7 @@ def generate_translation(sentence: str) -> Translation:
 
 
 @timed
-def generate_responses(sentence: str, number_suggestions: int = 2) -> list[ResponseSuggestion]:
+def generate_response_suggestions(sentence: str, number_suggestions: int = 2) -> list[ResponseSuggestion]:
     context = [Message(role=SYSTEM, content=RESPONSES_SYSTEM_PROMPT)]
     prompt = RESPONSES_USER_PROMPT.format(number_suggestions, sentence)
     context.append(Message(role=USER, content=prompt))

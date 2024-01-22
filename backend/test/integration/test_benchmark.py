@@ -7,7 +7,7 @@ from shared.model.literal_translation import LiteralTranslation
 from shared.model.response_suggestion import ResponseSuggestion
 from shared.model.translation import Translation
 
-from service.generate import generate_responses, generate_translation, generate_literal_translations
+from service.generate import generate_response_suggestions, generate_translation, generate_literal_translations
 
 
 class Benchmark(unittest.TestCase):
@@ -72,7 +72,7 @@ class Benchmark(unittest.TestCase):
         for sentence in self.BENCHMARK_SENTENCES:
             logging.info(f"Getting response suggestions for {sentence} ...")
             try:
-                openai_response = generate_responses(sentence["sentence"], expected_number_of_suggestions)
+                openai_response = generate_response_suggestions(sentence["sentence"], expected_number_of_suggestions)
                 if len(openai_response) is not expected_number_of_suggestions:
                     bad_answer_count = bad_answer_count + 1
             except ValidationError as de:
