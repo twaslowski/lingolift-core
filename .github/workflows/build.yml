@@ -51,7 +51,6 @@ jobs:
 #          ./docker-util.sh push response_suggestion
 
   create-infrastructure:
-    needs: [build-and-push-docker]
     runs-on: ubuntu-latest
     env:
       TF_VAR_openai_api_key: ${{ secrets.OPENAI_API_KEY }}
