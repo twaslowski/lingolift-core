@@ -10,7 +10,7 @@ python = "^3.9, !=3.9.7"
 streamlit = "^1.30.0"
 pytest = "^7.4.4"
 mypy = "^1.8.0"
-shared = {path = "../shared"}
+shared = {git = "https://github.com/tobiaswaslowski/lingolift.git", subdirectory = "shared"}
 
 
 [build-system]

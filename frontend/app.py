@@ -4,7 +4,7 @@ import time
 
 import requests  # type: ignore[import-untyped]
 import streamlit as st
-from shared.client import Client
+from shared.lambda_client import LambdaClient
 from shared.exception import ApplicationException
 from shared.model.literal_translation import LiteralTranslation  # type: ignore[import-untyped]
 from shared.model.response_suggestion import should_generate_response_suggestions  # type: ignore[import-untyped]
@@ -16,10 +16,10 @@ TITLE = "grammr"
 
 
 async def main() -> None:
-    backend_protocol = st.secrets.connection.protocol
-    backend_host = st.secrets.connection.host
-    backend_port = st.secrets.connection.port
-    client = Client(backend_protocol, backend_host, backend_port)
+    access_key_id = st.secrets["ACCESS_KEY_ID"]
+    secret_access_key = st.secrets["SECRET_ACCESS_KEY"]
+    region = st.secrets["AWS_REGION"]
+    client = LambdaClient(access_key_id, secret_access_key, region)
     stringifier = Stringifier(MarkupLanguage.MARKDOWN)
 
     if await backend_is_healthy(client):
@@ -30,7 +30,7 @@ async def main() -> None:
     # st.markdown(stringifier.disclaimer())
 
 
-async def chat(client: Client, stringifier: Stringifier):
+async def chat(client: LambdaClient, stringifier: Stringifier):
     intro = st.markdown(stringifier.introductory_text())
 
     # Initialize chat history
@@ -126,15 +126,8 @@ def render_message(string: str, interval: float = 0.025):
     st.session_state.messages.append({"role": "assistant", "content": string})
 
 
-async def backend_is_healthy(client: Client):
-    try:
-        response = await client.fetch_health()
-        if response.status_code == 200:
-            logging.info("Backend is healthy")
-            return True
-    except Exception as e:
-        logging.error("Error upon health check ", e)
-        return False
+async def backend_is_healthy(client: LambdaClient) -> bool:
+    return True
 
 
 if __name__ == '__main__':

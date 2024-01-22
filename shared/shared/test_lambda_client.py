@@ -5,6 +5,7 @@ import pytest
 
 from shared.exception import ApplicationException
 from shared.lambda_client import LambdaClient
+from shared.model.translation import Translation
 
 """
 Tests the shared client methods that are used by both the frontend and the telegram bot.
@@ -18,10 +19,11 @@ sends responses that adhere to the shared pydantic models defined in the `shared
 def test_translation_happy_path(mocker):
     # Set up mocks
     mock_payload = Mock()
-    mock_payload.read.return_value = ('{"status_code": 200, "body": '
-                                      '{"translation": "some translation", '
-                                      '"language_name": "test", '
-                                      '"language_code": "test"}}')
+    mock_payload.read.return_value = (json.dumps({
+        "status_code": 200,
+        "body": json.dumps(
+            Translation(translation="some translation", language_name="test", language_code="test").model_dump())
+    }))
 
     # Set up client
     client = LambdaClient("some", "credentials", "here")

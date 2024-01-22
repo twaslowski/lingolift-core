@@ -32,7 +32,8 @@ class LambdaClient:
             payload = json.loads(response_body)
             status_code = payload.get('status_code')
             if status_code == 200:
-                return Translation(**payload.get('body'))
+                body = json.loads(payload.get('body'))
+                return Translation(**body)
             else:
                 raise ApplicationException(**payload.get('body'))
         except json.JSONDecodeError:
@@ -51,7 +52,8 @@ class LambdaClient:
             payload = json.loads(response['Payload'].read())
             status_code = payload.get('status_code')
             if status_code == 200:
-                return [LiteralTranslation(**literal_translation) for literal_translation in payload.get('body')]
+                return [LiteralTranslation(**literal_translation) for literal_translation in
+                        json.loads(payload.get('body'))]
             else:
                 raise ApplicationException(**payload.get('body'))
         except json.JSONDecodeError:
@@ -70,7 +72,7 @@ class LambdaClient:
             payload = json.loads(response['Payload'].read())
             status_code = payload.get('status_code')
             if status_code == 200:
-                return [ResponseSuggestion(**suggestion) for suggestion in payload.get('body')]
+                return [ResponseSuggestion(**suggestion) for suggestion in json.loads(payload.get('body'))]
             else:
                 raise ApplicationException(**payload.get('body'))
         except json.JSONDecodeError:
