@@ -18,7 +18,7 @@ class LambdaClient:
             aws_secret_access_key=secret_access_key
         )
 
-    def fetch_translation(self, sentence: str) -> Translation:
+    async def fetch_translation(self, sentence: str) -> Translation:
         response = self.lambda_client.invoke(
             FunctionName="translation-lambda",
             InvocationType='RequestResponse',
@@ -41,7 +41,7 @@ class LambdaClient:
         except Exception:
             raise ApplicationException("Unknown error occurred.")
 
-    def fetch_literal_translations(self, sentence: str):
+    async def fetch_literal_translations(self, sentence: str):
         response = self.lambda_client.invoke(
             FunctionName="literal_translation-lambda",
             InvocationType='RequestResponse',
@@ -61,7 +61,7 @@ class LambdaClient:
         except Exception:
             raise ApplicationException("Unknown error occurred.")
 
-    def fetch_response_suggestions(self, sentence: str):
+    async def fetch_response_suggestions(self, sentence: str):
         response = self.lambda_client.invoke(
             FunctionName="respoonse_suggestion-lambda",
             InvocationType='RequestResponse',
