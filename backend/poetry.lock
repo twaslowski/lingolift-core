@@ -2087,7 +2087,7 @@ requests = "2.31.0"
 type = "git"
 url = "https://github.com/tobiaswaslowski/lingolift.git"
 reference = "HEAD"
-resolved_reference = "34862d20939115d19111b14d7dd8198e15c945ef"
+resolved_reference = "bce12bd90c9d8f3ab2cba9cbdb63a0e223e982ad"
 subdirectory = "shared"
 
 [[package]]
@@ -2484,23 +2484,6 @@ secure = ["certifi", "cryptography (>=1.3.4)", "idna (>=2.0.0)", "ipaddress", "p
 socks = ["PySocks (>=1.5.6,!=1.5.7,<2.0)"]
 
 [[package]]
-name = "urllib3"
-version = "2.0.7"
-description = "HTTP library with thread-safe connection pooling, file post, and more."
-optional = false
-python-versions = ">=3.7"
-files = [
-    {file = "urllib3-2.0.7-py3-none-any.whl", hash = "sha256:fdb6d215c776278489906c2f8916e6e7d4f5a9b602ccbcfdf7f016fc8da0596e"},
-    {file = "urllib3-2.0.7.tar.gz", hash = "sha256:c97dfde1f7bd43a71c8d2a58e369e9b2bf692d1334ea9f9cae55add7d0dd0f84"},
-]
-
-[package.extras]
-brotli = ["brotli (>=1.0.9)", "brotlicffi (>=0.8.0)"]
-secure = ["certifi", "cryptography (>=1.9)", "idna (>=2.0.0)", "pyopenssl (>=17.1.0)", "urllib3-secure-extra"]
-socks = ["pysocks (>=1.5.6,!=1.5.7,<2.0)"]
-zstd = ["zstandard (>=0.18.0)"]
-
-[[package]]
 name = "virtualenv"
 version = "20.25.0"
 description = "Virtual Python Environment builder"
@@ -2675,4 +2658,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9"
-content-hash = "330038eada8ca9377b402b1dee94dbb89c6b9ea2c96aaf8d97726b2687a95701"
+content-hash = "f9d0a4796a25e469baa07775897f32e1ecce482aeecfb7c8787118e71f17924c"

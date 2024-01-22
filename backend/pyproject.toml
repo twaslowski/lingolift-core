@@ -11,7 +11,9 @@ openai = "^1.7.2"
 requests = "2.31.0"
 python-dotenv = "^1.0.0"
 json5 = "^0.9.14"
-poetry-plugin-export = "^1.6.0"
+# urllib and poetry-plugin-export have some dependency conflicts, this resolves those
+poetry-plugin-export = "^1.5.0"
+urllib3 = "<2"
 python-iso639 = "^2024.1.2"
 shared = {git = "https://github.com/tobiaswaslowski/lingolift.git", subdirectory = "shared"}
 
