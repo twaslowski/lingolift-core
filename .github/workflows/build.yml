@@ -26,7 +26,7 @@ jobs:
 
       - name: Poetry setup
         run: |
-          cd backend && poetry install
+          cd backend && poetry install --with dev
           
       - name: Tests
         run: |
