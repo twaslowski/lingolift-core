@@ -16,7 +16,7 @@ sends responses that adhere to the shared pydantic models defined in the `shared
 """
 
 
-def test_translation_happy_path(mocker):
+async def test_translation_happy_path(mocker):
     # Set up mocks
     mock_payload = Mock()
     mock_payload.read.return_value = (json.dumps({
@@ -31,7 +31,7 @@ def test_translation_happy_path(mocker):
     mocker.patch.object(client.lambda_client, 'invoke', return_value={"Payload": mock_payload})
 
     # when
-    translation = client.fetch_translation("some sentence")
+    translation = await client.fetch_translation("some sentence")
 
     # then
     assert translation.translation == "some translation"
@@ -39,7 +39,7 @@ def test_translation_happy_path(mocker):
     assert translation.language_code == "test"
 
 
-def test_translation_expected_error(mocker):
+async def test_translation_expected_error(mocker):
     # Set up mocks
     mock_payload = Mock()
     mock_payload.read.return_value = (json.dumps({
@@ -53,12 +53,12 @@ def test_translation_expected_error(mocker):
     mocker.patch.object(client.lambda_client, 'invoke', return_value={"Payload": mock_payload})
 
     with pytest.raises(ApplicationException) as e:
-        client.fetch_translation("some sentence")
+        await client.fetch_translation("some sentence")
         captured_error = ApplicationException(**e.value)
         assert captured_error.error_message == "some error"
 
 
-def test_translation_unexpected_error(mocker):
+async def test_translation_unexpected_error(mocker):
     mock_payload = Mock()
     mock_payload.read.return_value = (json.dumps({
         "status_code": 500,
@@ -69,6 +69,6 @@ def test_translation_unexpected_error(mocker):
     mocker.patch.object(client.lambda_client, 'invoke', return_value={"Payload": mock_payload})
 
     with pytest.raises(ApplicationException) as e:
-        client.fetch_translation("some sentence")
+        await client.fetch_translation("some sentence")
         captured_error = ApplicationException(**e.value)
         assert captured_error.error_message == "Unknown error occurred."

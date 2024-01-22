@@ -3,10 +3,11 @@ import logging
 
 import boto3
 
-from shared.exception import ApplicationException
-from shared.model.translation import Translation
-from shared.model.literal_translation import LiteralTranslation
-from shared.model.response_suggestion import ResponseSuggestion
+from exception import ApplicationException
+from model.syntactical_analysis import SyntacticalAnalysis
+from model.translation import Translation
+from model.literal_translation import LiteralTranslation
+from model.response_suggestion import ResponseSuggestion
 
 
 class LambdaClient:
@@ -53,7 +54,7 @@ class LambdaClient:
             status_code = payload.get('status_code')
             if status_code == 200:
                 return [LiteralTranslation(**literal_translation) for literal_translation in
-                        json.loads(payload.get('body'))]
+                        json.loads(payload.get('body').decode())]
             else:
                 raise ApplicationException(**payload.get('body'))
         except json.JSONDecodeError:
@@ -81,4 +82,30 @@ class LambdaClient:
             raise ApplicationException("Unknown error occurred.")
 
     def fetch_syntactical_analysis(self, sentence: str, language: str):
-        raise ApplicationException("Not implemented yet.")
+        response = self.lambda_client.invoke(
+            FunctionName="syntactical_analysis-lambda",
+            InvocationType='RequestResponse',
+            Payload=json.dumps({"sentence": sentence, "language": language})
+        )
+        print(response.get('Payload').read())
+        try:
+            payload = json.loads(response['Payload'].read())
+            status_code = payload.get('status_code')
+            if status_code == 200:
+                return [SyntacticalAnalysis(**a) for a in json.loads(payload.get('body').decode())]
+            else:
+                raise ApplicationException(**payload.get('body'))
+        except json.JSONDecodeError:
+            raise ApplicationException("Could not parse response from backend.")
+        except Exception:
+            raise ApplicationException("Unknown error occurred.")
+
+
+if __name__ == '__main__':
+    import os
+
+    logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
+    client = LambdaClient(os.getenv("ACCESS_KEY_ID"),
+                          os.getenv("SECRET_ACCESS_KEY"),
+                          "eu-central-1")
+    print(client.fetch_syntactical_analysis("Wie geht es dir?", "DE"))
