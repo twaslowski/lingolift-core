@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import Optional
+from typing import Optional, Union
 
 import emoji
 
@@ -40,7 +40,7 @@ class Stringifier:
         or {self.hyperlink('contact my creator', 'https://www.linkedin.com/in/twaslowski/')}
         if you have any questions or remarks."""
 
-    def coalesce_analyses(self, literal_translations: list[LiteralTranslation],
+    def coalesce_analyses(self, literal_translations: Union[list[LiteralTranslation], ApplicationException],
                           syntactical_analysis: list[SyntacticalAnalysis]) -> str:
         """
         If both a literal translation of the words in the sentence and the syntactical analysis (i.e. part-of-speech
@@ -52,6 +52,8 @@ class Stringifier:
         :param ml: Rendering Mode; HTML or Markdown. Different clients may use different modes of displaying information
         :return:
         """
+        if isinstance(literal_translations, ApplicationException):
+            raise ApplicationException(error_message="An error occurred while fetching the literal translation.")
         response_string = self.headline("Vocabulary and Grammar breakdown")
         for word in literal_translations:
             analysis = self.find_analysis(word.word, syntactical_analysis)
@@ -70,7 +72,7 @@ class Stringifier:
         :param syntactical_analyses: Set of syntactical analyses for words in the sentence
         :return: The analysis for the word including the lemma, dependencies and morphology, if available.
         """
-        if type(syntactical_analyses) == ApplicationException:
+        if isinstance(syntactical_analyses,  ApplicationException):
             return None
         for analysis in syntactical_analyses:
             if analysis.word == word:

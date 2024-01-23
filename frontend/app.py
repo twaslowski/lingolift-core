@@ -84,12 +84,12 @@ async def chat(client: LambdaClient, stringifier: Stringifier):
                             client.fetch_syntactical_analysis(sentence, translation.language_code),
                             return_exceptions=True)
 
-                    if isinstance(literal_translations, ApplicationException):
-                        st.error("An unexpected error occurred while fetching literal translations.")
-
                     # render syntactical analysis
-                    analysis_stringified = stringifier.coalesce_analyses(literal_translations, syntactical_analysis)
-                    render_message(analysis_stringified)
+                    try:
+                        analysis_stringified = stringifier.coalesce_analyses(literal_translations, syntactical_analysis)
+                        render_message(analysis_stringified)
+                    except ApplicationException as e:
+                        st.error(e.error_message)
 
                     # at this point, the suggestions should be available
                     if generate_suggestions:
