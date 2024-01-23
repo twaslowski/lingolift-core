@@ -1,6 +1,7 @@
 import asyncio
 import json
 import logging
+from typing import Tuple
 
 import boto3
 
@@ -26,21 +27,11 @@ class LambdaClient:
             InvocationType='RequestResponse',
             Payload=json.dumps({"sentence": sentence})
         )
-        response_body = response.get('Payload').read()
-        logging.info(f"Received lambda response: {response_body}")
-        try:
-            payload = json.loads(response_body)
-            status_code = payload.get('status_code')
-            if status_code == 200:
-                body = json.loads(payload.get('body'))
-                return Translation(**body)
-            else:
-                error = json.loads(payload.get('body'))
-                raise ApplicationException(**error)
-        except json.JSONDecodeError:
-            raise ApplicationException("Could not parse response from backend.")
-        except Exception:
-            raise ApplicationException("Unknown error occurred.")
+        status_code, body = retrieve_payload(response)
+        if status_code == 200:
+            return Translation(**body)
+        else:
+            raise ApplicationException(**body)
 
     async def fetch_literal_translations(self, sentence: str):
         response = self.lambda_client.invoke(
@@ -48,20 +39,11 @@ class LambdaClient:
             InvocationType='RequestResponse',
             Payload=json.dumps({"sentence": sentence})
         )
-        response_body = response.get('Payload').read()
-        logging.info(f"Received lambda response: {response_body}")
-        try:
-            payload = json.loads(response_body)
-            status_code = payload.get('status_code')
-            if status_code == 200:
-                return [LiteralTranslation(**literal_translation) for literal_translation in
-                        json.loads(payload.get('body').decode())]
-            else:
-                raise ApplicationException(**payload.get('body'))
-        except json.JSONDecodeError:
-            raise ApplicationException("Could not parse response from backend.")
-        except Exception:
-            raise ApplicationException("Unknown error occurred.")
+        status_code, body = retrieve_payload(response)
+        if status_code == 200:
+            return [LiteralTranslation(**literal_translation) for literal_translation in body]
+        else:
+            raise ApplicationException(**body)
 
     async def fetch_response_suggestions(self, sentence: str):
         response = self.lambda_client.invoke(
@@ -69,19 +51,11 @@ class LambdaClient:
             InvocationType='RequestResponse',
             Payload=json.dumps({"sentence": sentence})
         )
-        response_body = response.get('Payload').read()
-        logging.info(f"Received lambda response: {response_body}")
-        try:
-            payload = json.loads(response_body)
-            status_code = payload.get('status_code')
-            if status_code == 200:
-                return [ResponseSuggestion(**suggestion) for suggestion in json.loads(payload.get('body'))]
-            else:
-                raise ApplicationException(**payload.get('body'))
-        except json.JSONDecodeError:
-            raise ApplicationException("Could not parse response from backend.")
-        except Exception:
-            raise ApplicationException("Unknown error occurred.")
+        status_code, body = retrieve_payload(response)
+        if status_code == 200:
+            return [ResponseSuggestion(**suggestion) for suggestion in body]
+        else:
+            raise ApplicationException(**body)
 
     async def fetch_syntactical_analysis(self, sentence: str, language: str):
         response = self.lambda_client.invoke(
@@ -89,19 +63,27 @@ class LambdaClient:
             InvocationType='RequestResponse',
             Payload=json.dumps({"sentence": sentence, "language": language})
         )
-        response_body = response.get('Payload').read()
-        logging.info(f"Received lambda response: {response_body}")
         try:
-            payload = json.loads(response_body)
-            status_code = payload.get('status_code')
+            status_code, body = retrieve_payload(response)
             if status_code == 200:
-                return [SyntacticalAnalysis(**a) for a in json.loads(response_body).get('body')]
+                return [SyntacticalAnalysis(**a) for a in body]
             else:
-                raise ApplicationException(**payload.get('body'))
-        except json.JSONDecodeError:
-            raise ApplicationException("Could not parse response from backend.")
+                raise ApplicationException(**body)
         except Exception:
             raise ApplicationException("Unknown error occurred.")
+
+
+def retrieve_payload(lambda_response: dict) -> Tuple[int, dict]:
+    try:
+        payload = json.loads(lambda_response.get('Payload').read().decode())
+        logging.info(f"Received lambda response: {payload}")
+        status_code = payload.get('status_code')
+        body = payload.get('body')
+        if isinstance(body, str):
+            body = json.loads(body)
+        return status_code, body
+    except json.JSONDecodeError:
+        raise ApplicationException("Could not parse response from backend.")
 
 
 if __name__ == '__main__':
@@ -111,4 +93,4 @@ if __name__ == '__main__':
     client = LambdaClient(os.getenv("ACCESS_KEY_ID"),
                           os.getenv("SECRET_ACCESS_KEY"),
                           "eu-central-1")
-    logging.info(asyncio.run(client.fetch_translation("Wie viel kostet das Bier?")))
+    logging.info(asyncio.run(client.fetch_literal_translations("Wie viel kostet das Bier?")))
