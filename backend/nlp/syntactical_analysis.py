@@ -6,8 +6,6 @@ from shared.model.syntactical_analysis import SyntacticalAnalysis, PartOfSpeech,
 from spacy.tokens.token import Token
 from nlp.language_detection import detect_language
 
-from generative.upos import generate_legible_upos
-
 models = {
     "DE": "de_core_news_sm",
     "RU": "ru_core_news_sm",
