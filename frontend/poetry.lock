@@ -1271,7 +1271,7 @@ crt = ["botocore[crt] (>=1.33.2,<2.0a.0)"]
 
 [[package]]
 name = "shared"
-version = "0.2.0"
+version = "0.3.0"
 description = ""
 optional = false
 python-versions = "^3.9"
@@ -1279,16 +1279,16 @@ files = []
 develop = false
 
 [package.dependencies]
-boto3 = "^1.34.23"
+boto3 = "^1.34.25"
 emoji = "^2.9.0"
 pydantic = "^2.5.3"
 requests = "2.31.0"
 
 [package.source]
 type = "git"
-url = "https://github.com/tobiaswaslowski/lingolift.git#a73c7dc0"
+url = "https://github.com/tobiaswaslowski/lingolift.git"
 reference = "HEAD"
-resolved_reference = "4df4077463f61c6a193eb42a4f9fadb854c218ee"
+resolved_reference = "f2af7c969d0d0ef4c440aa133e1abefa02107764"
 subdirectory = "shared"
 
 [[package]]
@@ -1570,4 +1570,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9, !=3.9.7"
-content-hash = "92e9e35bddb418bd88550379d9e9d77a8f5fcdf7692615996fb7907cfbf8a8d7"
+content-hash = "b9e1b87a769b98bcf0ccb31acf6292d24ba97820f290d25b4eeb8c347de45a9e"
