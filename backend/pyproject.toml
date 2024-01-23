@@ -20,6 +20,7 @@ de-core-news-sm = { url = "https://github.com/explosion/spacy-models/releases/do
 fr-core-news-md = { url = "https://github.com/explosion/spacy-models/releases/download/fr_core_news_md-3.7.0/fr_core_news_md-3.7.0.tar.gz" }
 pt-core-news-sm = { url = "https://github.com/explosion/spacy-models/releases/download/pt_core_news_sm-3.7.0/pt_core_news_sm-3.7.0.tar.gz" }
 es-core-news-sm = { url = "https://github.com/explosion/spacy-models/releases/download/es_core_news_sm-3.7.0/es_core_news_sm-3.7.0.tar.gz" }
+lingua-language-detector = "^2.0.2"
 
 [tool.poetry.group.generative]
 optional = true

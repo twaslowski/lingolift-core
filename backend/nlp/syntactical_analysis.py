@@ -2,9 +2,9 @@ from typing import Iterator
 
 import iso639
 import spacy
-from shared.exception import ApplicationException
 from shared.model.syntactical_analysis import SyntacticalAnalysis, PartOfSpeech, Morphology
 from spacy.tokens.token import Token
+from nlp.language_detection import detect_language
 
 from generative.upos import generate_legible_upos
 
@@ -17,21 +17,15 @@ models = {
 }
 
 
-class LanguageNotAvailableException(ApplicationException):
-    pass
-
-
-def perform_analysis(sentence: str, language_iso_code: str) -> Iterator[SyntacticalAnalysis]:
+def perform_analysis(sentence: str) -> Iterator[SyntacticalAnalysis]:
     """
     Performs a syntactical analysis on a sentence in a given language.
     :param sentence: Source sentence
     :param language_iso_code: The ISO-639-1 code of the language to analyze, in order to load a model.
     :return:
     """
-    model = models.get(language_iso_code.upper(), None)
-    if model is None:
-        raise_language_not_available_exception(language_iso_code)
-    nlp = spacy.load(model)
+    language_code = str(detect_language(sentence))
+    nlp = spacy.load(models.get(language_code))
     doc = nlp(sentence)
 
     for token in doc:
@@ -49,16 +43,6 @@ def perform_analysis(sentence: str, language_iso_code: str) -> Iterator[Syntacti
             lemma=extract_lemma(token),
             dependency=extract_dependency(token)
         )
-
-
-def raise_language_not_available_exception(language_iso_code: str):
-    # Try to throw a readable error first (with the whole language name)
-    # If the country code is entirely invalid, include it in the error message instead
-    try:
-        raise LanguageNotAvailableException(
-            f"Language {iso639.Language.from_part1(language_iso_code)} is not available.")
-    except iso639.LanguageNotFoundError:
-        raise LanguageNotAvailableException(f"Language {language_iso_code} is not available.")
 
 
 def extract_dependency(token: Token) -> str | None:
@@ -82,7 +66,7 @@ def extract_relevant_tags(token: Token) -> list[str]:
     :return: The relevant tags.
     """
     match token.pos_:
-        case 'VERB':
+        case 'VERB' | 'AUX':
             relevant_tags = ['Number', 'Person', 'Tense']
         case 'NOUN' | 'DET' | 'ADJ':
             relevant_tags = ['Gender', 'Case', 'Number']
@@ -93,6 +77,6 @@ def extract_relevant_tags(token: Token) -> list[str]:
 
 
 if __name__ == '__main__':
-    response = list(perform_analysis('Wie viel kostet das Bier?', 'DE'))
+    response = list(perform_analysis('Wie viel kostet das Bier?'))
     for r in response:
         print(r.stringify())
