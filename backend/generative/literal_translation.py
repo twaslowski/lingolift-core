@@ -7,7 +7,6 @@ from shared.model.literal_translation import LiteralTranslation
 
 from llm.gpt_adapter import openai_exchange
 from llm.message import Message, USER, SYSTEM
-from llm.prompts import LITERAL_TRANSLATIONS_SYSTEM_PROMPT
 
 LITERAL_TRANSLATION_MAX_UNIQUE_WORDS = 15
 
@@ -75,6 +74,16 @@ def chunk_sentence(sentence: str, chunk_size: int = 1) -> list[list[str]]:
         if chunk not in chunks:
             chunks.append(chunk)
     return chunks  # type: ignore
+
+
+LITERAL_TRANSLATIONS_SYSTEM_PROMPT = """
+Provide literal translations for words in the context of a sentence.
+You will receive a JSON with a sentence and one or multiple words, and provide a response in the following structure:
+[{
+      "word": "PLACEHOLDER_WORD",
+      "translation": "PLACEHOLDER_LITERAL_TRANSLATION"
+}]
+"""
 
 
 class SentenceTooLongException(ApplicationException):

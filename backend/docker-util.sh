@@ -27,14 +27,16 @@ function build() {
   # Different files are required as well because otherwise imports would be failing
   case "$FUNCTION" in
       "translation"|"literal_translation"|"response_suggestion")
-        export LAMBDA_FILE=lambda_function
+        export LAMBDA_FILE=lambda_functions_generative
+        export DOCKERFILE=docker/Dockerfile-generative.template
         mkdir -p package
-        poetry export -f requirements.txt -o package/requirements.txt --without-hashes
+        poetry export -f requirements.txt --with generative -o package/requirements.txt --without-hashes
         ;;
       "syntactical_analysis")
-        export LAMBDA_FILE=lambda_function_spacy
+        export LAMBDA_FILE=lambda_functions_nlp
+        export DOCKERFILE=docker/Dockerfile-nlp.template
         mkdir -p package
-        poetry export --with spacy -f requirements.txt -o package/requirements.txt --without-hashes
+        poetry export -f requirements.txt --with nlp -o package/requirements.txt --without-hashes
         ;;
       *)
           echo "Unhandled function: $FUNCTION"
@@ -42,7 +44,7 @@ function build() {
           ;;
   esac
 
-  sed "s/\$LAMBDA_HANDLER/${FUNCTION}_handler/g" Dockerfile.template | sed "s/\$LAMBDA_FILE/${LAMBDA_FILE}/g" > Dockerfile
+  sed "s/\$LAMBDA_HANDLER/${FUNCTION}_handler/g" $DOCKERFILE | sed "s/\$LAMBDA_FILE/${LAMBDA_FILE}/g" > Dockerfile
   docker build -t "${FUNCTION}-lambda" --platform linux/x86_64 .
 
   cleanup

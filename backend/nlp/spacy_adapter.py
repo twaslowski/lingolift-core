@@ -1,6 +1,5 @@
 import iso639
 import spacy
-from dotenv import load_dotenv
 from shared.exception import ApplicationException
 
 from shared.model.syntactical_analysis import SyntacticalAnalysis
@@ -43,5 +42,4 @@ def perform_analysis(sentence: str, language_iso_code: str) -> list[SyntacticalA
 
 
 if __name__ == '__main__':
-    load_dotenv()
     print([a.model_dump() for a in perform_analysis("Как у тебя сегодня дела?", "RU")])
