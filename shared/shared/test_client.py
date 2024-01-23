@@ -1,4 +1,4 @@
-from unittest import IsolatedAsyncioTestCase
+import json
 from unittest.mock import Mock
 
 import pytest
@@ -10,6 +10,7 @@ from shared.exception import ApplicationException
 from shared.model.syntactical_analysis import SyntacticalAnalysis
 from shared.model.translation import Translation
 from shared.model.upos_explanation import UposExplanation
+from aioresponses import aioresponses
 
 
 # todo fix tests
@@ -17,23 +18,25 @@ from shared.model.upos_explanation import UposExplanation
 # but CoroutineMock appears to use the deprecated @asyncio.coroutine decorator,
 # which means it's not compatible with Python 3.12. I really don't want to downgrade my Python version to 3.11 just
 # for this. Not to mention that would break a bunch of other things because of the way I do typing.
+
+# as per https://github.com/pnuckowski/aioresponses/issues/218
+@pytest.fixture
+def mocked():
+    with aioresponses() as m:
+        yield m
+
+
 @pytest.mark.asyncio
-async def test_translation_happy_path(mocker):
+async def test_translation_happy_path(mocked):
     # Create an instance of your client class
     client = Client()
 
     # Mock the response from aiohttp post
-    mock_response = mocker.MagicMock()
-    mock_response.status = 200
-    mock_response.json = mocker.AsyncMock(return_value={
+    mocked.post(f"{client.url}/translation", status=200, body=json.dumps({
         "translation": "translation",
         "language_name": "german",
         "language_code": "de"
-    })
-
-    # Use mocker to patch aiohttp.ClientSession.post
-    mocker.patch('aiohttp.ClientSession.post',
-                 return_value=mocker.Mock(__aenter__=CoroutineMock(return_value=mock_response)))
+    }))
 
     # Call the fetch_translation method
     translation = await client.fetch_translation("some sentence")
