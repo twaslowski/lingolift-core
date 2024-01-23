@@ -42,8 +42,8 @@ function build() {
           ;;
   esac
 
-  sed "s/\$LAMBDA_HANDLER/$FUNCTION/g" Dockerfile.template | sed "s/\$LAMBDA_FILE/$LAMBDA_FILE/g" > Dockerfile
-  docker build -t "$FUNCTION-lambda" --platform linux/x86_64 .
+  sed "s/\$LAMBDA_HANDLER/${FUNCTION}_handler/g" Dockerfile.template | sed "s/\$LAMBDA_FILE/${LAMBDA_FILE}/g" > Dockerfile
+  docker build -t "${FUNCTION}-lambda" --platform linux/x86_64 .
 
   cleanup
 }
