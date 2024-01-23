@@ -1,6 +1,6 @@
 from typing import Iterator
 
-import iso639
+import nlp.universal_features as universal_features
 import spacy
 from shared.model.syntactical_analysis import SyntacticalAnalysis, PartOfSpeech, Morphology
 from spacy.tokens.token import Token
@@ -34,8 +34,7 @@ def perform_analysis(sentence: str) -> Iterator[SyntacticalAnalysis]:
         if token.pos_ == 'PUNCT':
             return
         if tags:
-            # morphology_explanation = generate_legible_upos(token.text, '|'.join(tags)).explanation
-            morphology = Morphology(tags=tags, explanation="")
+            morphology = Morphology(tags=tags, explanation=convert_universal_feature_tags(tags, token))
         yield SyntacticalAnalysis(
             word=token.text,
             pos=PartOfSpeech(value=token.pos_, explanation=spacy.explain(token.pos_)),
@@ -43,6 +42,22 @@ def perform_analysis(sentence: str) -> Iterator[SyntacticalAnalysis]:
             lemma=extract_lemma(token),
             dependency=extract_dependency(token)
         )
+
+
+def convert_universal_feature_tags(tags: list[str], token: Token) -> str:
+    """
+    Converts the Universal Feature tags to a legible format.
+    :param tags: A list of Universal Feature tags.
+    :param token: A spaCy token.
+    :return: A legible format of the Universal Feature tags.
+    """
+    match token.pos_:
+        case 'VERB' | 'AUX':
+            return universal_features.convert(tags, universal_features.VERB_FEATURE_SET)
+        case 'NOUN' | 'DET' | 'ADJ':
+            return universal_features.convert(tags, universal_features.NOUN_FEATURE_SET)
+        case _:
+            return ''
 
 
 def extract_dependency(token: Token) -> str | None:
