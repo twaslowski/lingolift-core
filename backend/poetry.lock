@@ -2000,11 +2000,8 @@ pydantic = "^2.5.3"
 requests = "2.31.0"
 
 [package.source]
-type = "git"
-url = "https://github.com/tobiaswaslowski/lingolift.git"
-reference = "HEAD"
-resolved_reference = "afc0283d6e418d7047a5929699e4134b1c8493ce"
-subdirectory = "shared"
+type = "directory"
+url = "../shared"
 
 [[package]]
 name = "shellingham"
@@ -2557,4 +2554,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9"
-content-hash = "91c64d49476a91b8c6fc8aa3e9a7007b2c8535427d8e702f455964ea278e7fa4"
+content-hash = "81b0c6fdb873f68cc0f8460f476a24c23aed164f62bed198402b75195077b4c0"
