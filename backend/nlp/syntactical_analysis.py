@@ -34,8 +34,8 @@ def perform_analysis(sentence: str) -> Iterator[SyntacticalAnalysis]:
         if token.pos_ == 'PUNCT':
             return
         if tags:
-            morphology_explanation = generate_legible_upos(token.text, '|'.join(tags)).explanation
-            morphology = Morphology(tags=tags, explanation=morphology_explanation)
+            # morphology_explanation = generate_legible_upos(token.text, '|'.join(tags)).explanation
+            morphology = Morphology(tags=tags, explanation="")
         yield SyntacticalAnalysis(
             word=token.text,
             pos=PartOfSpeech(value=token.pos_, explanation=spacy.explain(token.pos_)),
