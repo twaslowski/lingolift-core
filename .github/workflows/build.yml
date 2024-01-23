@@ -26,7 +26,7 @@ jobs:
 
       - name: set up backend
         run: |
-          cd backend && poetry install --with dev --with spacy
+          cd backend && poetry install --with dev --with nlp --with generative
           make test
           
       - name: set up shared
