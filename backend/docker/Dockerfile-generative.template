@@ -11,7 +11,7 @@ COPY package/requirements.txt .
 COPY lambda_functions_generative.py .
 
 COPY llm ./llm/
-COPY service ./service/
+COPY generative ./generative/
 COPY util ./util/
 
 # Install the Python dependencies and package them in a zip file
