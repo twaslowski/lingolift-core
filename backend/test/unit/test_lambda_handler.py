@@ -1,17 +1,14 @@
-from unittest import TestCase
-from unittest.mock import Mock
-
 from iso639 import LanguageNotFoundError
 from shared.exception import ApplicationException
 from shared.model.literal_translation import LiteralTranslation
 from shared.model.response_suggestion import ResponseSuggestion
 from shared.model.translation import Translation
 
-from lambda_function import translation_handler, literal_translation_handler, response_suggestion_handler
+from lambda_functions_generative import translation_handler, literal_translation_handler, response_suggestion_handler
 
 
 def test_translation_handler_happy_path(mocker):
-    mocker.patch('lambda_function.generate_translation', return_value=Translation(translation="test",
+    mocker.patch('lambda_functions_generative.generate_translation', return_value=Translation(translation="test",
                                                                                   language_name="test",
                                                                                   language_code="test"))
     event = {"sentence": "test"}
@@ -24,7 +21,7 @@ def test_translation_handler_happy_path(mocker):
 
 
 def test_translation_handler_unhappy_path(mocker):
-    mocker.patch('lambda_function.generate_translation', side_effect=LanguageNotFoundError)
+    mocker.patch('lambda_functions_generative.generate_translation', side_effect=LanguageNotFoundError)
 
     event = {"sentence": "test"}
     response = translation_handler(event, None)
@@ -34,7 +31,7 @@ def test_translation_handler_unhappy_path(mocker):
 
 
 def test_translation_handler_unknown_error(mocker):
-    mocker.patch('lambda_function.generate_translation', side_effect=Exception("test"))
+    mocker.patch('lambda_functions_generative.generate_translation', side_effect=Exception("test"))
 
     event = {"sentence": "test"}
     response = translation_handler(event, None)
@@ -44,7 +41,7 @@ def test_translation_handler_unknown_error(mocker):
 
 
 def test_literal_translation_handler_happy_path(mocker):
-    mocker.patch('lambda_function.generate_literal_translations',
+    mocker.patch('lambda_functions_generative.generate_literal_translation',
                  return_value=[LiteralTranslation(word="test", translation="test")])
     event = {"sentence": "test"}
     response = literal_translation_handler(event, None)
@@ -56,7 +53,7 @@ def test_literal_translation_handler_happy_path(mocker):
 
 
 def test_literal_translation_unknown_error(mocker):
-    mocker.patch('lambda_function.generate_literal_translations', side_effect=Exception("test"))
+    mocker.patch('lambda_functions_generative.generate_literal_translation', side_effect=Exception("test"))
 
     event = {"sentence": "test"}
     response = literal_translation_handler(event, None)
@@ -66,7 +63,7 @@ def test_literal_translation_unknown_error(mocker):
 
 
 def test_response_suggestions_happy_path(mocker):
-    mocker.patch('lambda_function.generate_response_suggestions',
+    mocker.patch('lambda_functions_generative.generate_response_suggestions',
                  return_value=[ResponseSuggestion(suggestion="test", translation="test")])
     event = {"sentence": "test"}
     response = response_suggestion_handler(event, None)
@@ -78,7 +75,7 @@ def test_response_suggestions_happy_path(mocker):
 
 
 def test_response_suggestions_unexpected_error(mocker):
-    mocker.patch('lambda_function.generate_response_suggestions', side_effect=Exception("test"))
+    mocker.patch('lambda_functions_generative.generate_response_suggestions', side_effect=Exception("test"))
 
     event = {"sentence": "test"}
     response = response_suggestion_handler(event, None)

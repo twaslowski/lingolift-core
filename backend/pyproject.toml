@@ -7,37 +7,26 @@ readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.9"
-openai = "^1.7.2"
-requests = "2.31.0"
-python-dotenv = "^1.0.0"
-json5 = "^0.9.14"
-# urllib and poetry-plugin-export have some dependency conflicts, this resolves those
-poetry-plugin-export = "^1.5.0"
-urllib3 = "<2"
 python-iso639 = "^2024.1.2"
-shared = {git = "https://github.com/tobiaswaslowski/lingolift.git", subdirectory = "shared"}
+shared = { git = "https://github.com/tobiaswaslowski/lingolift.git", subdirectory = "shared" }
 
-[tool.poetry.group.lambda.dependencies]
-shared = {git = "https://github.com/tobiaswaslowski/lingolift.git", subdirectory = "shared"}
-
-[tool.poetry.group.webserver]
+[tool.poetry.group.nlp]
 optional = true
 
-[tool.poetry.group.webserver.dependencies]
-Flask = "^3.0.0"
-Flask-Cors = "^4.0.0"
-gunicorn = "^21.2.0"
-
-[tool.poetry.group.spacy]
-optional = true
-
-[tool.poetry.group.spacy.dependencies]
+[tool.poetry.group.nlp.dependencies]
 spacy = "^3.7.0"
 ru-core-news-sm = { url = "https://github.com/explosion/spacy-models/releases/download/ru_core_news_sm-3.7.0/ru_core_news_sm-3.7.0.tar.gz" }
 de-core-news-sm = { url = "https://github.com/explosion/spacy-models/releases/download/de_core_news_sm-3.7.0/de_core_news_sm-3.7.0.tar.gz" }
 fr-core-news-md = { url = "https://github.com/explosion/spacy-models/releases/download/fr_core_news_md-3.7.0/fr_core_news_md-3.7.0.tar.gz" }
 pt-core-news-sm = { url = "https://github.com/explosion/spacy-models/releases/download/pt_core_news_sm-3.7.0/pt_core_news_sm-3.7.0.tar.gz" }
 es-core-news-sm = { url = "https://github.com/explosion/spacy-models/releases/download/es_core_news_sm-3.7.0/es_core_news_sm-3.7.0.tar.gz" }
+
+[tool.poetry.group.generative]
+optional = true
+
+[tool.poetry.group.generative.dependencies]
+openai = "^1.7.2"
+json5 = "^0.9.14"
 
 [tool.poetry.group.dev]
 optional = true
@@ -47,6 +36,8 @@ pip = "^23.3.2"
 mypy = "^1.8.0"
 pytest = "^7.4.4"
 pytest-mock = "^3.12.0"
+poetry-plugin-export = "^1.5.0"
+urllib3 = "<2"
 
 [build-system]
 requires = ["poetry-core"]

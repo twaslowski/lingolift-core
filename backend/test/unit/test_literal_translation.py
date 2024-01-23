@@ -1,6 +1,6 @@
 import unittest
 
-from service.literal_translation import chunk_sentence, SentenceTooLongException, generate_literal_translation
+from generative.literal_translation import chunk_sentence, SentenceTooLongException, generate_literal_translation
 
 
 class LiteralTranslationTest(unittest.TestCase):

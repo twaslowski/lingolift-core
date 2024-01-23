@@ -1,7 +1,9 @@
 import iso639
 from shared.exception import ApplicationException
 
-from service.generate import generate_translation, generate_literal_translations, generate_response_suggestions
+from generative.response_suggestion import generate_response_suggestions
+from generative.translation import generate_translation
+from generative.literal_translation import generate_literal_translation
 import logging
 
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
@@ -50,7 +52,7 @@ def literal_translation_handler(event, _):
     sentence = event.get('sentence')
     logging.info(f"Received sentence: {sentence}")
     try:
-        response = generate_literal_translations(sentence)
+        response = generate_literal_translation(sentence)
         return {
             "status_code": 200,
             "body": [r.model_dump() for r in response]

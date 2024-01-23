@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from service.spacy_adapter import perform_analysis, LanguageNotAvailableException
+from nlp.spacy_adapter import perform_analysis, LanguageNotAvailableException
 
 
 class TestSpacyAdapter(TestCase):

@@ -3,11 +3,9 @@ import unittest
 
 from dotenv import load_dotenv
 from pydantic import ValidationError
-from shared.model.literal_translation import LiteralTranslation
-from shared.model.response_suggestion import ResponseSuggestion
-from shared.model.translation import Translation
 
-from service.generate import generate_response_suggestions, generate_translation, generate_literal_translations
+from generative.response_suggestion import generate_response_suggestions
+from generative.translation import generate_translation
 
 
 class Benchmark(unittest.TestCase):
