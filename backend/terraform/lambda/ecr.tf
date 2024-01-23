@@ -17,12 +17,11 @@ locals {
     rules = [
       {
         rulePriority = 1,
-        description  = "Keep last 30 images",
+        description  = "Keep 3 images",
         selection    = {
-          tagStatus     = "tagged",
-          tagPrefixList = ["v"],
+          tagStatus     = "untagged",
           countType     = "imageCountMoreThan",
-          countNumber   = 5
+          countNumber   = 2
         },
         action = {
           type = "expire"
