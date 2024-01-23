@@ -14,6 +14,9 @@ module "syntactical_analysis-lambda" {
   source         = "./lambda"
   openai_api_key = "not-needed"
   name           = "syntactical_analysis"
+
+  memory_size = 1024
+  timeout     = 30
 }
 
 module "response_suggestion-lambda" {
