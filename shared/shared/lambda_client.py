@@ -33,7 +33,7 @@ class LambdaClient:
         else:
             raise ApplicationException(**body)
 
-    async def fetch_literal_translations(self, sentence: str):
+    async def fetch_literal_translations(self, sentence: str) -> list[LiteralTranslation]:
         response = self.lambda_client.invoke(
             FunctionName="literal_translation-lambda",
             InvocationType='RequestResponse',
@@ -45,7 +45,7 @@ class LambdaClient:
         else:
             raise ApplicationException(**body)
 
-    async def fetch_response_suggestions(self, sentence: str):
+    async def fetch_response_suggestions(self, sentence: str) -> list[ResponseSuggestion]:
         response = self.lambda_client.invoke(
             FunctionName="response_suggestion-lambda",
             InvocationType='RequestResponse',
@@ -57,7 +57,7 @@ class LambdaClient:
         else:
             raise ApplicationException(**body)
 
-    async def fetch_syntactical_analysis(self, sentence: str, language: str):
+    async def fetch_syntactical_analysis(self, sentence: str, language: str) -> list[SyntacticalAnalysis]:
         response = self.lambda_client.invoke(
             FunctionName="syntactical_analysis-lambda",
             InvocationType='RequestResponse',
