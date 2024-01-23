@@ -3,34 +3,48 @@ from typing import List
 from pydantic import BaseModel
 
 
+class PartOfSpeech(BaseModel):
+    value: str
+    explanation: str
+
+
+class Morphology(BaseModel):
+    tags: list[str]
+    explanation: str | None
+
+
 class SyntacticalAnalysis(BaseModel):
     word: str
-    morphology: str
-    lemma: str
-    pos: str
-    dependency: str
-    pos_explanation: str
+    pos: PartOfSpeech
+    morphology: Morphology | None
+    lemma: str | None
+    dependency: str | None
 
     def stringify_lemma(self) -> str:
-        if self.word.lower() != self.lemma.lower():
-            return f' (from: {self.lemma})'
-        else:
-            return ''
+        return f' (from: {self.lemma})' if self.lemma else None
 
-    def stringify_morphology(self) -> str:
-        if self.morphology != '':
-            return f'Morphological features: {self.morphology}'
+    def stringify_morphology(self) -> str | None:
+        if self.morphology:
+            if self.morphology.explanation:
+                return self.morphology.explanation
+            else:
+                return ', '.join(self.morphology.tags)
         else:
-            return ''
+            return None
+
+    def stringify_dependency(self) -> str | None:
+        # Only return something IF there is a dependency AND a the word is inflected in the first place
+        return f' (refers to: {self.dependency})' if self.dependency and self.lemma else None
 
     def stringify(self) -> str:
         features: List[str] = []
         add_feature(features, self.stringify_lemma())
-        add_feature(features, self.pos_explanation)
+        add_feature(features, self.pos.explanation)
         add_feature(features, self.stringify_morphology())
+        # add_feature(features, self.dependency)
         return '; '.join(features)
 
 
-def add_feature(features: list[str], feature: str):
-    if feature != '':
+def add_feature(features: list[str], feature: str | None):
+    if feature:
         features.append(feature)

@@ -3,7 +3,7 @@ import logging
 from iso639 import LanguageNotFoundError
 from shared.exception import ApplicationException
 
-from nlp.spacy_adapter import perform_analysis, LanguageNotAvailableException
+from nlp.syntactical_analysis import perform_analysis, LanguageNotAvailableException
 
 
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)

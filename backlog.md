@@ -7,8 +7,7 @@
 - Actually, re-think Exception Handling entirely. There should be a less complicated way of solving it than I am doing
   now.
 - Test Telegram Client. As the frontend and the telegram client converge, the tests on the telegram client
-  will help develop confidence in the (largely untestable) frontend as well.
-    - This actually works surprisingly well.
+  will help develop confidence in the (largely untestable) frontend as well. ✅
 - Backend: Move it to Lambda? I considered this previously, but straight-up running the backend on lambda with a thin
   wrapper does not work, as the collective spaCy models end up using more memory than is allowed (150M). However,
   creating several small lambdas _would_ improve reliability and CI/CD options. I already invested a bunch of time
@@ -21,7 +20,7 @@
     - Dockerizing this is the way to go. The Pydantic issue turns out to be extremely hard to fix and to debug;
       I ended up building all the dependencies in a Docker container to emulate the x86_64 architecture that the
       lambda runtime uses, and at that point you might as well just use Docker. Managing ECR is a bit of a pain, but
-      it's not too bad.
+      it's not too bad. ✅
 - Implement IAC. This will enable CI/CD usage, which I really need. DynDNS on my Raspberry Pi is turning out to be
   incredibly unreliable, so this is top priority. ✅
     - Create ECR ✅
@@ -31,8 +30,8 @@
     - Setup Github Actions ✅
 - Figure out a smart way of arbitrarily creating Lambdas. Creating a Terraform module would be a good way to go;
 however, coupling them together makes techdebt issue #1 more difficult to handle. ✅ 
-- I need to figure out error handling in the lambdas. Using `context.fail()` or returníng bad Status Codes might
-be good ways of achieving this.
+- ~~I need to figure out error handling in the lambdas. Using `context.fail()` or returníng bad Status Codes might
+be good ways of achieving this.~~
 
 ## Tech Debt
 
@@ -40,9 +39,7 @@ be good ways of achieving this.
   However, this is difficult to achieve as it requires to separate `terraform apply`s. This can be solved by manually
   pushing, but it creates an infrastructure state that I ideally would like to avoid.
 - The current `backend/docker-util.sh` is pretty hacky. It does its job for now, but I would prefer having proper
-  argument parsing and error handling.
-- As I move towards a Lambda-oriented architecture, refactoring the backend would be a good idea. Specifically,
-  splitting up the `service` package into different functionalities might make sense.
+  argument parsing and error handling.✅
 - The frontend is currently not particularly clean. For more complex features, we'll probably have to move to
   something more powerful anyhow, but keeping this clean for a while is probably important so we can add more features.
 - Create a Trello board so I can get rid of this way of documenting progress.
