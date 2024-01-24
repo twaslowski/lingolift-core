@@ -5,35 +5,29 @@ description = ""
 authors = ["Tobias Waslowski <tobiaswaslowski@gmail.com>"]
 readme = "README.md"
 
+# core dependencies
 [tool.poetry.dependencies]
 python = "3.11.7"
 python-iso639 = "^2024.1.2"
 shared = { git = "https://github.com/tobiaswaslowski/lingolift.git#22aa1cf", subdirectory = "shared" }
 
-[tool.poetry.group.nlp]
-optional = true
 
-[tool.poetry.group.nlp.dependencies]
-spacy = "^3.7.0"
-
-[tool.poetry.group.spacy_models.dependencies]
-ru-core-news-sm = { url = "https://github.com/explosion/spacy-models/releases/download/ru_core_news_sm-3.7.0/ru_core_news_sm-3.7.0.tar.gz" }
-de-core-news-sm = { url = "https://github.com/explosion/spacy-models/releases/download/de_core_news_sm-3.7.0/de_core_news_sm-3.7.0.tar.gz" }
-es-core-news-sm = { url = "https://github.com/explosion/spacy-models/releases/download/es_core_news_sm-3.7.0/es_core_news_sm-3.7.0.tar.gz" }
-
-[tool.poetry.group.language_detection.dependencies]
-lingua-language-detector = "^2.0.2"
-
-[tool.poetry.group.generative]
-optional = true
-
+# dependencies for interacting with openai
 [tool.poetry.group.generative.dependencies]
 openai = "^1.7.2"
 json5 = "^0.9.14"
 
-[tool.poetry.group.dev]
-optional = true
 
+# spacy dependencies
+[tool.poetry.group.nlp.dependencies]
+spacy = "^3.7.0"
+de-core-news-sm = { url = "https://github.com/explosion/spacy-models/releases/download/de_core_news_sm-3.7.0/de_core_news_sm-3.7.0.tar.gz" }
+es-core-news-sm = { url = "https://github.com/explosion/spacy-models/releases/download/es_core_news_sm-3.7.0/es_core_news_sm-3.7.0.tar.gz" }
+ru-core-news-sm = { url = "https://github.com/explosion/spacy-models/releases/download/ru_core_news_sm-3.7.0/ru_core_news_sm-3.7.0.tar.gz" }
+lingua-language-detector = "^2.0.2"
+
+
+# testing, linting, utilities
 [tool.poetry.group.dev.dependencies]
 pip = "^23.3.2"
 mypy = "^1.8.0"
@@ -42,13 +36,11 @@ pytest-mock = "^3.12.0"
 poetry-plugin-export = "^1.5.0"
 urllib3 = "<2"
 
-[tool.poetry.group.webserver]
-optional = true
 
+# for running the local flask development server
 [tool.poetry.group.webserver.dependencies]
 flask = "^3.0.1"
 flask-cors = "^4.0.0"
-
 
 [build-system]
 requires = ["poetry-core"]

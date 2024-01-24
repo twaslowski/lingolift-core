@@ -34,44 +34,19 @@ jobs:
           cd shared && poetry install --with dev
           make test
 
-      - name: Build the Docker image
+      - name: Build layers and packages
         run: |
           pushd backend
-          ./docker-util.sh build translation
-          ./docker-util.sh build literal_translation
-          ./docker-util.sh build response_suggestion
-          ./docker-util.sh build syntactical_analysis
+          ./build-deps generative
+          make generative-lambda
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: arn:aws:iam::246770851643:role/github-actions
           aws-region: eu-central-1
-
-      - name: Push the Docker images
-        env:
-          AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
+      
+      - name: Create infrastructure
         run: |
-          pushd backend
-          ./docker-util.sh push translation
-          ./docker-util.sh push literal_translation
-          ./docker-util.sh push response_suggestion
-          ./docker-util.sh push syntactical_analysis
-
-  create-infrastructure:
-    needs: [build-and-push-docker]
-    runs-on: ubuntu-latest
-    env:
-      TF_VAR_openai_api_key: ${{ secrets.OPENAI_API_KEY }}
-    steps:
-      - name: checkout
-        uses: actions/checkout@v3
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          role-to-assume: arn:aws:iam::246770851643:role/github-actions
-          aws-region: eu-central-1
-      - name: Create Terraform Infrastructure
-        run: |
-          pushd backend/terraform && terraform init
+          pushd backend/terraform
           terraform apply -auto-approve
