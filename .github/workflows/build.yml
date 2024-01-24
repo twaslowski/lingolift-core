@@ -17,6 +17,11 @@ jobs:
       - name: checkout
         uses: actions/checkout@v3
 
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.11.6
+
       - name: Install dependencies
         run: |
           sudo apt update
@@ -28,50 +33,33 @@ jobs:
         run: |
           cd backend && poetry install --with dev --with nlp --with generative
           make test
-          
+
       - name: set up shared
         run: |
           cd shared && poetry install --with dev
           make test
 
-      - name: Build the Docker image
-        run: |
-          pushd backend
-          ./docker-util.sh build translation
-          ./docker-util.sh build literal_translation
-          ./docker-util.sh build response_suggestion
-          ./docker-util.sh build syntactical_analysis
-
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: arn:aws:iam::246770851643:role/github-actions
           aws-region: eu-central-1
 
-      - name: Push the Docker images
+      - name: Build layers and packages
+        run: |
+          pushd backend
+          ./build-deps.sh generative
+          make build-lambda
+
+      - name: Build syntactical_analysis docker image
         env:
           AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
         run: |
           pushd backend
-          ./docker-util.sh push translation
-          ./docker-util.sh push literal_translation
-          ./docker-util.sh push response_suggestion
+          ./docker-util.sh build syntactical_analysis
           ./docker-util.sh push syntactical_analysis
 
-  create-infrastructure:
-    needs: [build-and-push-docker]
-    runs-on: ubuntu-latest
-    env:
-      TF_VAR_openai_api_key: ${{ secrets.OPENAI_API_KEY }}
-    steps:
-      - name: checkout
-        uses: actions/checkout@v3
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          role-to-assume: arn:aws:iam::246770851643:role/github-actions
-          aws-region: eu-central-1
-      - name: Create Terraform Infrastructure
+      - name: Create infrastructure
         run: |
-          pushd backend/terraform && terraform init
-          terraform apply -auto-approve
+          pushd backend/terraform
+          terraform init && terraform apply -auto-approve

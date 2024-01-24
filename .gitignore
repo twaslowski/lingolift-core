@@ -38,6 +38,7 @@ yarn-error.log
 .terraform/
 terraform.tfstate
 terraform.tfstate.backup
+backend/terraform/builds
 
 # Visual Studio Code
 .vscode/*

@@ -15,15 +15,13 @@ lint:
 shared:
 	@poetry remove shared && poetry add ../shared/
 
-build: clean
-	@mkdir -p package
-	@poetry export --without webserver --without spacy --without dev -f requirements.txt -o package/requirements.txt --without-hashes
-	@touch package/lambda_function.py
-	@docker build -t translation-lambda --build-arg FUNCTION=translation .
+build-lambda:
+	@mkdir -p package_generative
+	@cp -r lambda_functions_generative.py generative llm util package_generative
+	@cd package_generative && zip -r ../package_generative.zip .
 
-docker-clean:
-	@docker stop translation-lambda
-	@docker rm -f translation-lambda
+build-deps:
+	@./build-deps.sh generative
 
 make clean:
 	@rm -rf package*

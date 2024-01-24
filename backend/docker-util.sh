@@ -28,13 +28,13 @@ function build() {
   case "$FUNCTION" in
       "translation"|"literal_translation"|"response_suggestion")
         export LAMBDA_FILE=lambda_functions_generative
-        export DOCKERFILE=docker/Dockerfile-generative.template
+        export DOCKERFILE=Dockerfile-generative.template
         mkdir -p package
         poetry export -f requirements.txt --with generative -o package/requirements.txt --without-hashes
         ;;
       "syntactical_analysis")
         export LAMBDA_FILE=lambda_functions_nlp
-        export DOCKERFILE=docker/Dockerfile-nlp.template
+        export DOCKERFILE=Dockerfile-nlp.template
         mkdir -p package
         poetry export -f requirements.txt --with nlp -o package/requirements.txt --without-hashes
         ;;
@@ -45,16 +45,16 @@ function build() {
   esac
 
   sed "s/\$LAMBDA_HANDLER/${FUNCTION}_handler/g" $DOCKERFILE | sed "s/\$LAMBDA_FILE/${LAMBDA_FILE}/g" > Dockerfile
-  docker build -t "${FUNCTION}-lambda" --platform linux/x86_64 .
+  docker build --no-cache -t "${FUNCTION}-lambda" --platform linux/x86_64 .
 
   cleanup
 }
 
 function push() {
   FUNCTION=$1
-  aws ecr get-login-password --region eu-central-1 | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.eu-central-1.amazonaws.com
-  docker tag "$FUNCTION-lambda:latest" "$AWS_ACCOUNT_ID.dkr.ecr.eu-central-1.amazonaws.com/$FUNCTION-lambda:latest"
-  docker push "$AWS_ACCOUNT_ID.dkr.ecr.eu-central-1.amazonaws.com/$FUNCTION-lambda:latest"
+  aws ecr get-login-password --region eu-central-1 | docker login --username AWS --password-stdin "${AWS_ACCOUNT_ID}.dkr.ecr.eu-central-1.amazonaws.com"
+  docker tag "$FUNCTION-lambda:latest" "${AWS_ACCOUNT_ID}.dkr.ecr.eu-central-1.amazonaws.com/${FUNCTION}-lambda:latest"
+  docker push "${AWS_ACCOUNT_ID}.dkr.ecr.eu-central-1.amazonaws.com/${FUNCTION}-lambda:latest"
 }
 
 # perform action with function
