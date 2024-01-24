@@ -57,11 +57,11 @@ class LambdaClient:
         else:
             raise ApplicationException(**body)
 
-    async def fetch_syntactical_analysis(self, sentence: str, language: str) -> list[SyntacticalAnalysis]:
+    async def fetch_syntactical_analysis(self, sentence: str) -> list[SyntacticalAnalysis]:
         response = self.lambda_client.invoke(
             FunctionName="syntactical_analysis-lambda",
             InvocationType='RequestResponse',
-            Payload=json.dumps({"sentence": sentence, "language": language})
+            Payload=json.dumps({"sentence": sentence})
         )
         try:
             status_code, body = retrieve_payload(response)

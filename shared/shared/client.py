@@ -1,5 +1,6 @@
 import logging
 
+import aiohttp
 import requests  # type: ignore[import-untyped]
 
 from shared.exception import ApplicationException
@@ -35,15 +36,18 @@ class Client:
         :return: Translation object in case of a 200 status code, ApplicationException otherwise
         """
         logging.info(f"fetching translation for sentence '{sentence}'")
-        response = requests.post(f"{self.url}/translation", json={"sentence": sentence})
-        logging.info(f"received /translation response for sentence '{sentence}': '{response.json()}'")
-        if response.status_code == 200:
-            return Translation(**response.json())
-        if response.status_code == 400:
-            logging.error(f"Received /translation error for sentence '{sentence}': '{response.json()}'")
-            raise ApplicationException(**response.json())
-        else:
-            raise ApplicationException(error_message=TRANSLATIONS_UNEXPECTED_ERROR)
+        async with aiohttp.ClientSession() as session:
+            async with session.post(f"{self.url}/translation", json={"sentence": sentence}) as response:
+                data = await response.json()
+                logging.info(f"received /translation response for sentence '{sentence}': '{data}'")
+
+                if response.status == 200:
+                    return Translation(**data)
+                elif response.status == 400:
+                    logging.error(f"Received /translation error for sentence '{sentence}': '{data}'")
+                    raise ApplicationException(**data)
+                else:
+                    raise ApplicationException(error_message=TRANSLATIONS_UNEXPECTED_ERROR)
 
     async def fetch_literal_translations(self, sentence: str) -> list[LiteralTranslation]:
         """
@@ -51,34 +55,40 @@ class Client:
         :param sentence: Sentence for which to fetch literal translations
         :return: list of LiteralTranslation objects in case of a 200 status code, ApplicationException otherwise
         """
-        response = requests.post(f"{self.url}/literal-translation", json={"sentence": sentence})
-        if response.status_code == 200:
-            response = response.json()
-            logging.info(f"Received /literal-translation response for sentence '{sentence}': '{response}'")
-            return [LiteralTranslation(**literal_translation) for literal_translation in response]
-        elif response.status_code == 400:
-            logging.error(f"Received /literal-translation error for sentence '{sentence}': '{response.json()}'")
-            raise ApplicationException(**response.json())
-        else:
-            raise ApplicationException(error_message=LITERAL_TRANSLATIONS_UNEXPECTED_ERROR)
+        logging.info(f"fetching literal translations for sentence '{sentence}'")
+        async with aiohttp.ClientSession() as session:
+            async with session.post(f"{self.url}/literal-translation", json={"sentence": sentence}) as response:
+                if response.status == 200:
+                    literal_translations = await response.json()
+                    logging.info(
+                        f"Received /literal-translation response for sentence '{sentence}': '{literal_translations}'")
+                    return [LiteralTranslation(**literal_translation) for literal_translation in literal_translations]
+                elif response.status == 400:
+                    error_data = await response.json()
+                    logging.error(f"Received /literal-translation error for sentence '{sentence}': '{error_data}'")
+                    raise ApplicationException(**error_data)
+                else:
+                    raise ApplicationException(error_message=LITERAL_TRANSLATIONS_UNEXPECTED_ERROR)
 
-    async def fetch_syntactical_analysis(self, sentence: str, language: str) -> list[SyntacticalAnalysis]:
+    async def fetch_syntactical_analysis(self, sentence: str) -> list[SyntacticalAnalysis]:
         """
         Interacts with the /syntactical-analysis endpoint of the backend API.
         :param sentence: Sentence for which to fetch syntactical analysis
-        :param language: Source language of the sentence; required for choosing correct spaCy model
         :return: list of SyntacticalAnalysis objects in case of a 200 status code, ApplicationException otherwise
         """
-        response = requests.post(f"{self.url}/syntactical-analysis", json={"sentence": sentence, "language": language})
-        if response.status_code == 200:
-            analyses = response.json()
-            logging.info(f"Received syntactical analysis for sentence '{sentence}': '{analyses}'")
-            return [SyntacticalAnalysis(**analysis) for analysis in analyses]
-        elif response.status_code == 400:
-            logging.error(f"Received /syntactical-analysis error for sentence '{sentence}': '{response.json()}'")
-            raise ApplicationException(**response.json())
-        else:
-            raise ApplicationException(error_message=SYNTACTICAL_ANALYSIS_UNEXPECTED_ERROR)
+        logging.info(f"fetching syntactical analysis for sentence '{sentence}'")
+        async with aiohttp.ClientSession() as session:
+            async with session.post(f"{self.url}/syntactical-analysis", json={"sentence": sentence}) as response:
+                if response.status == 200:
+                    analyses = await response.json()
+                    logging.info(f"Received syntactical analysis for sentence '{sentence}': '{analyses}'")
+                    return [SyntacticalAnalysis(**analysis) for analysis in analyses]
+                elif response.status == 400:
+                    error_data = await response.json()
+                    logging.error(f"Received /syntactical-analysis error for sentence '{sentence}': '{error_data}'")
+                    raise ApplicationException(**error_data)
+                else:
+                    raise ApplicationException(error_message=SYNTACTICAL_ANALYSIS_UNEXPECTED_ERROR)
 
     async def fetch_response_suggestions(self, sentence: str) -> list[ResponseSuggestion]:
         """
@@ -86,17 +96,19 @@ class Client:
         :param sentence: Sentence for which to fetch response suggestions
         :return: list of ResponseSuggestion objects in case of a 200 status code, ApplicationException otherwise
         """
-        response = requests.post(f"{self.url}/response-suggestion", json={"sentence": sentence})
-        if response.status_code == 200:
-            suggestions = response.json()
-            logging.info(f"Received response suggestions for sentence '{sentence}': '{suggestions}'")
-            return [ResponseSuggestion(**suggestion) for suggestion in suggestions]
-        elif response.status_code == 400:
-            logging.error(f"Received /response-suggestion error "
-                          f"response for sentence '{sentence}': '{response.json()}'")
-            raise ApplicationException(**response.json())
-        else:
-            raise ApplicationException(error_message=RESPONSE_SUGGESTIONS_UNEXPECTED_ERROR)
+        logging.info(f"fetching response suggestions for sentence '{sentence}'")
+        async with aiohttp.ClientSession() as session:
+            async with session.post(f"{self.url}/response-suggestion", json={"sentence": sentence}) as response:
+                if response.status == 200:
+                    suggestions = await response.json()
+                    logging.info(f"Received response suggestions for sentence '{sentence}': '{suggestions}'")
+                    return [ResponseSuggestion(**suggestion) for suggestion in suggestions]
+                elif response.status == 400:
+                    error_data = await response.json()
+                    logging.error(f"Received /response-suggestion error for sentence '{sentence}': '{error_data}'")
+                    raise ApplicationException(**error_data)
+                else:
+                    raise ApplicationException(error_message=RESPONSE_SUGGESTIONS_UNEXPECTED_ERROR)
 
     async def fetch_upos_explanation(self, syntactical_analysis: SyntacticalAnalysis) -> UposExplanation:
         """

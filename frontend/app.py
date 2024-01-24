@@ -1,11 +1,12 @@
 import asyncio
 import logging
 import time
+from asyncio import create_task
 
 import requests  # type: ignore[import-untyped]
 import streamlit as st
+from shared.client import Client
 from shared.lambda_client import LambdaClient
-from shared.exception import ApplicationException
 from shared.model.literal_translation import LiteralTranslation  # type: ignore[import-untyped]
 from shared.model.response_suggestion import should_generate_response_suggestions  # type: ignore[import-untyped]
 from shared.model.syntactical_analysis import SyntacticalAnalysis  # type: ignore[import-untyped]
@@ -15,19 +16,23 @@ from shared.rendering import Stringifier, MarkupLanguage
 TITLE = "grammr"
 
 
-async def main() -> None:
-    access_key_id = st.secrets["ACCESS_KEY_ID"]
-    secret_access_key = st.secrets["SECRET_ACCESS_KEY"]
-    region = st.secrets["AWS_REGION"]
-    client = LambdaClient(access_key_id, secret_access_key, region)
+def main() -> None:
+    client = create_client()
     stringifier = Stringifier(MarkupLanguage.MARKDOWN)
 
-    if await backend_is_healthy(client):
-        st.title(TITLE)
-        await chat(client, stringifier)
+    asyncio.run(chat(client, stringifier))
+
+
+def create_client():
+    use_local = False
+    if use_local:
+        return Client(protocol="http")
     else:
-        st.error("The backend is not available. Please try again later.")
-    # st.markdown(stringifier.disclaimer())
+        access_key_id = st.secrets["ACCESS_KEY_ID"]
+        secret_access_key = st.secrets["SECRET_ACCESS_KEY"]
+        region = st.secrets["AWS_REGION"]
+
+        return LambdaClient(access_key_id, secret_access_key, region)
 
 
 async def chat(client: LambdaClient, stringifier: Stringifier):
@@ -51,60 +56,34 @@ async def chat(client: LambdaClient, stringifier: Stringifier):
         with st.chat_message("user"):
             st.markdown(prompt)
 
-        # the syntactical analysis only ever happens when the translation has been fetched successfully
-        translation = None
-
         # Display assistant response in chat message container
         with st.chat_message("assistant"):
+            sentence = find_latest_user_message(st.session_state.messages)['content']
+            # create futures for all requests
+            translation_future = create_task(client.fetch_translation(sentence))
+            response_suggestions = create_task(client.fetch_response_suggestions(sentence))
+            syntactical_translations_future = create_task(client.fetch_syntactical_analysis(sentence))
+            literal_translations_future = create_task(client.fetch_literal_translations(sentence))
             try:
                 with st.spinner("Translating"):
-                    sentence = find_latest_user_message(st.session_state.messages)['content']
-                    translation = await client.fetch_translation(sentence)
+                    translation = await translation_future
                 translation_stringified = stringifier.stringify_translation(sentence, translation)
-                render_message(translation_stringified)
-            except ApplicationException as e:
-                st.error(e.error_message)
-            # broader exception clause not covered in client, e.g. if client is entirely unreachable
+                render_message(translation_stringified, 0.025)
+
+                with st.spinner("Fetching syntactical analysis ..."):
+                    analysis = await syntactical_translations_future
+                    literal_translation = await literal_translations_future
+                analysis_stringified = stringifier.coalesce_analyses(literal_translation, analysis)
+                render_message(analysis_stringified)
+
+                with st.spinner("Fetching suggestions ..."):
+                    await response_suggestions
+                response_suggestions_stringified = stringifier.stringify_suggestions(response_suggestions.result())
+                render_message(response_suggestions_stringified)
+
             except Exception as e:
                 logging.error("Error: ", e)
                 st.error("An unexpected error has occurred.")
-
-        if translation is not None:
-            with st.chat_message("assistant"):
-                try:
-                    with st.spinner("Fetching suggestions and syntactical analysis ..."):
-                        generate_suggestions = should_generate_response_suggestions(sentence, translation.translation)
-                        # determine if suggestions should be generated in the first place
-                        if generate_suggestions:
-                            suggestions_future = asyncio.create_task(client.fetch_response_suggestions(sentence))
-
-                        # fetch literal translations and syntactical analysis in parallel
-                        literal_translations, syntactical_analysis = await asyncio.gather(
-                            client.fetch_literal_translations(sentence),
-                            client.fetch_syntactical_analysis(sentence, translation.language_code),
-                            return_exceptions=True)
-
-                    # render syntactical analysis
-                    try:
-                        analysis_stringified = stringifier.coalesce_analyses(literal_translations, syntactical_analysis)
-                        render_message(analysis_stringified)
-                    except ApplicationException as e:
-                        st.error(e.error_message)
-
-                    # at this point, the suggestions should be available
-                    if generate_suggestions:
-                        suggestions = await suggestions_future
-                        response_suggestions_stringified = stringifier.stringify_suggestions(suggestions)
-                        render_message(response_suggestions_stringified)
-                    else:
-                        render_message("Your sentence does not appear to be a question; "
-                                       "therefore, no response suggestions will be generated.")
-
-                except ApplicationException as e:
-                    st.error(e.error_message)
-                except Exception as e:
-                    logging.error("Error: ", e)
-                    st.error("An unexpected error has occurred.")
 
 
 def find_latest_user_message(messages: list) -> dict[str, str]:
@@ -120,8 +99,9 @@ def find_latest_user_message(messages: list) -> dict[str, str]:
         return {}
 
 
-def render_message(string: str, interval: float = 0.025):
-    placeholder = st.empty()
+def render_message(string: str, interval: float = 0.025, placeholder=None) -> None:
+    if not placeholder:
+        placeholder = st.empty()
     for i in range(len(string)):
         placeholder.markdown(string[:i] + "▌")
         time.sleep(interval)
@@ -129,10 +109,6 @@ def render_message(string: str, interval: float = 0.025):
     st.session_state.messages.append({"role": "assistant", "content": string})
 
 
-async def backend_is_healthy(client: LambdaClient) -> bool:
-    return True
-
-
 if __name__ == '__main__':
     logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
-    asyncio.run(main())
+    main()
