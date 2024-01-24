@@ -48,7 +48,7 @@ jobs:
       - name: Build layers and packages
         run: |
           pushd backend
-          ./build-deps generative
+          ./build-deps.sh generative
           make generative-lambda
 
       - name: Build syntactical_analysis docker image
