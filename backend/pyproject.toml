@@ -8,7 +8,7 @@ readme = "README.md"
 [tool.poetry.dependencies]
 python = "^3.9"
 python-iso639 = "^2024.1.2"
-shared = { git = "https://github.com/tobiaswaslowski/lingolift.git", subdirectory = "shared" }
+shared = { git = "https://github.com/tobiaswaslowski/lingolift.git#22aa1cf", subdirectory = "shared" }
 
 [tool.poetry.group.nlp]
 optional = true
