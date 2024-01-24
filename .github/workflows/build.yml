@@ -62,4 +62,4 @@ jobs:
       - name: Create infrastructure
         run: |
           pushd backend/terraform
-          terraform apply -auto-approve
+          terraform init && terraform apply -auto-approve
