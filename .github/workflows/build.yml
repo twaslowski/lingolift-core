@@ -60,6 +60,8 @@ jobs:
           ./docker-util.sh push syntactical_analysis
 
       - name: Create infrastructure
+        env:
+          TF_VAR_openai_api_key: ${{ secrets.OPENAI_API_KEY }}
         run: |
           pushd backend/terraform
           terraform init && terraform apply -auto-approve
