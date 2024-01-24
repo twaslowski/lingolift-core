@@ -3,8 +3,8 @@ import logging
 from iso639 import LanguageNotFoundError
 from shared.exception import ApplicationException
 
-from nlp.syntactical_analysis import perform_analysis, LanguageNotAvailableException
-
+from nlp.language_detection import LanguageNotAvailableException
+from nlp.syntactical_analysis import perform_analysis
 
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 
@@ -14,7 +14,7 @@ def syntactical_analysis_handler(event, _):
     language = event.get('language')
     logging.info(f"Received sentence, language: {sentence}, {language}")
     try:
-        analyses = perform_analysis(sentence, language)
+        analyses = perform_analysis(sentence)
         return {
             "status_code": 200,
             "body": [a.model_dump() for a in analyses]
