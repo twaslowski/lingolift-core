@@ -15,13 +15,13 @@ lint:
 shared:
 	@poetry remove shared && poetry add ../shared/
 
-generative-lambda:
+build-lambda:
 	@mkdir -p package_generative
 	@cp -r lambda_functions_generative.py generative llm util package_generative
+	@cd package_generative && zip -r ../package_generative.zip .
 
-nlp-lambda:
-	@mkdir -p package_nlp
-	@cp -r lambda_functions_nlp.py nlp util package_nlp
+build-deps:
+	@./build-deps.sh generative
 
 make clean:
 	@rm -rf package*
