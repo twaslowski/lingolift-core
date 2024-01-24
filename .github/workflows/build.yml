@@ -20,7 +20,7 @@ jobs:
       - name: Set up Python 3.11
         uses: actions/setup-python@v4
         with:
-          python-version: 3.11.7
+          python-version: 3.11.6
 
       - name: Install dependencies
         run: |
@@ -52,6 +52,8 @@ jobs:
           make build-lambda
 
       - name: Build syntactical_analysis docker image
+        env:
+          AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
         run: |
           pushd backend
           ./docker-util.sh build syntactical_analysis

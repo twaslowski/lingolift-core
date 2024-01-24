@@ -7,7 +7,7 @@ readme = "README.md"
 
 # core dependencies
 [tool.poetry.dependencies]
-python = "3.11.7"
+python = "3.11.6"
 python-iso639 = "^2024.1.2"
 shared = { git = "https://github.com/tobiaswaslowski/lingolift.git#22aa1cf", subdirectory = "shared" }
 

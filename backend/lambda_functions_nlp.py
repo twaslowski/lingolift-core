@@ -1,6 +1,5 @@
 import logging
 
-from iso639 import LanguageNotFoundError
 from shared.exception import ApplicationException
 
 from nlp.language_detection import LanguageNotAvailableException
@@ -20,7 +19,7 @@ def syntactical_analysis_handler(event, _):
             "status_code": 200,
             "body": [a.model_dump() for a in analyses]
         }
-    except LanguageNotFoundError | LanguageNotAvailableException as e:
+    except LanguageNotAvailableException as e:
         return {
             "status_code": 400,
             "body": ApplicationException(e.error_message).dict()
