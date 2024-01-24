@@ -17,6 +17,11 @@ jobs:
       - name: checkout
         uses: actions/checkout@v3
 
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.11.7
+
       - name: Install dependencies
         run: |
           sudo apt update
@@ -28,11 +33,17 @@ jobs:
         run: |
           cd backend && poetry install --with dev --with nlp --with generative
           make test
-          
+
       - name: set up shared
         run: |
           cd shared && poetry install --with dev
           make test
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::246770851643:role/github-actions
+          aws-region: eu-central-1
 
       - name: Build layers and packages
         run: |
@@ -40,12 +51,12 @@ jobs:
           ./build-deps generative
           make generative-lambda
 
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          role-to-assume: arn:aws:iam::246770851643:role/github-actions
-          aws-region: eu-central-1
-      
+      - name: Build syntactical_analysis docker image
+        run: |
+          pushd backend
+          ./docker-util.sh build syntactical_analysis
+          ./docker-util.sh push syntactical_analysis
+
       - name: Create infrastructure
         run: |
           pushd backend/terraform
