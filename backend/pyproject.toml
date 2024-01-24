@@ -6,7 +6,7 @@ authors = ["Tobias Waslowski <tobiaswaslowski@gmail.com>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "^3.9"
+python = "3.11.7"
 python-iso639 = "^2024.1.2"
 shared = { git = "https://github.com/tobiaswaslowski/lingolift.git#22aa1cf", subdirectory = "shared" }
 
@@ -15,11 +15,13 @@ optional = true
 
 [tool.poetry.group.nlp.dependencies]
 spacy = "^3.7.0"
+
+[tool.poetry.group.spacy_models.dependencies]
 ru-core-news-sm = { url = "https://github.com/explosion/spacy-models/releases/download/ru_core_news_sm-3.7.0/ru_core_news_sm-3.7.0.tar.gz" }
 de-core-news-sm = { url = "https://github.com/explosion/spacy-models/releases/download/de_core_news_sm-3.7.0/de_core_news_sm-3.7.0.tar.gz" }
-fr-core-news-md = { url = "https://github.com/explosion/spacy-models/releases/download/fr_core_news_md-3.7.0/fr_core_news_md-3.7.0.tar.gz" }
-pt-core-news-sm = { url = "https://github.com/explosion/spacy-models/releases/download/pt_core_news_sm-3.7.0/pt_core_news_sm-3.7.0.tar.gz" }
 es-core-news-sm = { url = "https://github.com/explosion/spacy-models/releases/download/es_core_news_sm-3.7.0/es_core_news_sm-3.7.0.tar.gz" }
+
+[tool.poetry.group.language_detection.dependencies]
 lingua-language-detector = "^2.0.2"
 
 [tool.poetry.group.generative]
