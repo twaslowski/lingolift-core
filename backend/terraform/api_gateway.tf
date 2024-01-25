@@ -1,6 +1,15 @@
 resource "aws_api_gateway_rest_api" "lingolift_api" {
   name        = "lingolift_api"
   description = "The Lingolift API"
+
+  body = jsonencode({
+    openapi = "3.0.1"
+    info    = {
+      title   = "lingolift_api"
+      version = "1.0"
+    }
+    paths = {}
+  })
 }
 
 resource "aws_api_gateway_resource" "translation" {
