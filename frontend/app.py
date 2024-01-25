@@ -10,6 +10,7 @@ from shared.model.response_suggestion import should_generate_response_suggestion
 from shared.model.syntactical_analysis import SyntacticalAnalysis  # type: ignore[import-untyped]
 from shared.model.translation import Translation  # type: ignore[import-untyped]
 from shared.rendering import Stringifier, MarkupLanguage
+from shared.exception import ApplicationException
 
 TITLE = "grammr"
 
@@ -76,6 +77,8 @@ async def chat(client: Client, stringifier: Stringifier):
                 response_suggestions_stringified = stringifier.stringify_suggestions(response_suggestions.result())
                 render_message(response_suggestions_stringified)
 
+            except ApplicationException as e:
+                st.error(e.error_message)
             except Exception as e:
                 logging.error(f"Error: {e}")
                 st.error("An unexpected error has occurred.")
