@@ -6,13 +6,13 @@ module "ecr" {
 
   repository_read_write_access_arns = [
     data.aws_caller_identity.current.arn,
-    module.lambda_function_container_image.lambda_role_arn
+    module.syntactical_analysis.lambda_role_arn
   ]
 
   repository_lifecycle_policy = local.repository_lifecycle_policy
 }
 
-module "lambda_function_container_image" {
+module "syntactical_analysis" {
   source = "terraform-aws-modules/lambda/aws"
 
   function_name = "syntactical-analysis-lambda"
@@ -28,6 +28,8 @@ module "lambda_function_container_image" {
   memory_size = 2048
   timeout     = 15
 
+  create_current_version_allowed_triggers = false
+  allowed_triggers                        = local.allowed_triggers
   environment_variables = {
     "OPENAI_API_KEY" = var.openai_api_key
   }
@@ -40,7 +42,7 @@ locals {
       {
         rulePriority = 1,
         description  = "Keep 3 images",
-        selection    = {
+        selection = {
           tagStatus   = "untagged",
           countType   = "imageCountMoreThan",
           countNumber = 2

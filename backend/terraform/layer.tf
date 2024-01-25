@@ -7,6 +7,6 @@ module "generative_dependencies_layer" {
   description         = "Layer containing core dependencies like openai"
   compatible_runtimes = ["python3.11"]
 
-  create_package = false
+  create_package         = false
   local_existing_package = "../package_generative_deps.zip"
 }
