@@ -1,15 +1,6 @@
 resource "aws_api_gateway_rest_api" "lingolift_api" {
   name        = "lingolift_api"
   description = "The Lingolift API"
-
-  body = jsonencode({
-    openapi = "3.0.1"
-    info    = {
-      title   = "lingolift_api"
-      version = "1.0"
-    }
-    paths = {}
-  })
 }
 
 resource "aws_api_gateway_resource" "translation" {
@@ -106,7 +97,7 @@ resource "aws_api_gateway_deployment" "deployment" {
   rest_api_id = aws_api_gateway_rest_api.lingolift_api.id
 
   triggers = {
-    redeployment = sha1(jsonencode(aws_api_gateway_rest_api.lingolift_api.body))
+    redeployment = filesha1("api_gateway.tf")
   }
 
   lifecycle {
@@ -119,7 +110,7 @@ resource "aws_api_gateway_stage" "dev" {
 
   deployment_id = aws_api_gateway_deployment.deployment.id
   rest_api_id   = aws_api_gateway_rest_api.lingolift_api.id
-  stage_name    = "dev"
+  stage_name    = "v1"
 }
 
 resource "aws_cloudwatch_log_group" "logs" {

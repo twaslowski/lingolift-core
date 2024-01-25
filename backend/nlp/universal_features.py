@@ -67,7 +67,6 @@ def convert(tags: list[str], feature_set: dict) -> str:
         if key == 'Person':
             value = f'P{value}'
         value = value.upper()
-        print(key, value)
         feature_type = feature_set.get(key)
         if feature_type and hasattr(feature_type, value):
             tag_values[key] = feature_type[value].value
