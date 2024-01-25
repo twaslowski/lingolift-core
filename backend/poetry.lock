@@ -1736,13 +1736,13 @@ test = ["appdirs (==1.4.4)", "covdefaults (>=2.3)", "pytest (>=7.4)", "pytest-co
 
 [[package]]
 name = "pluggy"
-version = "1.3.0"
+version = "1.4.0"
 description = "plugin and hook calling mechanisms for python"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "pluggy-1.3.0-py3-none-any.whl", hash = "sha256:d89c696a773f8bd377d18e5ecda92b7a3793cbe66c87060a6fb58c7b6e1061f7"},
-    {file = "pluggy-1.3.0.tar.gz", hash = "sha256:cf61ae8f126ac6f7c451172cf30e3e43d3ca77615509771b3a984a0730651e12"},
+    {file = "pluggy-1.4.0-py3-none-any.whl", hash = "sha256:7db9f7b503d67d1c5b95f59773ebb58a8c1c288129a88665838012cfb07b8981"},
+    {file = "pluggy-1.4.0.tar.gz", hash = "sha256:8c85c2876142a764e5b7548e7d9a0e0ddb46f5185161049a79b7e974454223be"},
 ]
 
 [package.extras]
@@ -2354,7 +2354,7 @@ requests = "2.31.0"
 type = "git"
 url = "https://github.com/tobiaswaslowski/lingolift.git#22aa1cf"
 reference = "HEAD"
-resolved_reference = "c9de041ac172f6a5030c366bdd4ba922c7afa091"
+resolved_reference = "654158de0d82fc99e319dfb8b76f19ddc7cf0f80"
 subdirectory = "shared"
 
 [[package]]
@@ -3016,5 +3016,5 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 
 [metadata]
 lock-version = "2.0"
-python-versions = "3.11.7"
-content-hash = "b75cdd449cce97c01b7a04915d64204cd35fbc5c7169590e7fd36ff1ea4a6ce5"
+python-versions = "3.11.6"
+content-hash = "5b7575c008ba9e8c7d52b41794dc46ec5b2cd8b7d7eea3b6dddb4921e019d56b"

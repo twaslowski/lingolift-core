@@ -23,5 +23,8 @@ build-lambda:
 build-deps:
 	@./build-deps.sh generative
 
+deploy: terraform nlp llm generative lambda_functions_generative.py lambda_functions_nlp.py
+	@cd terraform && terraform apply -auto-approve
+
 make clean:
 	@rm -rf package*
