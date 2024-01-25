@@ -28,14 +28,11 @@ def create_client():
     if use_local:
         return Client(protocol="http")
     else:
-        access_key_id = st.secrets["ACCESS_KEY_ID"]
-        secret_access_key = st.secrets["SECRET_ACCESS_KEY"]
-        region = st.secrets["AWS_REGION"]
-
-        return LambdaClient(access_key_id, secret_access_key, region)
+        api_gateway_url = st.secrets["API_GATEWAY"]
+        return Client(host=api_gateway_url)
 
 
-async def chat(client: LambdaClient, stringifier: Stringifier):
+async def chat(client: Client, stringifier: Stringifier):
     intro = st.markdown(stringifier.introductory_text())
 
     # Initialize chat history
@@ -82,7 +79,7 @@ async def chat(client: LambdaClient, stringifier: Stringifier):
                 render_message(response_suggestions_stringified)
 
             except Exception as e:
-                logging.error("Error: ", e)
+                logging.error(f"Error: {e}")
                 st.error("An unexpected error has occurred.")
 
 

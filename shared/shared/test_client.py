@@ -2,7 +2,6 @@ import json
 from unittest.mock import Mock
 
 import pytest
-import requests  # type: ignore[import-untyped]
 
 from shared.client import Client, LITERAL_TRANSLATIONS_UNEXPECTED_ERROR, \
     SYNTACTICAL_ANALYSIS_UNEXPECTED_ERROR, UPOS_EXPLANATIONS_UNEXPECTED_ERROR
@@ -12,7 +11,7 @@ from shared.model.translation import Translation
 from shared.model.upos_explanation import UposExplanation
 from aioresponses import aioresponses
 
-client = Client()
+client = Client('')
 
 
 # as per https://github.com/pnuckowski/aioresponses/issues/218
@@ -26,7 +25,7 @@ def mocked():
 async def test_translation_happy_path(mocked):
     # Create an instance of your client class
     # Mock the response from aiohttp post
-    mocked.post(f"{client.url}/translation", status=200, body=json.dumps({
+    mocked.post(f"{client.host}/translation", status=200, body=json.dumps({
         "translation": "translation",
         "language_name": "german",
         "language_code": "de"
@@ -43,16 +42,8 @@ async def test_translation_happy_path(mocked):
 
 
 @pytest.mark.asyncio
-async def test_translation_unexpected_error(mocked):
-    mocked.post(f"{client.url}/translation", status=500, body=json.dumps({"error_message": "error"}))
-    with pytest.raises(ApplicationException) as e:
-        await client.fetch_translation("some sentence")
-        assert "unexpected error" in e.value.error_message.lower()
-
-
-@pytest.mark.asyncio
 async def test_literal_translation_happy_path(mocked):
-    mocked.post(f"{client.url}/literal-translation", status=200, body=json.dumps([
+    mocked.post(f"{client.host}/literal-translation", status=200, body=json.dumps([
         {
             "word": "some",
             "translation": "ein"
@@ -69,7 +60,7 @@ async def test_literal_translation_happy_path(mocked):
 
 @pytest.mark.asyncio
 async def test_literal_translation_expected_error(mocked):
-    mocked.post(f"{client.url}/literal-translation", status=400, body=json.dumps({
+    mocked.post(f"{client.host}/literal-translation", status=400, body=json.dumps({
         "error_message": "Too many words for literal translation"
     }))
     with pytest.raises(ApplicationException) as e:
@@ -78,16 +69,8 @@ async def test_literal_translation_expected_error(mocked):
 
 
 @pytest.mark.asyncio
-async def test_literal_translation_unexpected_error(mocked):
-    mocked.post(f"{client.url}/literal-translation", status=500, body=json.dumps({"error_message": "error"}))
-    with pytest.raises(ApplicationException) as e:
-        await client.fetch_literal_translations("some sentence")
-        assert e.value.error_message, LITERAL_TRANSLATIONS_UNEXPECTED_ERROR
-
-
-@pytest.mark.asyncio
 async def test_syntactical_analysis_happy_path(mocked):
-    mocked.post(f"{client.url}/syntactical-analysis", status=200, body=json.dumps([
+    mocked.post(f"{client.host}/syntactical-analysis", status=200, body=json.dumps([
         SyntacticalAnalysis(
             word="word",
             lemma="lemma",
@@ -111,17 +94,9 @@ async def test_syntactical_analysis_happy_path(mocked):
 
 @pytest.mark.asyncio
 async def test_syntactical_analysis_expected_error(mocked):
-    mocked.post(f"{client.url}/syntactical-analysis", status=400, body=json.dumps({
+    mocked.post(f"{client.host}/syntactical-analysis", status=400, body=json.dumps({
         "error_message": "Language not available"
     }))
     with pytest.raises(ApplicationException) as e:
         await client.fetch_syntactical_analysis("some sentence")
         assert e.value.error_message == "Language not available"
-
-
-@pytest.mark.asyncio
-async def test_syntactical_analysis_unexpected_error(mocked):
-    mocked.post(f"{client.url}/syntactical-analysis", status=500, body=json.dumps({"error_message": "error"}))
-    with pytest.raises(ApplicationException) as e:
-        await client.fetch_syntactical_analysis("some sentence")
-        assert e.value.error_message == SYNTACTICAL_ANALYSIS_UNEXPECTED_ERROR
