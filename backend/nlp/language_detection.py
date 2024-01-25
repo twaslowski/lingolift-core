@@ -1,11 +1,11 @@
 from lingua import LanguageDetectorBuilder, Language
 from shared.exception import ApplicationException
 
-MIN_DISTANCE = 0.8
+MIN_DISTANCE = 0.7
 LANGUAGES = [Language.SPANISH, Language.GERMAN, Language.RUSSIAN, Language.FRENCH, Language.PORTUGUESE]
 DETECTOR = (LanguageDetectorBuilder.from_languages(*LANGUAGES)
             .with_preloaded_language_models()
-            .with_minimum_relative_distance(0.8)
+            .with_minimum_relative_distance(MIN_DISTANCE)
             .build())
 
 
