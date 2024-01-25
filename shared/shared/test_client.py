@@ -3,8 +3,7 @@ from unittest.mock import Mock
 
 import pytest
 
-from shared.client import Client, LITERAL_TRANSLATIONS_UNEXPECTED_ERROR, \
-    SYNTACTICAL_ANALYSIS_UNEXPECTED_ERROR, UPOS_EXPLANATIONS_UNEXPECTED_ERROR
+from shared.client import Client
 from shared.exception import ApplicationException
 from shared.model.syntactical_analysis import SyntacticalAnalysis, PartOfSpeech
 from shared.model.translation import Translation
@@ -86,7 +85,7 @@ async def test_syntactical_analysis_happy_path(mocked):
             dependency="word"
         ).model_dump()]
     ))
-    analyses = await client.fetch_syntactical_analysis("some sentence")
+    analyses = await client.fetch_syntactical_analysis("some sentence", "some-language")
     assert isinstance(analyses, list)
     assert len(analyses) == 2
     assert isinstance(analyses[1], SyntacticalAnalysis)
@@ -98,5 +97,5 @@ async def test_syntactical_analysis_expected_error(mocked):
         "error_message": "Language not available"
     }))
     with pytest.raises(ApplicationException) as e:
-        await client.fetch_syntactical_analysis("some sentence")
+        await client.fetch_syntactical_analysis("some sentence", "some-language")
         assert e.value.error_message == "Language not available"

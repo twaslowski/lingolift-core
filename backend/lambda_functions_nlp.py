@@ -12,9 +12,10 @@ logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s
 def syntactical_analysis_handler(event, _):
     body = json.loads(event.get('body'))
     sentence = body.get('sentence')
-    logging.info(f"Received sentence, language: {sentence}")
+    language = body.get('language')
+    logging.info(f"Received sentence, language: {sentence}, {language}")
     try:
-        analyses = perform_analysis(sentence)
+        analyses = perform_analysis(sentence, language)
         return ok([a.model_dump() for a in analyses])
     except LanguageNotAvailableException as e:
         return fail(ApplicationException(e.error_message), 400)

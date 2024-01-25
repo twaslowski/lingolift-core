@@ -6,7 +6,7 @@ from nlp.syntactical_analysis import perform_analysis
 def test_happy_path(mocker):
     # Perform one comprehensive test, because analyses are quite slow.
     sentence = "Satzzeichen werden nicht gezählt."
-    result = list(perform_analysis(sentence))
+    result = list(perform_analysis(sentence, "DE"))
 
     # ensure punctuation tokens are omitted from the analysis
     assert len(result) == 4

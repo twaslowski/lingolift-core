@@ -61,15 +61,17 @@ class Client:
                     logging.error(f"Received /literal-translation error for sentence '{sentence}': '{error_data}'")
                     raise ApplicationException(**error_data)
 
-    async def fetch_syntactical_analysis(self, sentence: str) -> list[SyntacticalAnalysis]:
+    async def fetch_syntactical_analysis(self, sentence: str, language: str) -> list[SyntacticalAnalysis]:
         """
         Interacts with the /syntactical-analysis endpoint of the backend API.
         :param sentence: Sentence for which to fetch syntactical analysis
         :return: list of SyntacticalAnalysis objects in case of a 200 status code, ApplicationException otherwise
         """
         logging.info(f"fetching syntactical analysis for sentence '{sentence}'")
-        async with aiohttp.ClientSession() as session:
-            async with session.post(f"{self.host}/syntactical-analysis", json={"sentence": sentence}) as response:
+        async with (aiohttp.ClientSession() as session):
+            async with session.post(f"{self.host}/syntactical-analysis", json={
+                "sentence": sentence,
+                "language": language}) as response:
                 logging.info(f"Received raw /syntactical-analysis response: '{response.status}, {response.text}'")
                 if response.status == 200:
                     analyses = await response.json()

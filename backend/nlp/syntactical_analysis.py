@@ -15,15 +15,14 @@ models = {
 }
 
 
-def perform_analysis(sentence: str) -> Iterator[SyntacticalAnalysis]:
+def perform_analysis(sentence: str, language_iso_code: str) -> Iterator[SyntacticalAnalysis]:
     """
     Performs a syntactical analysis on a sentence in a given language.
     :param sentence: Source sentence
     :param language_iso_code: The ISO-639-1 code of the language to analyze, in order to load a model.
     :return:
     """
-    language_code = str(detect_language(sentence))
-    nlp = spacy.load(models.get(language_code))
+    nlp = spacy.load(models.get(language_iso_code))
     doc = nlp(sentence)
 
     for token in doc:
