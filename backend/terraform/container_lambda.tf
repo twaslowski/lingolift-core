@@ -23,7 +23,6 @@ module "syntactical_analysis" {
   image_uri                    = "${module.ecr.repository_url}:latest"
   package_type                 = "Image"
   architectures                = ["x86_64"]
-  trigger_on_package_timestamp = true
 
   memory_size = 2048
   timeout     = 15
