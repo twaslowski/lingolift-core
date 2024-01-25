@@ -3,10 +3,8 @@ import logging
 import time
 from asyncio import create_task
 
-import requests  # type: ignore[import-untyped]
 import streamlit as st
 from shared.client import Client
-from shared.lambda_client import LambdaClient
 from shared.model.literal_translation import LiteralTranslation  # type: ignore[import-untyped]
 from shared.model.response_suggestion import should_generate_response_suggestions  # type: ignore[import-untyped]
 from shared.model.syntactical_analysis import SyntacticalAnalysis  # type: ignore[import-untyped]
