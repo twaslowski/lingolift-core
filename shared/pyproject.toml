@@ -1,12 +1,12 @@
 [tool.poetry]
 name = "shared"
-version = "0.3.0"
+version = "0.4.0"
 description = ""
 authors = ["Tobias Waslowski <tobiaswaslowski@gmail.com>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "3.11.6"
+python = "^3.9"
 pydantic = "^2.5.3"
 emoji = "^2.9.0"
 boto3 = "^1.34.25"

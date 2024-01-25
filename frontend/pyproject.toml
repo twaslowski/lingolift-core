@@ -6,7 +6,7 @@ authors = ["Tobias Waslowski <tobiaswaslowski@gmail.com>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "3.11.6"
+python = "3.9.8"
 streamlit = "^1.30.0"
 pytest = "^7.4.4"
 mypy = "^1.8.0"
