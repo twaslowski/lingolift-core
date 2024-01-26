@@ -21,13 +21,5 @@ build:
 	@cd package_generative && zip -r ../package_generative.zip .
 	@./build-deps.sh generative
 
-deploy:
-ifeq ($(filter $(firstword $(MAKECMDGOALS)),dev prod),)
-	$(error Invalid environment. Use 'dev' or 'prod')
-endif
-	@echo "Deploying in $(firstword $(MAKECMDGOALS)) mode..."
-	@./deploy.sh $(firstword $(MAKECMDGOALS))
-
-
 make clean:
 	@rm -rf package*

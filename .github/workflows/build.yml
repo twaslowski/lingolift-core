@@ -47,11 +47,9 @@ jobs:
 
       - name: Build layers and packages
         run: |
-          pushd backend
-          ./build-deps.sh generative
-          make build-lambda
+          cd backend && make build
 
-      - name: Build syntactical_analysis docker image
+      - name: Build syntactical_analysis docker image for dev
         env:
           AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
         run: |
@@ -59,7 +57,7 @@ jobs:
           ./docker-util.sh build syntactical_analysis dev
           ./docker-util.sh push syntactical_analysis dev
 
-      - name: Create dev environment
+      - name: Create dev infrastructure
         env:
           TF_VAR_openai_api_key: ${{ secrets.OPENAI_API_KEY }}
         run: |
