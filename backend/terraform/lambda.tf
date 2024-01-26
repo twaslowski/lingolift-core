@@ -51,6 +51,8 @@ module "syntactical_analysis" {
   package_type = "Image"
   image_uri    = "${module.ecr.repository_url}:latest"
 
+  memory = 2048
+
   handler        = "lambda_functions_generative.response_suggestion_handler"
   openai_api_key = var.openai_api_key
 }
