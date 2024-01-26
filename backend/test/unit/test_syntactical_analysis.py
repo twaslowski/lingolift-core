@@ -4,6 +4,7 @@ from nlp.syntactical_analysis import perform_analysis
 
 
 def test_happy_path(mocker):
+    mocker.patch("nlp.syntactical_analysis.llm_detect_language", return_value="DE")
     # Perform one comprehensive test, because analyses are quite slow.
     sentence = "Satzzeichen werden nicht gezählt."
     result = list(perform_analysis(sentence))
