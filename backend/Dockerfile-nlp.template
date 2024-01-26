@@ -12,6 +12,7 @@ COPY lambda_functions_nlp.py .
 
 COPY nlp ./nlp/
 COPY util ./util/
+COPY llm ./llm/
 
 # Install the Python dependencies and package them in a zip file
 RUN python3 -m pip install -r requirements.txt

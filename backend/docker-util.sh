@@ -36,7 +36,7 @@ function build() {
         export LAMBDA_FILE=lambda_functions_nlp
         export DOCKERFILE=Dockerfile-nlp.template
         mkdir -p package
-        poetry export -f requirements.txt --with nlp -o package/requirements.txt --without-hashes
+        poetry export -f requirements.txt --with nlp --with generative -o package/requirements.txt --without-hashes
         ;;
       *)
           echo "Unhandled function: $FUNCTION"

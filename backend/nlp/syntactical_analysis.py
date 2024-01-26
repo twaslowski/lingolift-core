@@ -4,7 +4,7 @@ import nlp.universal_features as universal_features
 import spacy
 from shared.model.syntactical_analysis import SyntacticalAnalysis, PartOfSpeech, Morphology
 from spacy.tokens.token import Token
-from nlp.language_detection import detect_language
+from nlp.language_detection import llm_detect_language
 
 models = {
     "DE": "de_core_news_sm",
@@ -22,7 +22,7 @@ def perform_analysis(sentence: str) -> Iterator[SyntacticalAnalysis]:
     :param language_iso_code: The ISO-639-1 code of the language to analyze, in order to load a model.
     :return:
     """
-    language_code = str(detect_language(sentence))
+    language_code = str(llm_detect_language(sentence))
     nlp = spacy.load(models.get(language_code))
     doc = nlp(sentence)
 
