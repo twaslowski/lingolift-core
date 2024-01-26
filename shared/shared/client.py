@@ -70,7 +70,6 @@ class Client:
         logging.info(f"fetching syntactical analysis for sentence '{sentence}'")
         async with aiohttp.ClientSession() as session:
             async with session.post(f"{self.host}/syntactical-analysis", json={"sentence": sentence}) as response:
-                logging.info(f"Received raw /syntactical-analysis response: '{response.status}, {response.text}'")
                 if response.status == 200:
                     analyses = await response.json()
                     logging.info(f"Received syntactical analysis for sentence '{sentence}': '{analyses}'")

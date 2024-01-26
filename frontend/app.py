@@ -25,7 +25,7 @@ def main() -> None:
 def create_client():
     use_local = False
     if use_local:
-        return Client(protocol="http")
+        return Client(host="http://localhost:5001")
     else:
         api_gateway_url = st.secrets["API_GATEWAY"]
         return Client(host=api_gateway_url)
