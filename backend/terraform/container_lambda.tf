@@ -20,9 +20,9 @@ module "syntactical_analysis" {
 
   create_package = false
 
-  image_uri                    = "${module.ecr.repository_url}:latest"
-  package_type                 = "Image"
-  architectures                = ["x86_64"]
+  image_uri     = "${module.ecr.repository_url}:latest"
+  package_type  = "Image"
+  architectures = ["x86_64"]
 
   memory_size = 2048
   timeout     = 15
