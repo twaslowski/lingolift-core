@@ -61,7 +61,7 @@ jobs:
         env:
           TF_VAR_openai_api_key: ${{ secrets.OPENAI_API_KEY }}
         run: |
-          ./deploy.sh dev
+          cd backend && ./deploy.sh dev
 
       - name: Smoke test
         env:
