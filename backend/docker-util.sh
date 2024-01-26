@@ -2,6 +2,7 @@
 
 VERB=$1
 FUNCTION=$2
+ENV=$3
 
 VALID_BUILD_FUNCTIONS=("translation" "literal_translation" "syntactical_analysis" "response_suggestion")
 
@@ -26,6 +27,7 @@ function build() {
   # Slightly different build logic for different functions based on dependencies
   # Different files are required as well because otherwise imports would be failing
   case "$FUNCTION" in
+      # todo no longer dockerizing these; deprecated for now, can be removed entirely in the future
       "translation"|"literal_translation"|"response_suggestion")
         export LAMBDA_FILE=lambda_functions_generative
         export DOCKERFILE=Dockerfile-generative.template
@@ -53,8 +55,8 @@ function build() {
 function push() {
   FUNCTION=$1
   aws ecr get-login-password --region eu-central-1 | docker login --username AWS --password-stdin "${AWS_ACCOUNT_ID}.dkr.ecr.eu-central-1.amazonaws.com"
-  docker tag "$FUNCTION-lambda:latest" "${AWS_ACCOUNT_ID}.dkr.ecr.eu-central-1.amazonaws.com/${FUNCTION}-lambda:latest"
-  docker push "${AWS_ACCOUNT_ID}.dkr.ecr.eu-central-1.amazonaws.com/${FUNCTION}-lambda:latest"
+  docker tag "$FUNCTION-lambda:latest" "${AWS_ACCOUNT_ID}.dkr.ecr.eu-central-1.amazonaws.com/${FUNCTION}-lambda-${ENV}:latest"
+  docker push "${AWS_ACCOUNT_ID}.dkr.ecr.eu-central-1.amazonaws.com/${FUNCTION}-lambda-${ENV}:latest"
 }
 
 # perform action with function

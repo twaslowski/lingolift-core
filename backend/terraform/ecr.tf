@@ -1,7 +1,7 @@
 module "ecr" {
   source = "terraform-aws-modules/ecr/aws"
 
-  repository_name                 = "syntactical_analysis-lambda"
+  repository_name                 = "syntactical_analysis-lambda-${var.environment}"
   repository_image_tag_mutability = "MUTABLE"
 
   repository_read_write_access_arns = [

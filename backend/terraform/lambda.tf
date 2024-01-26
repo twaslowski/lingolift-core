@@ -1,11 +1,12 @@
 module "translation" {
   source                 = "./modules/endpoint"
+  environment      = var.environment
   api_gateway_id         = aws_api_gateway_rest_api.lingolift_api.id
   root_resource_id       = aws_api_gateway_rest_api.lingolift_api.root_resource_id
   runtime                = "python3.11"
   name                   = "translation"
   local_existing_package = "../package_generative.zip"
-  layers = [
+  layers                 = [
     module.generative_dependencies_layer.lambda_layer_arn
   ]
   handler        = "lambda_functions_generative.translation_handler"
@@ -14,12 +15,13 @@ module "translation" {
 
 module "literal_translation" {
   source                 = "./modules/endpoint"
+  environment      = var.environment
   api_gateway_id         = aws_api_gateway_rest_api.lingolift_api.id
   root_resource_id       = aws_api_gateway_rest_api.lingolift_api.root_resource_id
   runtime                = "python3.11"
   name                   = "literal-translation"
   local_existing_package = "../package_generative.zip"
-  layers = [
+  layers                 = [
     module.generative_dependencies_layer.lambda_layer_arn
   ]
   handler        = "lambda_functions_generative.literal_translation_handler"
@@ -28,14 +30,14 @@ module "literal_translation" {
 
 module "response_suggestion" {
   source           = "./modules/endpoint"
+  environment      = var.environment
   api_gateway_id   = aws_api_gateway_rest_api.lingolift_api.id
   root_resource_id = aws_api_gateway_rest_api.lingolift_api.root_resource_id
 
   runtime                = "python3.11"
   name                   = "response-suggestion"
   local_existing_package = "../package_generative.zip"
-  memory                 = 2048
-  layers = [
+  layers                 = [
     module.generative_dependencies_layer.lambda_layer_arn
   ]
   handler        = "lambda_functions_generative.response_suggestion_handler"
@@ -44,6 +46,7 @@ module "response_suggestion" {
 
 module "syntactical_analysis" {
   source           = "./modules/endpoint"
+  environment      = var.environment
   api_gateway_id   = aws_api_gateway_rest_api.lingolift_api.id
   root_resource_id = aws_api_gateway_rest_api.lingolift_api.root_resource_id
 
@@ -55,11 +58,6 @@ module "syntactical_analysis" {
 
   handler        = "lambda_functions_generative.response_suggestion_handler"
   openai_api_key = var.openai_api_key
-}
-
-
-variable "openai_api_key" {
-  type = string
 }
 
 locals {

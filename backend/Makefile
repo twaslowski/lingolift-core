@@ -15,16 +15,19 @@ lint:
 shared:
 	@poetry remove shared && poetry add ../shared/
 
-build-lambda:
+build:
 	@mkdir -p package_generative
 	@cp -r lambda_functions_generative.py generative llm util package_generative
 	@cd package_generative && zip -r ../package_generative.zip .
-
-build-deps:
 	@./build-deps.sh generative
 
-deploy: terraform nlp llm generative lambda_functions_generative.py lambda_functions_nlp.py
-	@cd terraform && terraform apply -auto-approve
+deploy:
+ifeq ($(filter $(firstword $(MAKECMDGOALS)),dev prod),)
+	$(error Invalid environment. Use 'dev' or 'prod')
+endif
+	@echo "Deploying in $(firstword $(MAKECMDGOALS)) mode..."
+	@./deploy.sh $(firstword $(MAKECMDGOALS))
+
 
 make clean:
 	@rm -rf package*

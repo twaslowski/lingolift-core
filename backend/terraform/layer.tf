@@ -3,7 +3,7 @@ module "generative_dependencies_layer" {
 
   create_layer = true
 
-  layer_name          = "lingolift-generative-deps-layer"
+  layer_name          = "lingolift-generative-deps-layer-${var.environment}"
   description         = "Layer containing core dependencies like openai"
   compatible_runtimes = ["python3.11"]
 

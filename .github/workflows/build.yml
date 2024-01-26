@@ -56,12 +56,17 @@ jobs:
           AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
         run: |
           pushd backend
-          ./docker-util.sh build syntactical_analysis
-          ./docker-util.sh push syntactical_analysis
+          ./docker-util.sh build syntactical_analysis dev
+          ./docker-util.sh push syntactical_analysis dev
 
-      - name: Create infrastructure
+      - name: Create dev environment
         env:
           TF_VAR_openai_api_key: ${{ secrets.OPENAI_API_KEY }}
         run: |
-          pushd backend/terraform
-          terraform init && terraform apply -auto-approve
+          ./deploy.sh dev
+
+      - name: Smoke test
+        env:
+          API_GATEWAY_URL: ${{ secrets.API_GATEWAY_URL }}
+        run: |
+          cd shared && make smoke-test

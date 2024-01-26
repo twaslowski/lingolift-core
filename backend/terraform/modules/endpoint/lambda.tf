@@ -1,6 +1,6 @@
 module "lambda" {
   source        = "terraform-aws-modules/lambda/aws"
-  function_name = "${var.name}-lambda"
+  function_name = "${var.name}-lambda-${var.environment}"
   description   = "Provides the /${var.name} endpoint for the grammr application"
 
   create_package                          = false
@@ -13,6 +13,7 @@ module "lambda" {
 
   local_existing_package = var.local_existing_package
   image_uri              = var.image_uri
+  memory_size = var.memory
 
   layers = var.layers
 

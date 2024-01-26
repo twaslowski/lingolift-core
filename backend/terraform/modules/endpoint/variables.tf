@@ -2,6 +2,10 @@ variable "name" {
   type = string
 }
 
+variable "environment" {
+  type = string
+}
+
 # API Gateway Resources
 variable "root_resource_id" {
   type = string
