@@ -3,20 +3,21 @@ module "lambda" {
   function_name = "${var.name}-lambda"
   description   = "Provides the /${var.name} endpoint for the grammr application"
 
-  create_package         = false
-  local_existing_package = var.local_existing_package
-  package_type           = var.package_type
-  handler                = var.handler
+  create_package                          = false
+  create_current_version_allowed_triggers = false
+  package_type                            = var.package_type
+  trigger_on_package_timestamp            = true
+  runtime                                 = var.runtime
+  architectures                           = ["x86_64"]
+  handler                                 = var.handler
 
-  runtime                      = "python3.11"
-  architectures                = ["x86_64"]
-  trigger_on_package_timestamp = true
+  local_existing_package = var.local_existing_package
+  image_uri              = var.image_uri
 
   layers = var.layers
 
-  timeout                                 = var.timeout
-  create_current_version_allowed_triggers = false
-  allowed_triggers                        = local.allowed_triggers
+  timeout          = var.timeout
+  allowed_triggers = local.allowed_triggers
 
   environment_variables = {
     "OPENAI_API_KEY" = var.openai_api_key

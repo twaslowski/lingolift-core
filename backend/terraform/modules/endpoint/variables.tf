@@ -17,17 +17,27 @@ variable "openai_api_key" {
 }
 
 variable "handler" {
-  type    = string
+  type = string
 }
 
 variable "package_type" {
-    type    = string
-    default = "Zip"
+  type    = string
+  default = "Zip"
 }
 
 variable "local_existing_package" {
-    type    = string
-    default = ""
+  type    = string
+  default = null
+}
+
+variable "image_uri" {
+  type    = string
+  default = null
+}
+
+variable "runtime" {
+  type    = string
+  default = null
 }
 
 variable "layers" {
