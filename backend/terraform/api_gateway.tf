@@ -40,6 +40,8 @@ resource "aws_api_gateway_account" "api_gateway_account" {
 }
 
 resource "aws_iam_role" "cloudwatch" {
+  count = var.environment == "dev" ? 1 : 0
+
   # There should only be one of these per region per account, so only create it in dev
   # https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-apigateway-account.html
   name = "api_gateway_cloudwatch_global"
