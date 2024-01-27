@@ -40,9 +40,9 @@ def literal_translation_handler(event, _):
     try:
         response = generate_literal_translation(sentence)
         return ok([r.model_dump() for r in response])
-    except SentenceTooLongException:
+    except SentenceTooLongException as e:
         logger.error(f"Sentence {sentence} too long for literal translation.")
-        return fail(ApplicationException(f"Sentence {sentence} too long for literal translation."), 400)
+        return fail(e, 400)
 
 
 def ok(res: dict | list) -> dict:
