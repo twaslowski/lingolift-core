@@ -25,8 +25,7 @@ def generate_literal_translation(sentence: str) -> list[LiteralTranslation]:
     chunks = chunk_sentence(sentence)
     if len(chunks) > LITERAL_TRANSLATION_MAX_UNIQUE_WORDS:
         logging.error(f"'{sentence}' too long for literal translation")
-        raise SentenceTooLongException(f"Too many unique words for literal translation; "
-                                       f"maximum words {LITERAL_TRANSLATION_MAX_UNIQUE_WORDS}")
+        raise SentenceTooLongException
     result = []
     # Create a ThreadPoolExecutor to process chunks concurrently
     with ThreadPoolExecutor() as executor:

@@ -26,6 +26,18 @@ resource "aws_api_gateway_stage" "stage" {
   stage_name    = var.environment
 }
 
+resource "aws_api_gateway_method_settings" "example" {
+  depends_on = [aws_api_gateway_stage.stage]
+  rest_api_id = aws_api_gateway_rest_api.lingolift_api.id
+  stage_name  = aws_api_gateway_stage.stage.stage_name
+  method_path = "*/*"
+
+  settings {
+    metrics_enabled = true
+    logging_level   = "INFO"
+  }
+}
+
 resource "aws_cloudwatch_log_group" "logs" {
   name              = "API-Gateway-Execution-Logs_${aws_api_gateway_rest_api.lingolift_api.id}/${var.environment}"
   retention_in_days = 14
@@ -37,17 +49,6 @@ resource "aws_api_gateway_account" "api_gateway_account" {
   count = var.environment == "dev" ? 1 : 0
 
   cloudwatch_role_arn = aws_iam_role.cloudwatch[0].arn
-}
-
-resource "aws_api_gateway_method_settings" "example" {
-  rest_api_id = aws_api_gateway_rest_api.lingolift_api.id
-  stage_name  = aws_api_gateway_stage.stage.id
-  method_path = "*/*"
-
-  settings {
-    metrics_enabled = true
-    logging_level   = "INFO"
-  }
 }
 
 resource "aws_iam_role" "cloudwatch" {
