@@ -40,7 +40,7 @@ jobs:
           make test
 
   build_docker:
-    needs: tests
+    needs: test
     runs-on: ubuntu-latest
     steps:
       - name: checkout
