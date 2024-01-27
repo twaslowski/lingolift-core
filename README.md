@@ -13,17 +13,27 @@ is largely achieved using the spaCy library.
 
 ## Overview
 
-This codebase is roughly segmented into three parts: A **backend**, a **frontend** and a **Telegram bot**.
-Essentially, the backend runs as a Flask server (that can be dockerized), which provides the relevant functionality
-via different HTTP endpoints.
+This codebase is roughly segmented into four parts:
+The `backend`, the `telegram-bot`, the `frontend` and the `shared` package.
+The `frontend` and `telegram-bot` are both clients for the `backend` API, which is the core of this application.
+The `shared` package provides functionality that is shared between all parts of the application, for example a
+HTTP client powered by `aiohttp` to deliver blazing fast requests, ensuring minimal wait times for the user.
+It further contains models for all tasks performed (like the `translation` or `syntactical analysis`: This enables
+type safety across the entire application, without which this kind of structure would be impossible to maintain.
 
-The Telegram Bot and the Frontend can both be run as clients for this server to render the
-translation info to end-users. The backend utilizes the OpenAI API to generate the relevant information.
-You can run the backend with and then either – or both – client applications to consume the backend API.
+The `backend` can be run as a local webserver powered by Flask; this is a relic from the prototyping stage of this
+project, but it is still very convenient for local testing. However, for staging and production, the `backend` runs
+entirely serverless on AWS Lambda, abstracted behind an API Gateway.
 
-For more information on how to run this application, check out the respective package's README.md.
+The frontend is currently hosted on the [Streamlit Community Cloud](https://streamlit.io/cloud) and is available for
+testing [here](https://grammr.streamlit.app).
+The Telegram bot can run on any low-powered machine; I'm personally using my Raspberry Pi to host it as of now;
+you can try it out [here](https://t.me/lingolift_bot).
 
-## Further Reading
+## On Generative AI
+
+Since the public release of the OpenAI API, a lot of language apps (and startups in general) that effectively sell
+GPT-Wrappers have sprung up left and right. 
 
 The /syntactical-analysis endpoint creates an analysis of the sentence with spaCy using Universal POS tags.
 There are some challenges around rendering this information, which largely belongs to the complex domain of
