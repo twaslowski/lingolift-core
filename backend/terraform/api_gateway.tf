@@ -53,20 +53,8 @@ resource "aws_iam_role" "cloudwatch" {
         Principal = {
           Service = "apigateway.amazonaws.com"
         }
-      },
-      {
-        Effect = "Allow",
-        Action = [
-          "logs:CreateLogGroup",
-          "logs:CreateLogStream",
-          "logs:DescribeLogGroups",
-          "logs:DescribeLogStreams",
-          "logs:PutLogEvents",
-          "logs:GetLogEvents",
-          "logs:FilterLogEvents"
-        ],
-        Resource = "*"
       }
     ]
   })
+  managed_policy_arns = ["arn:aws:iam::aws:policy/service-role/AmazonAPIGatewayPushToCloudWatchLogs"]
 }
