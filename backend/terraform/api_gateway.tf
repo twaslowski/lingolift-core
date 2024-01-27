@@ -36,7 +36,7 @@ resource "aws_api_gateway_account" "api_gateway_account" {
   # https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-apigateway-account.html
   count = var.environment == "dev" ? 1 : 0
 
-  cloudwatch_role_arn = aws_iam_role.cloudwatch.arn
+  cloudwatch_role_arn = aws_iam_role.cloudwatch[0].arn
 }
 
 resource "aws_api_gateway_method_settings" "example" {
