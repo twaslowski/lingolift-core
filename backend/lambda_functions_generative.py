@@ -9,13 +9,14 @@ from generative.literal_translation import generate_literal_translation
 import logging
 
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-logging.getLogger().setLevel(logging.INFO)
+logger = logging.getLogger('root')
+logger.setLevel(logging.INFO)
 
 
 def translation_handler(event, _):
     body = json.loads(event.get('body'))
     sentence = body.get('sentence')
-    logging.info(f"Received sentence: {sentence}")
+    logger.info(f"Received sentence: {sentence}")
     try:
         response = generate_translation(sentence)
         return ok(response.model_dump())
@@ -26,7 +27,7 @@ def translation_handler(event, _):
 def response_suggestion_handler(event, _):
     body = json.loads(event.get('body'))
     sentence = body.get('sentence')
-    logging.info(f"Received sentence: {sentence}")
+    logger.info(f"Received sentence: {sentence}")
     response = generate_response_suggestions(sentence)
     return ok([r.model_dump() for r in response])
 
@@ -34,7 +35,7 @@ def response_suggestion_handler(event, _):
 def literal_translation_handler(event, _):
     body = json.loads(event.get('body'))
     sentence = body.get('sentence')
-    logging.info(f"Received sentence: {sentence}")
+    logger.info(f"Received sentence: {sentence}")
     response = generate_literal_translation(sentence)
     return ok([r.model_dump() for r in response])
 
