@@ -15,10 +15,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Set up Python 3.11
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: 3.11.6
 
@@ -40,9 +40,11 @@ jobs:
           make test
 
   build-and-push-docker:
+    needs: tests
+    runs-on: ubuntu-latest
     steps:
       - name: checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
@@ -51,7 +53,7 @@ jobs:
           aws-region: eu-central-1
 
       - name: Set up Python 3.11
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: 3.11.6
 
@@ -64,7 +66,6 @@ jobs:
 
       - name: Build layers and packages
         run: |
-          cd backend
           cd backend && make build
 
       - name: Build syntactical_analysis docker image for dev
@@ -76,11 +77,13 @@ jobs:
           ./docker-util.sh push syntactical_analysis dev
 
   deploy_dev_infrastructure:
+    needs: build-and-push-docker
+    runs-on: ubuntu-latest
     env:
       AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
     steps:
       - name: checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
@@ -95,9 +98,11 @@ jobs:
           cd backend && ./deploy.sh dev
 
   smoke_test:
+    needs: deploy_dev_infrastructure
+    runs-on: ubuntu-latest
     steps:
       - name: checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
@@ -106,7 +111,7 @@ jobs:
           aws-region: eu-central-1
 
       - name: Set up Python 3.11
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: 3.11.6
 
@@ -119,16 +124,18 @@ jobs:
 
       - name: Smoke test
         env:
-          API_GATEWAY_URL: ${{ secrets.API_GATEWAY_URL }}
+          API_GATEWAY_HOST: ${{ secrets.API_GATEWAY_HOST }}
         run: |
           pushd shared
           poetry install --with dev
           make smoketest
 
   deploy_prod:
+    needs: smoke_test
+    runs-on: ubuntu-latest
     steps:
       - name: checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
