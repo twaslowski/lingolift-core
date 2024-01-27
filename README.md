@@ -33,7 +33,14 @@ you can try it out [here](https://t.me/lingolift_bot).
 ## On Generative AI
 
 Since the public release of the OpenAI API, a lot of language apps (and startups in general) that effectively sell
-GPT-Wrappers have sprung up left and right. 
+GPT-Wrappers have sprung up left and right. I'm not a massive fan of this trend. To be completely honest, I feel
+it is somewhat lazy at best and dishonest at worst to build an application that is more or less a massive API call 
+and call it an "AI-powered learning application."
+
+That being said, there are some things that you can do with Generative AI that are genuinely useful.
+For instance, being able to provide the literal translation of every word in a sentence is interesting; this couldn't
+be achieved by just using a dictionary; handling the ambiguous nature of words in different contexts is an extremely
+complex task that is made significantly easier by using Generative AI.
 
 The /syntactical-analysis endpoint creates an analysis of the sentence with spaCy using Universal POS tags.
 There are some challenges around rendering this information, which largely belongs to the complex domain of
