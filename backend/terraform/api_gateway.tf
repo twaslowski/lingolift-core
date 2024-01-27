@@ -30,3 +30,33 @@ resource "aws_cloudwatch_log_group" "logs" {
   name              = "API-Gateway-Execution-Logs_${aws_api_gateway_rest_api.lingolift_api.id}/${var.environment}"
   retention_in_days = 14
 }
+
+resource "aws_api_gateway_account" "api_gateway_account" {
+  # There should only be one of these per region per account, so only create it in dev
+  # https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-apigateway-account.html
+  count = var.environment == "dev" ? 1 : 0
+
+  cloudwatch_role_arn = aws_iam_role.cloudwatch.arn
+}
+
+resource "aws_iam_role" "cloudwatch" {
+  # There should only be one of these per region per account, so only create it in dev
+  # https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-apigateway-account.html
+  name = "api_gateway_cloudwatch_global"
+
+  assume_role_policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "",
+      "Effect": "Allow",
+      "Principal": {
+        "Service": "apigateway.amazonaws.com"
+      },
+      "Action": "sts:AssumeRole"
+    }
+  ]
+}
+EOF
+}
