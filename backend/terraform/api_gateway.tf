@@ -39,6 +39,17 @@ resource "aws_api_gateway_account" "api_gateway_account" {
   cloudwatch_role_arn = aws_iam_role.cloudwatch.arn
 }
 
+resource "aws_api_gateway_method_settings" "example" {
+  rest_api_id = aws_api_gateway_rest_api.lingolift_api.id
+  stage_name  = aws_api_gateway_stage.stage.id
+  method_path = "*/*"
+
+  settings {
+    metrics_enabled = true
+    logging_level   = "INFO"
+  }
+}
+
 resource "aws_iam_role" "cloudwatch" {
   count = var.environment == "dev" ? 1 : 0
 

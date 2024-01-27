@@ -16,6 +16,7 @@ module "lambda" {
   memory_size = var.memory
 
   layers = var.layers
+  cloudwatch_logs_retention_in_days = 14
 
   timeout          = var.timeout
   allowed_triggers = local.allowed_triggers
