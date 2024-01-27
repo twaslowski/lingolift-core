@@ -5,3 +5,7 @@ variable "openai_api_key" {
 variable "environment" {
   type = string
 }
+
+variable "commit_sha" {
+  type = string
+}

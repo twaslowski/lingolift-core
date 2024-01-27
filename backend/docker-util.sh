@@ -54,10 +54,13 @@ function build() {
 
 function push() {
   FUNCTION=$1
+  commit_sha=$(git rev-parse --short HEAD)
   aws ecr get-login-password --region eu-central-1 | docker login --username AWS --password-stdin "${AWS_ACCOUNT_ID}.dkr.ecr.eu-central-1.amazonaws.com"
   docker tag "$FUNCTION-lambda:latest" "${AWS_ACCOUNT_ID}.dkr.ecr.eu-central-1.amazonaws.com/${FUNCTION}-lambda-${ENV}:latest"
+  docker tag "$FUNCTION-lambda:latest" "${AWS_ACCOUNT_ID}.dkr.ecr.eu-central-1.amazonaws.com/${FUNCTION}-lambda-${ENV}:${commit_sha}"
   docker push "${AWS_ACCOUNT_ID}.dkr.ecr.eu-central-1.amazonaws.com/${FUNCTION}-lambda-${ENV}:latest"
+  docker push "${AWS_ACCOUNT_ID}.dkr.ecr.eu-central-1.amazonaws.com/${FUNCTION}-lambda-${ENV}:${commit_sha}"
 }
 
 # perform action with function
-$VERB $FUNCTION
+$VERB "${FUNCTION}"

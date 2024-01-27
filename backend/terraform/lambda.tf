@@ -52,7 +52,7 @@ module "syntactical_analysis" {
 
   name         = "syntactical-analysis"
   package_type = "Image"
-  image_uri    = "${module.ecr.repository_url}:latest"
+  image_uri    = "${module.ecr.repository_url}:${var.commit_sha}"
 
   memory = 2048
 
