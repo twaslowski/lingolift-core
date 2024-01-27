@@ -11,7 +11,7 @@ on:
     branches: [ "main" ]
 
 jobs:
-  tests:
+  test:
     runs-on: ubuntu-latest
     steps:
       - name: checkout
@@ -39,7 +39,7 @@ jobs:
           cd shared && poetry install --with dev
           make test
 
-  build-and-push-docker:
+  build_docker:
     needs: tests
     runs-on: ubuntu-latest
     steps:
@@ -64,10 +64,6 @@ jobs:
           pipx ensurepath
           pipx install poetry
 
-      - name: Build layers and packages
-        run: |
-          cd backend && make build
-
       - name: Build syntactical_analysis docker image for dev
         env:
           AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
@@ -91,6 +87,10 @@ jobs:
         with:
           role-to-assume: arn:aws:iam::246770851643:role/github-actions
           aws-region: eu-central-1
+
+      - name: Build layers and packages
+        run: |
+          cd backend && make build
 
       - name: deploy terraform
         env:
