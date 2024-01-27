@@ -34,7 +34,7 @@ you can try it out [here](https://t.me/lingolift_bot).
 
 Since the public release of the OpenAI API, a lot of language apps (and startups in general) that effectively sell
 GPT-Wrappers have sprung up left and right. I'm not a massive fan of this trend. To be completely honest, I feel
-it is somewhat lazy at best and dishonest at worst to build an application that is more or less a massive API call 
+it is somewhat lazy at best and dishonest at worst to build an application that is more or less a massive API call
 and call it an "AI-powered learning application."
 
 That being said, there are some things that you can do with Generative AI that are genuinely useful.
@@ -42,9 +42,34 @@ For instance, being able to provide the literal translation of every word in a s
 be achieved by just using a dictionary; handling the ambiguous nature of words in different contexts is an extremely
 complex task that is made significantly easier by using Generative AI.
 
-The /syntactical-analysis endpoint creates an analysis of the sentence with spaCy using Universal POS tags.
-There are some challenges around rendering this information, which largely belongs to the complex domain of
-computational linguistics, in a way that is comprehensible to an average end-user.
+Additionally, Generative AI (anecdotally, though I plan on benchmarking) performs substantially better than
+[Lingua](https://github.com/pemistahl/lingua-py) at Language Detection tasks for extremely short sentences.
+This is very useful; in cases like this, a hybrid approach of using Generative AI for shorter sentences and
+probabilistic, more specialised models for other cases seems to be the best approach.
+
+## NLP: Further Reading
+
+The /syntactical-analysis endpoint creates an analysis of the sentence with spaCy using traditional NLP techniques.
+Some of the goals are to show _why_ a word is inflected (incidentally, all the languages I'm focussing on right now
+happen to be strongly inflected) in a certain way; for example, when saying _ein großer Bär_ in German, the word
+_großer_ is an inflected adjective, and its inflection depends on the word it refers to, which is _Bär_ in this case.
+Since _Bär_ is a masculine noun, _großer_ is inflected in the masculine nominative singular form.
+
+<figure>
+<img src="https://deutschlernerblog.de/wp-content/uploads/2015/11/Adjektivdeklination_bestimmter_unbestimmter_Artikel_ohne_Artikel_Plural.png" alt="drawing" width="700"/>
+<figcaption>Source: https://deutschlernerblog.de/</figcaption>
+</figure>
+
+For people like me, who like to understand _why_ things work in a certain way, this just might be useful information.
+Similarly, explaining _why_ a mistake you made is wrong might be very interesting.
+
+### Caveats
+
+Natural Language Processing is a very complex field, and I'm not exactly an expert in it.
+One challenge is to render part-of-speech tagging, which is a huge part of what I'm doing right now, in a way that
+is understandable to an average user. This challenge is made even more difficult by the fact that different languages
+with different grammars may carry different learning challenges, so while this application supports a lot of languages
+as of now, mileage may vary strongly on the NLP side of things.
 
 If you're interested in reading about POS tagging and NLP in a broader sense, you can check out the following links:
 
