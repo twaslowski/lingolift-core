@@ -74,7 +74,7 @@ jobs:
           ./docker-util.sh push syntactical_analysis prod
 
   deploy_dev_infrastructure:
-    needs: build-and-push-docker
+    needs: build_docker
     runs-on: ubuntu-latest
     env:
       AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
