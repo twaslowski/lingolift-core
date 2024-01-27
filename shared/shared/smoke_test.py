@@ -8,7 +8,7 @@ client = Client(host=os.environ["API_GATEWAY_HOST"])
 
 
 @pytest.mark.asyncio
-async def test_literal_translations_endpoint():
+async def test_translations_endpoint():
     translation = await client.fetch_translation("Donde esta la biblioteca?")
     assert translation.translation is not None
     assert translation.language_code == "ES"
@@ -21,7 +21,7 @@ async def test_literal_translations_endpoint():
 
 
 @pytest.mark.asyncio
-async def test_literal_translations_endpoint():
+async def test_syntactical_analysis_endpoint():
     analysis = await client.fetch_syntactical_analysis("Donde esta la biblioteca?")
     assert len(analysis) > 0
 

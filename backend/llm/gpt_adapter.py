@@ -7,6 +7,7 @@ from openai import OpenAI
 from llm.message import Message
 
 api_key = os.getenv('OPENAI_API_KEY', None)
+logger = logging.getLogger('root')
 
 
 def openai_exchange(messages: list[Message], json_mode: bool = False) -> dict:
@@ -21,7 +22,7 @@ def openai_exchange(messages: list[Message], json_mode: bool = False) -> dict:
     However, in this context, we're simply consuming the responses without need for state, so this is fine.
     """
     client = OpenAI(api_key=api_key)
-    logging.info(f"Sending messages to OpenAI API: {messages}")
+    logger.info(f"Sending messages to OpenAI API: {messages}")
     response_format = "json_object" if json_mode else "text"
     # mypy complains about the usage of the create() function, but clearly it works
     completion = client.chat.completions.create(  # type: ignore
@@ -30,7 +31,7 @@ def openai_exchange(messages: list[Message], json_mode: bool = False) -> dict:
         messages=[message.asdict() for message in messages]
     )
     response = completion.choices[0].message.content
-    logging.info(f"Received response: {response}")
+    logger.info(f"Received response: {response}")
     return parse_response(response)
 
 
