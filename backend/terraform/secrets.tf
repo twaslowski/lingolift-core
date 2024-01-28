@@ -30,7 +30,7 @@ resource "random_password" "external_id" {
 }
 
 resource "aws_iam_role" "client_role" {
-  name = "ClientRole"
+  name = "ClientRole-${var.environment}"
 
   assume_role_policy = jsonencode({
     Version   = "2012-10-17"
@@ -46,7 +46,7 @@ resource "aws_iam_role" "client_role" {
   })
 
   inline_policy {
-    name = "ReadSecretPolicy"
+    name = "ReadSecretPolicy-${var.environment}"
 
     policy = jsonencode({
       Version = "2012-10-17"
