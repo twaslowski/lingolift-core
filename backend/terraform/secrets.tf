@@ -41,6 +41,11 @@ resource "aws_iam_role" "client_role" {
         Principal = {
           Service = "sts.amazonaws.com"
         }
+        Condition = {
+          "StringEquals" = {
+            "sts:ExternalId" = aws_secretsmanager_secret_version.external_id.secret_string
+          }
+        }
       }
     ]
   })
