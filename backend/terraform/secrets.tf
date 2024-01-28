@@ -7,12 +7,12 @@ resource "aws_secretsmanager_secret_version" "api_key" {
   secret_string = aws_api_gateway_api_key.key.value
 }
 
-resource "aws_secretsmanager_secret" "api_url" {
+resource "aws_secretsmanager_secret" "stage_invoke_url" {
   name = "api-gateway/${var.environment}/base-url"
 }
 
 resource "aws_secretsmanager_secret_version" "api_base_url" {
-  secret_id     = aws_secretsmanager_secret.api_url.id
+  secret_id     = aws_secretsmanager_secret.stage_invoke_url.id
   secret_string = aws_api_gateway_stage.stage.invoke_url
 }
 
@@ -27,4 +27,22 @@ resource "aws_secretsmanager_secret_version" "external_id" {
 
 resource "random_password" "external_id" {
   length = 32
+}
+
+resource "aws_iam_role" "cloudwatch" {
+  name = "ClientRole"
+
+  assume_role_policy = jsonencode({
+    Version   = "2012-10-17"
+    Statement = [
+      {
+        Action    = "sts:AssumeRole"
+        Effect    = "Allow"
+        Principal = {
+          Service = "sts.amazonaws.com"
+        }
+      }
+    ]
+  })
+  managed_policy_arns = ["arn:aws:iam::aws:policy/SecretsManagerReadWrite"]
 }
