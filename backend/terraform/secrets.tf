@@ -29,7 +29,7 @@ resource "random_password" "external_id" {
   length = 32
 }
 
-resource "aws_iam_role" "cloudwatch" {
+resource "aws_iam_role" "client_role" {
   name = "ClientRole"
 
   assume_role_policy = jsonencode({
