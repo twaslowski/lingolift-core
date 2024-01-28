@@ -3,12 +3,10 @@ from unittest.mock import Mock
 
 import pytest
 
-from shared.client import Client, LITERAL_TRANSLATIONS_UNEXPECTED_ERROR, \
-    SYNTACTICAL_ANALYSIS_UNEXPECTED_ERROR, UPOS_EXPLANATIONS_UNEXPECTED_ERROR
+from shared.client import Client
 from shared.exception import ApplicationException
 from shared.model.syntactical_analysis import SyntacticalAnalysis, PartOfSpeech
 from shared.model.translation import Translation
-from shared.model.upos_explanation import UposExplanation
 from aioresponses import aioresponses
 
 client = Client('')
