@@ -44,5 +44,19 @@ resource "aws_iam_role" "client_role" {
       }
     ]
   })
-  managed_policy_arns = ["arn:aws:iam::aws:policy/SecretsManagerReadWrite"]
+
+  inline_policy {
+    name = "ReadSecretPolicy"
+
+    policy = jsonencode({
+      Version = "2012-10-17"
+      Statement = [
+        {
+          Action   = ["secretsmanager:ReadSecretValue"]
+          Effect   = "Allow"
+          Resource = [aws_secretsmanager_secret.api_key.arn, aws_secretsmanager_secret.stage_invoke_url.arn]
+        },
+      ]
+    })
+  }
 }
