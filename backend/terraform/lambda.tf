@@ -59,12 +59,3 @@ module "syntactical_analysis" {
   handler        = "lambda_functions_generative.response_suggestion_handler"
   openai_api_key = var.openai_api_key
 }
-
-locals {
-  allowed_triggers = {
-    apigateway = {
-      service    = "apigateway"
-      source_arn = "arn:aws:execute-api:eu-central-1:246770851643:*"
-    }
-  }
-}
