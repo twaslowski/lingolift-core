@@ -14,8 +14,9 @@ class Client:
     Includes error handling and parsing to the pydantic models.
     """
 
-    def __init__(self, host):
+    def __init__(self, host, api_key):
         self.host = host
+        self.api_key = api_key
 
     async def fetch_translation(self, sentence: str) -> Translation:
         """
