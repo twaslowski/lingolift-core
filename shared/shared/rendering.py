@@ -19,20 +19,14 @@ class Stringifier:
     def __init__(self, markup_language: MarkupLanguage):
         self.markup_language = markup_language
 
-    def introductory_text(self) -> str:
-        return f"""
-        Hi! I'm the Grammr Bot. I will support you in learning a new language  
-        {emoji.emojize(':smiling_face_with_open_hands:')}. {self.linebreak()}
-        If you send me a sentence in a foreign language, I will ...
-        - translate it for you {emoji.emojize(':open_book:')}{self.linebreak()}
-        - {self.hyperlink('provide you with some insights into the grammar of the sentence ',
-                          'https://universaldependencies.org/format.html#morphological-annotation')}
-                          {emoji.emojize(':nerd_face:')}
-                          {self.linebreak()}
-        - help you respond with some suggestions {emoji.emojize(':pen:')}{self.linebreak()}
+    @staticmethod
+    def introductory_text() -> str:
+        return emoji.emojize(f"""
+        Hi! I'm the Grammr Bot. I will support you in learning German :Germany:.
+        Send me a German sentence, and I will translate it for you and explain the Grammar.
         
-        Alright, let's get started! Text me something – for example, '¿Donde esta la biblioteca?'.
-        """
+        Let's get started! Text me something – for example, 'Wie viel kostet ein Bier?' :beer:
+        """)
 
     def disclaimer(self) -> str:
         return f"""I'm currently under active development. You can
@@ -72,7 +66,7 @@ class Stringifier:
         :param syntactical_analyses: Set of syntactical analyses for words in the sentence
         :return: The analysis for the word including the lemma, dependencies and morphology, if available.
         """
-        if isinstance(syntactical_analyses,  ApplicationException):
+        if isinstance(syntactical_analyses, ApplicationException):
             return None
         for analysis in syntactical_analyses:
             if analysis.word == word:

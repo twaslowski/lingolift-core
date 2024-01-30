@@ -32,11 +32,14 @@ def create_client():
 
 
 async def chat(client: Client, stringifier: Stringifier):
-    intro = st.markdown(stringifier.introductory_text())
 
     # Initialize chat history
     if "messages" not in st.session_state:
         st.session_state.messages = []
+        st.session_state.messages.append({
+            'role': 'assistant',
+            'content': stringifier.introductory_text()
+        })
 
     # Display chat messages from history on app rerun
     for message in st.session_state.messages:
@@ -45,7 +48,6 @@ async def chat(client: Client, stringifier: Stringifier):
 
     # Accept user input
     if prompt := st.chat_input("What should I translate for you?"):
-        intro.empty()
         # Add user message to chat history
         st.session_state.messages.append({"role": "user", "content": prompt})
         # Display user message in chat message container

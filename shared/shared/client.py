@@ -8,12 +8,6 @@ from shared.model.response_suggestion import ResponseSuggestion
 from shared.model.syntactical_analysis import SyntacticalAnalysis
 from shared.model.translation import Translation
 
-TRANSLATIONS_UNEXPECTED_ERROR = "An unexpected error occurred when fetching translations from backend"
-LITERAL_TRANSLATIONS_UNEXPECTED_ERROR = "An unexpected error occurred when fetching translations from backend"
-SYNTACTICAL_ANALYSIS_UNEXPECTED_ERROR = "An unexpected error occurred when fetching syntactical analysis from backend"
-RESPONSE_SUGGESTIONS_UNEXPECTED_ERROR = "An unexpected error occurred when fetching response suggestions from backend"
-UPOS_EXPLANATIONS_UNEXPECTED_ERROR = "An unexpected error occurred when fetching UPOS explanations from backend"
-
 
 class Client:
     """
