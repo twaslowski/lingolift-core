@@ -1,6 +1,7 @@
 import asyncio
 import logging
 import os
+from asyncio import create_task
 
 import telegram.constants
 from dotenv import load_dotenv
@@ -15,10 +16,8 @@ from telegram.ext import filters as Filters
 load_dotenv()
 
 # create global-scoped client
-protocol = os.environ.get("BACKEND_PROTOCOL")
-host = os.environ.get("BACKEND_HOST")
-port = os.environ.get("BACKEND_PORT")
-client = Client(protocol, host, port)
+host = os.environ.get("API_GATEWAY_HOST")
+client = Client(host)
 
 stringifier = Stringifier(MarkupLanguage.HTML)
 
@@ -26,52 +25,36 @@ stringifier = Stringifier(MarkupLanguage.HTML)
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 
 MESSAGE_RECEIVED = "Thanks! I've received your sentence, working on the translation now ..."
-TRANSLATION_ERROR = "Sorry, I couldn't translate your sentence: {}"
-ANALYSIS_ERROR = "Something went wrong when processing the syntactical analysis: {}"
 
 
 async def handle_text_message(update: Update, _) -> None:
     sentence = update.message.text
     logging.info(f"Received message: {sentence}")
-    await reply(update, MESSAGE_RECEIVED, html=False)
-
     try:
-        translation = await client.fetch_translation(sentence)
+        await reply(update, MESSAGE_RECEIVED, html=False)
+
+        # send all requests to backend
+        translation_future = create_task(client.fetch_translation(sentence))
+        syntactical_translations_future = create_task(client.fetch_syntactical_analysis(sentence))
+        literal_translations_future = create_task(client.fetch_literal_translations(sentence))
+
+        # receive and send translation
+        translation = await translation_future
+        translation_response = stringifier.stringify_translation(sentence, translation)
+        await reply(update, translation_response)
+
+        # fetch analysis and literal translations
+        analysis = await syntactical_translations_future
+        literal_translation = await literal_translations_future
+        analysis_rendered = stringifier.coalesce_analyses(literal_translation, analysis)
+        logging.info(f"Finished rendering analysis for sentence {sentence}")
+        await reply(update, analysis_rendered)
     except ApplicationException as e:
-        await reply(update, TRANSLATION_ERROR.format(e.error_message))
+        await reply(update, e.error_message)
         return
-
-    translation_response = stringifier.stringify_translation(sentence, translation)
-    await reply(update, translation_response)
-
-    await reply(update, "Fetching syntactical analysis for your sentence ...", html=False)
-
-    # perform all other calls concurrently
-    suggestions, literal_translations, syntactical_analysis = await gather_calls(sentence, translation)
-
-    if type(literal_translations) is ApplicationException:
-        await reply(update, ANALYSIS_ERROR.format(literal_translations.error_message))
-        return
-
-    # if literal translation is available; error handling for syntactical analysis is done in find_analysis()
-    analysis_rendered = stringifier.coalesce_analyses(literal_translations, syntactical_analysis)
-    await reply(update, analysis_rendered)
-
-    if type(suggestions) is ApplicationException:
-        await reply(update, ANALYSIS_ERROR.format(suggestions.error_message))
-        return
-
-    # else
-    await reply(update, stringifier.stringify_suggestions(suggestions))
-
-
-async def gather_calls(sentence, translation):
-    return await asyncio.gather(
-        client.fetch_response_suggestions(sentence),
-        client.fetch_literal_translations(sentence),
-        client.fetch_syntactical_analysis(sentence, translation.language_code),
-        return_exceptions=True
-    )
+    except Exception as e:
+        logging.error(f"error occurred: {e}")
+        await reply(update, 'An unexpected error occurred.')
 
 
 async def reply(update: Update, message: str, html: bool = True):

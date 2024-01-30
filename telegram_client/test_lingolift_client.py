@@ -12,7 +12,7 @@ import app
 class TestLingoliftClient(IsolatedAsyncioTestCase):
 
     async def test_translation_errors(self):
-        app.client = Client()
+        app.client = Client("")
         # if translation fails
         app.client.fetch_translation = AsyncMock(side_effect=self.mock_error())
 
@@ -31,15 +31,13 @@ class TestLingoliftClient(IsolatedAsyncioTestCase):
         self.assertEqual(app.MESSAGE_RECEIVED, app.reply.call_args_list[0][0][1])
         # ensure there is overlap between Translation Error message and received error message
         # the formatting makes it difficult to perform exact matching, but this is close enough
-        self.assertIn(app.TRANSLATION_ERROR[:20], app.reply.call_args_list[1][0][1])
+        self.assertIn("some-error", app.reply.call_args_list[1][0][1])
 
     async def test_syntactical_analysis_errors(self):
         app.client = Mock()
         # if syntactical analysis fails
         app.client.fetch_translation = AsyncMock(return_value=self.mock_get_translation())
-        app.client.fetch_syntactical_analysis = AsyncMock(side_effect=self.mock_error())
         app.client.fetch_literal_translations = AsyncMock(side_effect=self.mock_error())
-        app.client.fetch_response_suggestions = AsyncMock(side_effect=self.mock_error())
 
         # set up mocks
         app.reply = AsyncMock()
@@ -51,7 +49,7 @@ class TestLingoliftClient(IsolatedAsyncioTestCase):
         await app.handle_text_message(update, None)
 
         # assert latest reply() count contains ANALYSIS_ERROR
-        self.assertIn(app.ANALYSIS_ERROR[:20], app.reply.call_args_list[-1][0][1])
+        self.assertIn("some-error", app.reply.call_args_list[-1][0][1])
 
     @staticmethod
     def mock_get_suggestions() -> list[ResponseSuggestion]:

@@ -8,6 +8,8 @@ from generative.translation import generate_translation
 from generative.literal_translation import generate_literal_translation, SentenceTooLongException
 import logging
 
+from util.lambda_proxy_return import fail, ok
+
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger('root')
 logger.setLevel(logging.INFO)
@@ -43,23 +45,3 @@ def literal_translation_handler(event, _):
     except SentenceTooLongException as e:
         logger.error(f"Sentence {sentence} too long for literal translation.")
         return fail(e, 400)
-
-
-def ok(res: dict | list) -> dict:
-    return {
-        "statusCode": 200,
-        "headers": {
-            "Content-Type": "application/json"
-        },
-        "body": json.dumps(res)
-    }
-
-
-def fail(e: ApplicationException, status: int) -> dict:
-    return {
-        "statusCode": status,
-        "headers": {
-            "Content-Type": "application/json"
-        },
-        "body": json.dumps(e.dict())
-    }
