@@ -10,9 +10,10 @@ api_key = os.getenv('OPENAI_API_KEY', None)
 logger = logging.getLogger('root')
 
 
-def openai_exchange(messages: list[Message], json_mode: bool = False) -> dict:
+def openai_exchange(messages: list[Message], model_name: str = "gpt-3.5-turbo-1106", json_mode: bool = False) -> dict | str:
     """
     Abstraction layer for the OpenAI API.
+    :param model_name: OpenAI model name.
     :param messages: List of message objects to emulate session state.
     Usually just contains System prompt and User request.
     :param json_mode: Whether to use LLM JSON mode. Defaults to False as OpenAI forcibly generates JSONs with an
@@ -26,13 +27,15 @@ def openai_exchange(messages: list[Message], json_mode: bool = False) -> dict:
     response_format = "json_object" if json_mode else "text"
     # mypy complains about the usage of the create() function, but clearly it works
     completion = client.chat.completions.create(  # type: ignore
-        model="gpt-3.5-turbo-1106",
+        model=model_name,
         response_format={"type": response_format},
         messages=[message.asdict() for message in messages]
     )
     response = completion.choices[0].message.content
     logger.info(f"Received response: {response}")
-    return parse_response(response)
+    if json_mode:
+        return parse_response(response)
+    return response
 
 
 def parse_response(gpt_response: str) -> dict:
