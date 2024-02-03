@@ -32,7 +32,7 @@ def perform_analysis(sentence: str) -> Iterator[SyntacticalAnalysis]:
         if token.pos_ == 'PUNCT':
             return
         if tags:
-            morphology = Morphology(tags=tags, explanation=convert_universal_feature_tags(tags, token))
+            morphology = Morphology(tags=tags_to_list(tags), explanation=convert_universal_feature_tags(tags, token))
         yield SyntacticalAnalysis(
             word=token.text,
             pos=PartOfSpeech(value=token.pos_, explanation=spacy.explain(token.pos_)),
@@ -42,7 +42,7 @@ def perform_analysis(sentence: str) -> Iterator[SyntacticalAnalysis]:
         )
 
 
-def convert_universal_feature_tags(tags: list[str], token: Token) -> str:
+def convert_universal_feature_tags(tags: dict, token: Token) -> str:
     """
     Converts the Universal Feature tags to a legible format.
     :param tags: A list of Universal Feature tags.
@@ -51,9 +51,9 @@ def convert_universal_feature_tags(tags: list[str], token: Token) -> str:
     """
     match token.pos_:
         case 'VERB' | 'AUX':
-            return universal_features.convert(tags, universal_features.VERB_FEATURE_SET)
+            return universal_features.convert_to_legible_tags(tags, universal_features.VERB_FEATURE_SET)
         case 'NOUN' | 'DET' | 'ADJ':
-            return universal_features.convert(tags, universal_features.NOUN_FEATURE_SET)
+            return universal_features.convert_to_legible_tags(tags, universal_features.NOUN_FEATURE_SET)
         case _:
             return ''
 
@@ -69,7 +69,7 @@ def extract_lemma(token: Token) -> str | None:
     return token.lemma_ if token.text.lower() != token.lemma_.lower() else None
 
 
-def extract_relevant_tags(token: Token) -> list[str]:
+def extract_relevant_tags(token: Token) -> dict[str, str]:
     """
     Extracts the relevant tags from a set of UPOS tags.
     Not all tags are equally relevant to the end-user; for example, Number, Person and Tense are substantially more
@@ -84,9 +84,23 @@ def extract_relevant_tags(token: Token) -> list[str]:
         case 'NOUN' | 'DET' | 'ADJ':
             relevant_tags = ['Gender', 'Case', 'Number']
         case _:
-            relevant_tags = []
+            relevant_tags = {}
     tags = str(token.morph).split('|')
-    return [tag for tag in tags if tag.split('=')[0] in relevant_tags]
+    # todo consider whether this line can be written more elegantly
+    return {
+        tag.split('=')[0]: tag.split('=')[1] for tag in tags if tag.split('=')[0] in relevant_tags
+    }
+
+
+def tags_to_list(tags: dict[str, str]) -> list[str]:
+    """
+    Converts a dictionary of tags to a list of strings.
+    This exists for backwards compatibility so I don't have to rewrite the whole shared Morphology structure
+    right now. Will be refactored at a later point in time.
+    :param tags: A dictionary of tags.
+    :return: A list of strings.
+    """
+    return [f"{k}={v}" for k, v in tags.items()]
 
 
 if __name__ == '__main__':

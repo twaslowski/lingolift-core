@@ -10,6 +10,8 @@ api_key = os.getenv('OPENAI_API_KEY', None)
 logger = logging.getLogger('root')
 
 
+# todo: This breaks the literal_translations endpoint, because that relies on parsing the response to a JSON.
+
 def openai_exchange(messages: list[Message], model_name: str = "gpt-3.5-turbo-1106", json_mode: bool = False) -> dict | str:
     """
     Abstraction layer for the OpenAI API.
