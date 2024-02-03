@@ -1,6 +1,6 @@
 from llm.gpt_adapter import openai_exchange
 from llm.message import Message
-from nlp.syntactical_analysis import extract_relevant_tags
+from nlp.syntactical_analysis import pos_tags_to_dict
 
 import spacy
 
@@ -15,7 +15,7 @@ def get_initial_morphology(word: str) -> str:
     nlp = spacy.load("de_core_news_sm")
     doc = nlp(word)
     token = doc[0]
-    return extract_relevant_tags(token)
+    return pos_tags_to_dict(token)
 
 
 if __name__ == '__main__':

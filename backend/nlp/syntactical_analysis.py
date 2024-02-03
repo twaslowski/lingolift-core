@@ -27,12 +27,13 @@ def perform_analysis(sentence: str) -> Iterator[SyntacticalAnalysis]:
     doc = nlp(sentence)
 
     for token in doc:
-        tags = extract_relevant_tags(token)
+        tags = pos_tags_to_dict(token)
         morphology = None
         if token.pos_ == 'PUNCT':
             return
         if tags:
-            morphology = Morphology(tags=tags_to_list(tags), explanation=convert_universal_feature_tags(tags, token))
+            morphology = Morphology(tags=tags_dict_to_list(tags),
+                                    explanation=convert_to_legible_features(tags, token))
         yield SyntacticalAnalysis(
             word=token.text,
             pos=PartOfSpeech(value=token.pos_, explanation=spacy.explain(token.pos_)),
@@ -42,7 +43,7 @@ def perform_analysis(sentence: str) -> Iterator[SyntacticalAnalysis]:
         )
 
 
-def convert_universal_feature_tags(tags: dict, token: Token) -> str:
+def convert_to_legible_features(tags: dict, token: Token) -> str:
     """
     Converts the Universal Feature tags to a legible format.
     :param tags: A list of Universal Feature tags.
@@ -51,9 +52,9 @@ def convert_universal_feature_tags(tags: dict, token: Token) -> str:
     """
     match token.pos_:
         case 'VERB' | 'AUX':
-            return universal_features.convert_to_legible_tags(tags, universal_features.VERB_FEATURE_SET)
+            return universal_features.convert_to_legible_tags(tags, universal_features.VERBAL_FEATURES)
         case 'NOUN' | 'DET' | 'ADJ':
-            return universal_features.convert_to_legible_tags(tags, universal_features.NOUN_FEATURE_SET)
+            return universal_features.convert_to_legible_tags(tags, universal_features.NOMINAL_FEATURES)
         case _:
             return ''
 
@@ -69,30 +70,19 @@ def extract_lemma(token: Token) -> str | None:
     return token.lemma_ if token.text.lower() != token.lemma_.lower() else None
 
 
-def extract_relevant_tags(token: Token) -> dict[str, str]:
+def pos_tags_to_dict(token: Token) -> dict[str, str]:
     """
-    Extracts the relevant tags from a set of UPOS tags.
-    Not all tags are equally relevant to the end-user; for example, Number, Person and Tense are substantially more
-    helpful than the Mood or the VerbForm. This also helps narrow down the problem and allows an incremental
-    approach to this complex issue.
+    Extracts a dict of features from the PoS tags of a Token.
     :param token: A spaCy token.
-    :return: The relevant tags.
+    :return: The features, e.g. {'Case': 'Nom', 'Number': 'Plur'}
     """
-    match token.pos_:
-        case 'VERB' | 'AUX':
-            relevant_tags = ['Number', 'Person', 'Tense']
-        case 'NOUN' | 'DET' | 'ADJ':
-            relevant_tags = ['Gender', 'Case', 'Number']
-        case _:
-            relevant_tags = {}
     tags = str(token.morph).split('|')
-    # todo consider whether this line can be written more elegantly
     return {
-        tag.split('=')[0]: tag.split('=')[1] for tag in tags if tag.split('=')[0] in relevant_tags
+        tag.split('=')[0]: tag.split('=')[1] for tag in tags if tag != ''
     }
 
 
-def tags_to_list(tags: dict[str, str]) -> list[str]:
+def tags_dict_to_list(tags: dict[str, str]) -> list[str]:
     """
     Converts a dictionary of tags to a list of strings.
     This exists for backwards compatibility so I don't have to rewrite the whole shared Morphology structure

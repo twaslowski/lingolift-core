@@ -11,8 +11,8 @@ def load_feature_set() -> dict:
         return json.load(f)
 
 
-NOUN_FEATURE_SET = ["Case", "Number", "Gender"]
-VERB_FEATURE_SET = ["Person", "Number", "Tense"]
+NOMINAL_FEATURES = ["Case", "Number", "Gender"]
+VERBAL_FEATURES = ["Person", "Number", "Tense"]
 FEATURES = load_feature_set()
 
 

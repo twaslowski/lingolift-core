@@ -7,7 +7,7 @@ def test_tags_for_noun():
         "Number": "Sing",
         "Gender": "Masc"
     }
-    assert universal_features.convert_to_legible_tags(tags, universal_features.NOUN_FEATURE_SET) == "Accusative Singular Masculine"
+    assert universal_features.convert_to_legible_tags(tags, universal_features.NOMINAL_FEATURES) == "Accusative Singular Masculine"
 
 
 def test_incomplete_tags_for_noun():
@@ -15,7 +15,7 @@ def test_incomplete_tags_for_noun():
         "Case": "Nom",
         "Number": "Sing"
     }
-    assert universal_features.convert_to_legible_tags(tags, universal_features.NOUN_FEATURE_SET) == "Nominative Singular"
+    assert universal_features.convert_to_legible_tags(tags, universal_features.NOMINAL_FEATURES) == "Nominative Singular"
 
 
 def test_tags_for_verb():
@@ -24,4 +24,4 @@ def test_tags_for_verb():
         "Person": "3",
         "Tense": "Pres"
     }
-    assert universal_features.convert_to_legible_tags(tags, universal_features.VERB_FEATURE_SET) == "3rd person Singular Present tense"
+    assert universal_features.convert_to_legible_tags(tags, universal_features.VERBAL_FEATURES) == "3rd person Singular Present tense"
