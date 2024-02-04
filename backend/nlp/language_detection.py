@@ -3,7 +3,6 @@ from shared.exception import ApplicationException
 
 from llm.gpt_adapter import openai_exchange, parse_response
 from llm.message import Message, SYSTEM, USER
-import iso639
 
 MIN_DISTANCE = 0.6
 LANGUAGES = [Language.SPANISH, Language.GERMAN, Language.RUSSIAN, Language.FRENCH, Language.PORTUGUESE]
@@ -38,9 +37,4 @@ def llm_detect_language(sentence: str) -> str:
     context = [Message(role=SYSTEM, content=SYSTEM_PROMPT),
                Message(role=USER, content=USER_PROMPT + sentence)]
     response = parse_response(openai_exchange(context, json_mode=True))
-    try:
-        language = iso639.Language.from_part1(response.get('iso_code').lower())
-    except iso639.NonExistentLanguageError:
-        raise LanguageNotAvailableException(
-            f"The language for sentence '{sentence}' was not recognized.")
-    return language.part1.upper()
+    return response.get('iso_code').upper()
