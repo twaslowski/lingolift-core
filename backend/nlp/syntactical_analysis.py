@@ -15,32 +15,36 @@ models = {
 }
 
 
-def perform_analysis(sentence: str) -> Iterator[SyntacticalAnalysis]:
+def perform_analysis(sentence: str, language_code: str = None) -> list[SyntacticalAnalysis]:
     """
     Performs a syntactical analysis on a sentence in a given language.
+    :param language_code: Can optionally be supplied to override the language detection.
     :param sentence: Source sentence
-    :param language_iso_code: The ISO-639-1 code of the language to analyze, in order to load a model.
     :return:
     """
-    language_code = str(llm_detect_language(sentence))
+    if not language_code:
+        language_code = str(llm_detect_language(sentence))
     nlp = spacy.load(models.get(language_code))
     doc = nlp(sentence)
 
-    for token in doc:
-        tags = pos_tags_to_dict(token)
-        morphology = None
-        if token.pos_ == 'PUNCT':
-            return
-        if tags:
-            morphology = Morphology(tags=tags_dict_to_list(tags),
-                                    explanation=convert_to_legible_features(tags, token))
-        yield SyntacticalAnalysis(
-            word=token.text,
-            pos=PartOfSpeech(value=token.pos_, explanation=spacy.explain(token.pos_)),
-            morphology=morphology,
-            lemma=extract_lemma(token),
-            dependency=extract_dependency(token)
-        )
+    return [_analyze_token(token) for token in doc if _analyze_token(token) is not None]
+
+
+def _analyze_token(token: Token) -> SyntacticalAnalysis | None:
+    tags = pos_tags_to_dict(token)
+    morphology = None
+    if token.pos_ == 'PUNCT':
+        return
+    if tags:
+        morphology = Morphology(tags=tags_dict_to_list(tags),
+                                explanation=convert_to_legible_features(tags, token))
+    return SyntacticalAnalysis(
+        word=token.text,
+        pos=PartOfSpeech(value=token.pos_, explanation=spacy.explain(token.pos_)),
+        morphology=morphology,
+        lemma=extract_lemma(token),
+        dependency=extract_dependency(token)
+    )
 
 
 def convert_to_legible_features(tags: dict, token: Token) -> str:
@@ -52,9 +56,9 @@ def convert_to_legible_features(tags: dict, token: Token) -> str:
     """
     match token.pos_:
         case 'VERB' | 'AUX':
-            return universal_features.convert_to_legible_tags(tags, universal_features.VERBAL_FEATURES)
+            return universal_features.convert_to_legible_tags(tags, universal_features.verbal_features)
         case 'NOUN' | 'DET' | 'ADJ':
-            return universal_features.convert_to_legible_tags(tags, universal_features.NOMINAL_FEATURES)
+            return universal_features.convert_to_legible_tags(tags, universal_features.nominal_features)
         case _:
             return ''
 

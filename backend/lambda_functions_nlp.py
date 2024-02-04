@@ -21,3 +21,11 @@ def syntactical_analysis_handler(event, _):
         return ok([a.model_dump() for a in analyses])
     except LanguageNotAvailableException as e:
         return fail(ApplicationException(e.error_message), 400)
+
+
+def inflection_handler(event, _):
+    body = json.loads(event.get('body'))
+    word = body.get('word')
+    inflections = retrieve_inflections(word)
+    # todo implement inflection
+    return ok("Not implemented yet")

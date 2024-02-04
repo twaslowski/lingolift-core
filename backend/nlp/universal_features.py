@@ -11,9 +11,17 @@ def load_feature_set() -> dict:
         return json.load(f)
 
 
-NOMINAL_FEATURES = ["Case", "Number", "Gender"]
-VERBAL_FEATURES = ["Person", "Number", "Tense"]
-FEATURES = load_feature_set()
+all_features = load_feature_set()
+nominal_features = ["Case", "Number", "Gender"]
+verbal_features = ["Person", "Number", "Tense"]
+
+
+def get_all_feature_instances(feature: str) -> list[str]:
+    """
+    :param feature: The feature to get all instances for, e.g. "Case"
+    :return: A list of all instances for the given feature, e.g. "Nom", "Acc", "Dat", "Gen"
+    """
+    return list(all_features.get(feature).keys())
 
 
 def convert_to_legible_tags(tags: dict, feature_set: list[str]) -> str:
@@ -28,6 +36,6 @@ def convert_to_legible_tags(tags: dict, feature_set: list[str]) -> str:
     for feature in feature_set:
         tag_value = tags.get(feature)
         if tag_value:
-            legible_tags.append(FEATURES.get(feature).get(tag_value))
+            legible_tags.append(all_features.get(feature).get(tag_value))
 
     return " ".join(filter(lambda x: x is not None, legible_tags))
