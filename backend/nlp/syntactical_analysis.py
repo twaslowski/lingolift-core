@@ -36,8 +36,7 @@ def _analyze_token(token: Token) -> SyntacticalAnalysis | None:
     if token.pos_ == 'PUNCT':
         return
     if tags:
-        morphology = Morphology(tags=tags_dict_to_list(tags),
-                                explanation=convert_to_legible_features(tags, token))
+        morphology = Morphology(tags=tags, explanation=convert_to_legible_features(tags, token))
     return SyntacticalAnalysis(
         word=token.text,
         pos=PartOfSpeech(value=token.pos_, explanation=spacy.explain(token.pos_)),
@@ -84,17 +83,6 @@ def pos_tags_to_dict(token: Token) -> dict[str, str]:
     return {
         tag.split('=')[0]: tag.split('=')[1] for tag in tags if tag != ''
     }
-
-
-def tags_dict_to_list(tags: dict[str, str]) -> list[str]:
-    """
-    Converts a dictionary of tags to a list of strings.
-    This exists for backwards compatibility so I don't have to rewrite the whole shared Morphology structure
-    right now. Will be refactored at a later point in time.
-    :param tags: A dictionary of tags.
-    :return: A list of strings.
-    """
-    return [f"{k}={v}" for k, v in tags.items()]
 
 
 if __name__ == '__main__':

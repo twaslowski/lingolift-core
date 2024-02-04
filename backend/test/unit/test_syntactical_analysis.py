@@ -1,5 +1,3 @@
-from shared.model.upos_explanation import UposExplanation
-
 from nlp.syntactical_analysis import perform_analysis
 
 
@@ -16,4 +14,3 @@ def test_happy_path(mocker):
     assert result[1].pos.value == "AUX"
     assert result[1].morphology.explanation == "3rd person Plural Present tense"
     assert result[3].pos.value == "VERB"
-

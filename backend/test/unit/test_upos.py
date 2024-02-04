@@ -5,28 +5,24 @@ import pytest
 from nlp.syntactical_analysis import pos_tags_to_dict
 
 
-@pytest.mark.skip(reason="refactoring, may not be needed")
-def test_upos_extraction_determiner():
+def test_feature_extraction_to_dict():
     token = Mock()
     token.morph = 'Mood=Ind|Number=Sing|Person=3|Tense=Pres|VerbForm=Fin'
-    token.pos_ = 'DET'
     relevant_tags = pos_tags_to_dict(token)
-    assert len(relevant_tags) == 1
+    assert "Mood" in relevant_tags
+    assert "Number" in relevant_tags
+    assert "Person" in relevant_tags
+    assert "Tense" in relevant_tags
+    assert "VerbForm" in relevant_tags
+    assert relevant_tags["Mood"] == "Ind"
+    assert relevant_tags["Number"] == "Sing"
+    assert relevant_tags["Person"] == "3"
+    assert relevant_tags["Tense"] == "Pres"
+    assert relevant_tags["VerbForm"] == "Fin"
 
 
-@pytest.mark.skip(reason="refactoring, may not be needed")
-def test_upos_extraction_verb():
+def test_empty_feature_extraction():
     token = Mock()
-    token.morph = 'Mood=Ind|Number=Sing|Person=3|Tense=Pres|VerbForm=Fin'
-    token.pos_ = 'VERB'
+    token.morph = ''
     relevant_tags = pos_tags_to_dict(token)
-    assert len(relevant_tags) == 3
-
-
-@pytest.mark.skip(reason="refactoring, may not be needed")
-def test_upos_extraction_misc():
-    token = Mock()
-    token.morph = 'Mood=Ind|Number=Sing|Person=3|Tense=Pres|VerbForm=Fin'
-    token.pos_ = 'NON_RELEVANT'
-    relevant_tags = pos_tags_to_dict(token)
-    assert len(relevant_tags) == 0
+    assert relevant_tags == {}
