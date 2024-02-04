@@ -7,7 +7,7 @@ def load_feature_set() -> dict:
     Loads the feature set for a given language.
     :return: The feature set with mappings of Universal Feature tags to legible descriptions.
     """
-    with open(f"nlp/features.json") as f:
+    with open(f"nlp/features/features_de.json") as f:
         return json.load(f)
 
 

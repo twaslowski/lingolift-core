@@ -1,5 +1,7 @@
 from concurrent.futures import ThreadPoolExecutor
 
+from shared.model.inflection import Inflection
+
 from llm.gpt_adapter import openai_exchange
 from llm.message import Message
 from nlp.syntactical_analysis import perform_analysis
@@ -10,22 +12,22 @@ from util.timing import timed
 
 
 @timed
-def retrieve_all_inflections(word: str) -> list[dict]:
+def retrieve_all_inflections(word: str) -> list[Inflection]:
     feature_permutations = generate_feature_permutations(word)
     result = []
     with ThreadPoolExecutor() as executor:
-        futures = [executor.submit(inflect, word, stringify_feature_permutation(permutation)) for permutation in
+        futures = [executor.submit(inflect, word, permutation) for permutation in
                    feature_permutations]
         for future in futures:
             result.append(future.result())
     return result
 
 
-def inflect(word: str, morphology: str) -> dict:
+def inflect(word: str, morphology: dict[str, str]) -> Inflection:
     prompt = "Inflect the following word according to the CoNNL-U Universal Feature Tags: {}, {}"
-    msg = Message(role="user", content=prompt.format(word, morphology))
+    msg = Message(role="user", content=prompt.format(word, stringify_morphology(morphology)))
     result = openai_exchange([msg], model_name="ft:gpt-3.5-turbo-1106:tobiorg::8npM4Pcf", json_mode=False)
-    return {morphology: result}
+    return Inflection(**{'word': result, 'morphology': morphology})
 
 
 def generate_feature_permutations(word: str) -> list[dict]:
@@ -62,7 +64,7 @@ def generate_feature_permutations(word: str) -> list[dict]:
 
 
 # duplicate from shared/model/syntactical_analysis.py
-def stringify_feature_permutation(permutation: dict) -> str:
+def stringify_morphology(permutation: dict) -> str:
     return '|'.join([f'{k}={v}' for k, v in permutation.items()])
 
 
