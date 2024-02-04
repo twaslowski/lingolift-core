@@ -9,8 +9,17 @@ class PartOfSpeech(BaseModel):
 
 
 class Morphology(BaseModel):
-    tags: list[str]
+    tags: dict[str, str]
     explanation: Union[str, None]
+
+    def tags_to_string(self) -> str:
+        return '|'.join([f'{k}={v}' for k, v in self.tags.items()])
+
+    def stringify_explanation(self) -> Union[str, None]:
+        if self.explanation:
+            return self.explanation
+        else:
+            return self.tags_to_string()
 
 
 class SyntacticalAnalysis(BaseModel):
@@ -23,28 +32,20 @@ class SyntacticalAnalysis(BaseModel):
     def stringify_lemma(self) -> str:
         return f' (from: {self.lemma})' if self.lemma else None
 
-    def stringify_morphology(self) -> Union[str, None]:
-        if self.morphology:
-            if self.morphology.explanation:
-                return self.morphology.explanation
-            else:
-                return ', '.join(self.morphology.tags)
-        else:
-            return None
-
     def stringify_dependency(self) -> Union[str, None]:
         # Only return something IF there is a dependency AND a the word is inflected in the first place
         return f' (refers to: {self.dependency})' if self.dependency and self.lemma else None
 
     def stringify(self) -> str:
-        features: List[str] = []
-        add_feature(features, self.stringify_lemma())
-        add_feature(features, self.pos.explanation)
-        add_feature(features, self.stringify_morphology())
+        properties: List[str] = []
+        add_property(properties, self.stringify_lemma())
+        add_property(properties, self.pos.explanation)
+        if self.morphology:
+            add_property(properties, self.morphology.stringify_explanation())
         # add_feature(features, self.dependency)
-        return '; '.join(features)
+        return '; '.join(properties)
 
 
-def add_feature(features: list[str], feature: Union[str, None]):
+def add_property(features: list[str], feature: Union[str, None]):
     if feature:
         features.append(feature)
