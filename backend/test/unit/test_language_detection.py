@@ -1,6 +1,7 @@
 import pytest
+from shared.exception import LanguageNotIdentifiedException
 
-from nlp.language_detection import detect_language, LanguageNotAvailableException
+from nlp.language_detection import detect_language
 
 
 def test_detect_language_happy_path():
@@ -15,15 +16,15 @@ def test_spanish_sentence():
 
 def test_detect_language_that_is_not_available():
     # for speed purposes, only languages for which spacy models are available are identified
-    with pytest.raises(LanguageNotAvailableException):
+    with pytest.raises(LanguageNotIdentifiedException):
         detect_language("dette språket støttes ikke")
 
 
 def test_detect_language_below_minimum_threshold():
-    with pytest.raises(LanguageNotAvailableException):
+    with pytest.raises(LanguageNotIdentifiedException):
         detect_language("this language non esta clear")
 
 
 def test_detect_non_existent_language():
-    with pytest.raises(LanguageNotAvailableException):
+    with pytest.raises(LanguageNotIdentifiedException):
         detect_language("asd asoige weljfn")

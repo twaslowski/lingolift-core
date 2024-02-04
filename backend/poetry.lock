@@ -2326,7 +2326,7 @@ testing-integration = ["build[virtualenv] (>=1.0.3)", "filelock (>=3.4.0)", "jar
 
 [[package]]
 name = "shared"
-version = "0.4.0"
+version = "0.5.0"
 description = ""
 optional = false
 python-versions = "^3.9"
@@ -2343,7 +2343,7 @@ pydantic = "^2.5.3"
 type = "git"
 url = "https://github.com/tobiaswaslowski/lingolift.git#590b325"
 reference = "HEAD"
-resolved_reference = "9539784cb1f8a092460c42601c806957ffc277c5"
+resolved_reference = "ffd7bf9acdc62a0489ee9487c67c977011f1784c"
 subdirectory = "shared"
 
 [[package]]

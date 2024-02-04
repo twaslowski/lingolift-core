@@ -1,7 +1,7 @@
 import json
 
 from iso639 import LanguageNotFoundError
-from shared.exception import ApplicationException
+from shared.exception import ApplicationException, LanguageNotIdentifiedException
 from shared.model.literal_translation import LiteralTranslation
 from shared.model.response_suggestion import ResponseSuggestion
 from shared.model.translation import Translation
@@ -33,7 +33,7 @@ def test_translation_handler_unhappy_path(mocker):
     response = translation_handler(event, None)
     assert response.get('statusCode') == 400
     e = ApplicationException(**json.loads(response.get('body')))
-    assert e.error_message == "Language for sentence test could not be identified."
+    assert e.error_message == LanguageNotIdentifiedException().error_message
 
 
 def test_literal_translation_handler_happy_path(mocker):
