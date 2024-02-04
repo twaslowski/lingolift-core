@@ -1566,9 +1566,9 @@ pydantic = "^2.5.3"
 
 [package.source]
 type = "git"
-url = "https://github.com/tobiaswaslowski/lingolift.git#590b325"
+url = "https://github.com/tobiaswaslowski/lingolift.git#bb17237"
 reference = "HEAD"
-resolved_reference = "ffd7bf9acdc62a0489ee9487c67c977011f1784c"
+resolved_reference = "bb172372e97909150dc5b658827bcc97c0b0261f"
 subdirectory = "shared"
 
 [[package]]
@@ -1953,4 +1953,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9.18"
-content-hash = "ca171cd9ee9c67da2e857d3a70c0236c47717eee7ac0f605de85efb6a5476cfa"
+content-hash = "fcb55cfe25878b0c0ae6ddf0852a7151ad8c6a0c452ef615fdf6d6542f9b0d1e"
