@@ -23,8 +23,6 @@ async def test_literal_translations_endpoint():
 
 @pytest.mark.asyncio
 async def test_literal_translation_error_message_for_long_sentences():
-    # todo exceptions should be shared in the model or a dedicated exceptions package
-    #  so that we can check for error types instead
     with pytest.raises(ApplicationException) as e:
         await client.fetch_literal_translations(
             "This sentence is too long for literal translation eins zwei drei vier fuenf sechs sieben acht neun zehn")
