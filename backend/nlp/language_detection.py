@@ -1,5 +1,5 @@
 from lingua import LanguageDetectorBuilder, Language
-from shared.exception import ApplicationException
+from shared.exception import LanguageNotIdentifiedException
 
 from llm.gpt_adapter import openai_exchange, parse_response
 from llm.message import Message, SYSTEM, USER
@@ -20,15 +20,10 @@ Your response should look like this:
 USER_PROMPT = "Identify the language of the following sentence: "
 
 
-class LanguageNotAvailableException(ApplicationException):
-    pass
-
-
 def detect_language(sentence: str) -> str:
     language = DETECTOR.detect_language_of(sentence)
     if language is None:
-        raise LanguageNotAvailableException(
-            f"This language was not recognized: p < {MIN_DISTANCE}. Supported languages: {LANGUAGES}")
+        raise LanguageNotIdentifiedException()
     else:
         return str(language.iso_code_639_1).split('.')[1]
 

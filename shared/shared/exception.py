@@ -9,6 +9,16 @@ class ApplicationException(Exception):
         return {"error_message": self.error_message}
 
 
-class MissingParameterException(ApplicationException):
-    def __init__(self, parameter_name: str):
-        super().__init__(f"Missing parameter '{parameter_name}'")
+class LanguageNotAvailableException(ApplicationException):
+    def __init__(self):
+        super().__init__("Analysis for this language is not supported (yet).")
+
+
+class LanguageNotIdentifiedException(ApplicationException):
+    def __init__(self):
+        super().__init__("Language could not be identified.")
+
+
+class SentenceTooLongException(ApplicationException):
+    def __init__(self):
+        super().__init__("This sentence is too long for syntactical analysis and literal translation.")

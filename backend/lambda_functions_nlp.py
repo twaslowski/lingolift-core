@@ -1,10 +1,10 @@
 import logging
 import json
 
-from shared.exception import ApplicationException
+from shared.exception import *
 
-from nlp.language_detection import LanguageNotAvailableException
 from nlp.syntactical_analysis import perform_analysis
+from generative.morphologizer import retrieve_all_inflections
 from util.lambda_proxy_return import ok, fail
 
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
@@ -26,6 +26,6 @@ def syntactical_analysis_handler(event, _):
 def inflection_handler(event, _):
     body = json.loads(event.get('body'))
     word = body.get('word')
-    inflections = retrieve_inflections(word)
+    inflections = retrieve_all_inflections(word)
     # todo implement inflection
-    return ok("Not implemented yet")
+    return ok(inflections)

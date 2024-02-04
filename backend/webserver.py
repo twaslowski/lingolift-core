@@ -1,13 +1,12 @@
 import logging
 
-import flask
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 
 from generative.translation import generate_translation
 from generative.response_suggestion import generate_response_suggestions
-from generative.literal_translation import generate_literal_translation, SentenceTooLongException
-from nlp.language_detection import LanguageNotAvailableException
+from generative.literal_translation import generate_literal_translation
+from shared.exception import LanguageNotAvailableException, SentenceTooLongException
 from nlp.syntactical_analysis import perform_analysis
 
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)

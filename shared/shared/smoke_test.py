@@ -3,7 +3,7 @@ import os
 import pytest
 
 from shared.client import Client
-from shared.exception import ApplicationException
+from shared.exception import ApplicationException, SentenceTooLongException, LanguageNotAvailableException
 
 client = Client(host=os.environ["API_GATEWAY_HOST"])
 
@@ -28,7 +28,7 @@ async def test_literal_translation_error_message_for_long_sentences():
     with pytest.raises(ApplicationException) as e:
         await client.fetch_literal_translations(
             "This sentence is too long for literal translation eins zwei drei vier fuenf sechs sieben acht neun zehn")
-    assert "Too many unique words" in e.value.error_message
+    assert e.value.error_message == SentenceTooLongException().error_message
 
 
 @pytest.mark.asyncio
@@ -42,7 +42,7 @@ async def test_syntactical_analysis_error_message_for_invalid_language():
     sentence = "Det er en norsk setning"
     with pytest.raises(ApplicationException) as e:
         await client.fetch_syntactical_analysis(sentence)
-    assert "not supported for this language" in e.value.error_message
+    assert e.value.error_message == LanguageNotAvailableException().error_message
 
 
 @pytest.mark.asyncio

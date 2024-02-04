@@ -1,10 +1,10 @@
-from typing import Iterator
+from shared.exception import LanguageNotAvailableException
 
 import nlp.universal_features as universal_features
 import spacy
 from shared.model.syntactical_analysis import SyntacticalAnalysis, PartOfSpeech, Morphology
 from spacy.tokens.token import Token
-from nlp.language_detection import llm_detect_language, LanguageNotAvailableException
+from nlp.language_detection import llm_detect_language
 
 models = {
     "DE": "de_core_news_sm",
@@ -28,7 +28,7 @@ def perform_analysis(sentence: str, language_code: str = None) -> list[Syntactic
         model = models[language_code]
         nlp = spacy.load(model)
     except KeyError:
-        raise LanguageNotAvailableException(f"Syntactical analysis is not supported for this language.")
+        raise LanguageNotAvailableException()
     doc = nlp(sentence)
 
     return [_analyze_token(token) for token in doc if _analyze_token(token) is not None]

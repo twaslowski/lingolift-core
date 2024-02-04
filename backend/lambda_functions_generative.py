@@ -1,7 +1,7 @@
 import json
 
 import iso639
-from shared.exception import ApplicationException
+from shared.exception import *
 
 from generative.response_suggestion import generate_response_suggestions
 from generative.translation import generate_translation
@@ -24,7 +24,7 @@ def translation_handler(event, _):
         return ok(response.model_dump())
     except iso639.LanguageNotFoundError:
         logger.error(f"Language for sentence {sentence} could not be identified.")
-        return fail(ApplicationException(f"Language for sentence {sentence} could not be identified."), 400)
+        return fail(LanguageNotIdentifiedException(), 400)
 
 
 def response_suggestion_handler(event, _):
