@@ -4,7 +4,7 @@ VERB=$1
 FUNCTION=$2
 ENV=$3
 
-VALID_BUILD_FUNCTIONS=("translation" "literal_translation" "syntactical_analysis" "response_suggestion")
+VALID_BUILD_FUNCTIONS=("translation" "literal_translation" "syntactical_analysis" "response_suggestion" "inflection")
 
 if [ -z "$VERB" ]; then
   echo "Missing action."
