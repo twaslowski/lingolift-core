@@ -1,9 +1,9 @@
 import logging
 import unittest
 
-from dotenv import load_dotenv
 from pydantic import ValidationError
 
+from generative.literal_translation import generate_literal_translation
 from generative.response_suggestion import generate_response_suggestions
 from generative.translation import generate_translation
 
@@ -18,7 +18,6 @@ class Benchmark(unittest.TestCase):
     ]
 
     def setUp(self) -> None:
-        load_dotenv()
         logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 
     def test_benchmark_translations(self):
@@ -47,7 +46,7 @@ class Benchmark(unittest.TestCase):
         for sentence in self.BENCHMARK_SENTENCES:
             logging.info(f"Getting literal translations for {sentence} ...")
             try:
-                openai_response = generate_literal_translations(sentence["sentence"])
+                openai_response = generate_literal_translation(sentence["sentence"])
                 self.assertEqual(len(sentence['sentence'].split()), len(openai_response))
             except ValidationError as de:
                 logging.error(f"Error serializing JSON to dataclass: {de}")

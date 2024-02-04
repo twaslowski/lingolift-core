@@ -5,7 +5,7 @@ from concurrent.futures import ThreadPoolExecutor
 from shared.exception import ApplicationException
 from shared.model.literal_translation import LiteralTranslation
 
-from llm.gpt_adapter import openai_exchange
+from llm.gpt_adapter import openai_exchange, parse_response
 from llm.message import Message, USER, SYSTEM
 
 LITERAL_TRANSLATION_MAX_UNIQUE_WORDS = 15
@@ -51,7 +51,8 @@ def generate_literal_translation_for_chunk(sentence: str, chunk: list[str]) -> l
     prompt = "Translate the word(s) '{}' in the context of the following sentence: '{}'.".format(chunk, sentence)
     context.append(Message(role=USER, content=prompt))
     # OpenAI's JSON mode enforces a root level object; I want to return a list here, therefore JSON mode doesn't work
-    response = openai_exchange(context, json_mode=False)
+    response = parse_response(openai_exchange(context, json_mode=False))
+
     return [LiteralTranslation(**word) for word in response]
 
 

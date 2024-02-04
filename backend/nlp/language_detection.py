@@ -1,7 +1,7 @@
 from lingua import LanguageDetectorBuilder, Language
 from shared.exception import ApplicationException
 
-from llm.gpt_adapter import openai_exchange
+from llm.gpt_adapter import openai_exchange, parse_response
 from llm.message import Message, SYSTEM, USER
 import iso639
 
@@ -37,7 +37,7 @@ def detect_language(sentence: str) -> str:
 def llm_detect_language(sentence: str) -> str:
     context = [Message(role=SYSTEM, content=SYSTEM_PROMPT),
                Message(role=USER, content=USER_PROMPT + sentence)]
-    response = openai_exchange(context, json_mode=True)
+    response = parse_response(openai_exchange(context, json_mode=True))
     try:
         language = iso639.Language.from_part1(response.get('iso_code').lower())
     except iso639.NonExistentLanguageError:
