@@ -10,7 +10,11 @@ api_key = os.getenv('OPENAI_API_KEY', None)
 logger = logging.getLogger('root')
 
 
-def openai_exchange(messages: list[Message], model_name: str = "gpt-3.5-turbo-1106", json_mode: bool = False) -> dict | str:
+# todo: This breaks the literal_translations endpoint, because that relies on parsing the response to a JSON.
+
+def openai_exchange(messages: list[Message],
+                    model_name: str = "gpt-3.5-turbo-1106",
+                    json_mode: bool = False) -> dict | str:
     """
     Abstraction layer for the OpenAI API.
     :param model_name: OpenAI model name.
@@ -33,8 +37,6 @@ def openai_exchange(messages: list[Message], model_name: str = "gpt-3.5-turbo-11
     )
     response = completion.choices[0].message.content
     logger.info(f"Received response: {response}")
-    if json_mode:
-        return parse_response(response)
     return response
 
 

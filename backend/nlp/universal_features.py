@@ -1,75 +1,41 @@
-from enum import Enum
+# The idea here is to be able to store all relevant
+import json
 
 
-class Gender(Enum):
-    MASC = "Masculine"
-    FEM = "Feminine"
-    NEUT = "Neuter"
-    COM = "Common Gender"
+def load_feature_set() -> dict:
+    """
+    Loads the feature set for a given language.
+    :return: The feature set with mappings of Universal Feature tags to legible descriptions.
+    """
+    with open(f"nlp/features.json") as f:
+        return json.load(f)
 
 
-class Number(Enum):
-    SING = "Singular"
-    PLUR = "Plural"
+all_features = load_feature_set()
+nominal_features = ["Case", "Number", "Gender"]
+verbal_features = ["Person", "Number", "Tense"]
 
 
-class Case(Enum):
-    NOM = "Nominative"
-    GEN = "Genitive"
-    DAT = "Dative"
-    ACC = "Accusative"
-    ABS = "Absolutive"
-    ERG = "Ergative"
-    VOC = "Vocative"
-    INS = "Instrumental"
-    DIS = "Distributive"
-    CAU = "Causative"
-    CMP = "Comparative"
-    EQU = "Equative"
+def get_all_feature_instances(feature: str) -> list[str]:
+    """
+    :param feature: The feature to get all instances for, e.g. "Case"
+    :return: A list of all instances for the given feature, e.g. "Nom", "Acc", "Dat", "Gen"
+    """
+    return list(all_features.get(feature).keys())
 
 
-class Person(Enum):
-    # A 0th person exists in Finnish, a 4th in Navajo. Might support that at some point in the future.
-    P1 = "1st person"
-    P2 = "2nd person"
-    P3 = "3rd person"
+def convert_to_legible_tags(tags: dict, feature_set: list[str]) -> str:
+    """
+    Converts the Universal Feature tags to a legible format, e.g. "Case=Nom | Number=Plur | Gender=Masc"
+    to "Nominative Plural Masculine".
+    :param tags: key-value pairs of Universal Feature tags, e.g. {'Case': 'Nom', 'Number': 'Plur'}
+    :param feature_set: The list of features to use, e.g. 'Case', 'Number', 'Gender'
+    :return:
+    """
+    legible_tags = []
+    for feature in feature_set:
+        tag_value = tags.get(feature)
+        if tag_value:
+            legible_tags.append(all_features.get(feature).get(tag_value))
 
-
-class Tense(Enum):
-    FUT = "Future tense"
-    PRES = "Present tense"
-    IMP = "Imperfect"
-    PAST = "Past tense"
-    PQP = "Pluperfect"
-
-
-NOUN_FEATURE_SET = {
-    'Case': Case,
-    'Number': Number,
-    'Gender': Gender,
-}
-
-VERB_FEATURE_SET = {
-    'Person': Person,
-    'Number': Number,
-    'Tense': Tense
-}
-
-
-def convert(tags: list[str], feature_set: dict) -> str:
-    tag_values = {feature: None for feature in feature_set}
-
-    # Parse and store the tag values
-    for tag in tags:
-        key, value = tag.split('=')
-        # This is a very hacky solution. Basically the value here is just '3', which is not a valid Enum key.
-        # I've therefore decided to make the Enum key 'P3', but I need to append the 'P' here.
-        if key == 'Person':
-            value = f'P{value}'
-        value = value.upper()
-        feature_type = feature_set.get(key)
-        if feature_type and hasattr(feature_type, value):
-            tag_values[key] = feature_type[value].value
-
-    readable_tags = [tag_values[feature] for feature in feature_set if tag_values[feature]]
-    return ' '.join(readable_tags)
+    return " ".join(filter(lambda x: x is not None, legible_tags))

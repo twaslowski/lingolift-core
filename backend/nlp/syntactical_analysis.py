@@ -1,4 +1,4 @@
-from typing import Iterator
+from shared.exception import LanguageNotAvailableException
 
 import nlp.universal_features as universal_features
 import spacy
@@ -15,34 +15,42 @@ models = {
 }
 
 
-def perform_analysis(sentence: str) -> Iterator[SyntacticalAnalysis]:
+def perform_analysis(sentence: str, language_code: str = None) -> list[SyntacticalAnalysis]:
     """
     Performs a syntactical analysis on a sentence in a given language.
+    :param language_code: Can optionally be supplied to override the language detection.
     :param sentence: Source sentence
-    :param language_iso_code: The ISO-639-1 code of the language to analyze, in order to load a model.
     :return:
     """
-    language_code = str(llm_detect_language(sentence))
-    nlp = spacy.load(models.get(language_code))
+    if not language_code:
+        language_code = str(llm_detect_language(sentence))
+    try:
+        model = models[language_code]
+        nlp = spacy.load(model)
+    except KeyError:
+        raise LanguageNotAvailableException()
     doc = nlp(sentence)
 
-    for token in doc:
-        tags = extract_relevant_tags(token)
-        morphology = None
-        if token.pos_ == 'PUNCT':
-            return
-        if tags:
-            morphology = Morphology(tags=tags, explanation=convert_universal_feature_tags(tags, token))
-        yield SyntacticalAnalysis(
-            word=token.text,
-            pos=PartOfSpeech(value=token.pos_, explanation=spacy.explain(token.pos_)),
-            morphology=morphology,
-            lemma=extract_lemma(token),
-            dependency=extract_dependency(token)
-        )
+    return [_analyze_token(token) for token in doc if _analyze_token(token) is not None]
 
 
-def convert_universal_feature_tags(tags: list[str], token: Token) -> str:
+def _analyze_token(token: Token) -> SyntacticalAnalysis | None:
+    tags = pos_tags_to_dict(token)
+    morphology = None
+    if token.pos_ == 'PUNCT':
+        return
+    if tags:
+        morphology = Morphology(tags=tags, explanation=convert_to_legible_features(tags, token))
+    return SyntacticalAnalysis(
+        word=token.text,
+        pos=PartOfSpeech(value=token.pos_, explanation=spacy.explain(token.pos_)),
+        morphology=morphology,
+        lemma=extract_lemma(token),
+        dependency=extract_dependency(token)
+    )
+
+
+def convert_to_legible_features(tags: dict, token: Token) -> str:
     """
     Converts the Universal Feature tags to a legible format.
     :param tags: A list of Universal Feature tags.
@@ -51,9 +59,9 @@ def convert_universal_feature_tags(tags: list[str], token: Token) -> str:
     """
     match token.pos_:
         case 'VERB' | 'AUX':
-            return universal_features.convert(tags, universal_features.VERB_FEATURE_SET)
+            return universal_features.convert_to_legible_tags(tags, universal_features.verbal_features)
         case 'NOUN' | 'DET' | 'ADJ':
-            return universal_features.convert(tags, universal_features.NOUN_FEATURE_SET)
+            return universal_features.convert_to_legible_tags(tags, universal_features.nominal_features)
         case _:
             return ''
 
@@ -69,24 +77,16 @@ def extract_lemma(token: Token) -> str | None:
     return token.lemma_ if token.text.lower() != token.lemma_.lower() else None
 
 
-def extract_relevant_tags(token: Token) -> list[str]:
+def pos_tags_to_dict(token: Token) -> dict[str, str]:
     """
-    Extracts the relevant tags from a set of UPOS tags.
-    Not all tags are equally relevant to the end-user; for example, Number, Person and Tense are substantially more
-    helpful than the Mood or the VerbForm. This also helps narrow down the problem and allows an incremental
-    approach to this complex issue.
+    Extracts a dict of features from the PoS tags of a Token.
     :param token: A spaCy token.
-    :return: The relevant tags.
+    :return: The features, e.g. {'Case': 'Nom', 'Number': 'Plur'}
     """
-    match token.pos_:
-        case 'VERB' | 'AUX':
-            relevant_tags = ['Number', 'Person', 'Tense']
-        case 'NOUN' | 'DET' | 'ADJ':
-            relevant_tags = ['Gender', 'Case', 'Number']
-        case _:
-            relevant_tags = []
     tags = str(token.morph).split('|')
-    return [tag for tag in tags if tag.split('=')[0] in relevant_tags]
+    return {
+        tag.split('=')[0]: tag.split('=')[1] for tag in tags if tag != ''
+    }
 
 
 if __name__ == '__main__':

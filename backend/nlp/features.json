@@ -1,0 +1,29 @@
+{
+  "Case": {
+    "Nom": "Nominative",
+    "Gen": "Genitive",
+    "Dat": "Dative",
+    "Acc": "Accusative"
+  },
+  "Gender": {
+    "Masc": "Masculine",
+    "Fem": "Feminine",
+    "Neut": "Neuter"
+  },
+  "Number": {
+    "Sing": "Singular",
+    "Plur": "Plural"
+  },
+  "Person": {
+    "1": "1st person",
+    "2": "2nd person",
+    "3": "3rd person"
+  },
+  "Tense": {
+    "Pres": "Present tense",
+    "Past": "Past tense",
+    "Imp": "Imperfect",
+    "Fut": "Future tense",
+    "Pqp": "Pluperfect"
+  }
+}

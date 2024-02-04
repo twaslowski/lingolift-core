@@ -1,6 +1,6 @@
 from shared.model.response_suggestion import ResponseSuggestion
 
-from llm.gpt_adapter import openai_exchange
+from llm.gpt_adapter import openai_exchange, parse_response
 from llm.message import USER, SYSTEM, Message
 
 
@@ -8,7 +8,7 @@ def generate_response_suggestions(sentence: str, number_suggestions: int = 2) ->
     context = [Message(role=SYSTEM, content=RESPONSE_SUGGESTIONS_SYSTEM_PROMPT)]
     prompt = RESPONSE_SUGGESTIONS_USER_PROMPT.format(number_suggestions, sentence)
     context.append(Message(role=USER, content=prompt))
-    response = openai_exchange(context, json_mode=True)
+    response = parse_response(openai_exchange(context, json_mode=True))
     return [ResponseSuggestion(**suggestion) for suggestion in response['response_suggestions']]
 
 
