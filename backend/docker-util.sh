@@ -34,7 +34,7 @@ function build() {
         mkdir -p package
         poetry export -f requirements.txt --with generative -o package/requirements.txt --without-hashes
         ;;
-      "syntactical_analysis")
+      "syntactical_analysis|inflection")
         export LAMBDA_FILE=lambda_functions_nlp
         export DOCKERFILE=Dockerfile-nlp.template
         mkdir -p package

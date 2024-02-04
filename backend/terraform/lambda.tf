@@ -52,7 +52,23 @@ module "syntactical_analysis" {
 
   name         = "syntactical-analysis"
   package_type = "Image"
-  image_uri    = "${module.ecr.repository_url}:${var.commit_sha}"
+  image_uri    = "${module.syntactical_analysis_repository.repository_url}:${var.commit_sha}"
+
+  memory = 2048
+
+  handler        = "lambda_functions_generative.response_suggestion_handler"
+  openai_api_key = var.openai_api_key
+}
+
+module "inflection" {
+  source           = "./modules/endpoint"
+  environment      = var.environment
+  api_gateway_id   = aws_api_gateway_rest_api.lingolift_api.id
+  root_resource_id = aws_api_gateway_rest_api.lingolift_api.root_resource_id
+
+  name         = "inflection"
+  package_type = "Image"
+  image_uri    = "${module.inflection_repository.repository_url}:${var.commit_sha}"
 
   memory = 2048
 
