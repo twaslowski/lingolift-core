@@ -2340,11 +2340,8 @@ emoji = "^2.9.0"
 pydantic = "^2.5.3"
 
 [package.source]
-type = "git"
-url = "https://github.com/tobiaswaslowski/lingolift.git#bb17237"
-reference = "HEAD"
-resolved_reference = "bb172372e97909150dc5b658827bcc97c0b0261f"
-subdirectory = "shared"
+type = "directory"
+url = "../shared"
 
 [[package]]
 name = "shellingham"
@@ -3006,4 +3003,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 [metadata]
 lock-version = "2.0"
 python-versions = "3.11.6"
-content-hash = "fcece62179e03e59bcb72df6e0254a0622d2b671a352393ed1872fdecfddf959"
+content-hash = "b2ae7d7ca33e0f2fb7cc18a7d46c1c32075cffbab6e4680f462f028109ea9663"

@@ -18,36 +18,23 @@ function cleanup() {
 
 function build() {
   FUNCTION=$1
-  if [[ ! " ${VALID_BUILD_FUNCTIONS[@]} " =~ " ${FUNCTION} " ]]; then
-      echo "Invalid function for build: $FUNCTION"
-      echo "Valid functions are: ${VALID_BUILD_FUNCTIONS[*]}"
-      exit 1
-  fi
 
-  # Slightly different build logic for different functions based on dependencies
-  # Different files are required as well because otherwise imports would be failing
-  case "$FUNCTION" in
-      # todo no longer dockerizing these; deprecated for now, can be removed entirely in the future
-      "translation"|"literal_translation"|"response_suggestion")
-        export LAMBDA_FILE=lambda_functions_generative
-        export DOCKERFILE=Dockerfile-generative.template
-        mkdir -p package
-        poetry export -f requirements.txt --with generative -o package/requirements.txt --without-hashes
-        ;;
-      "syntactical_analysis"|"inflection")
-        export LAMBDA_FILE=lambda_functions_nlp
-        export DOCKERFILE=Dockerfile-nlp.template
-        mkdir -p package
-        poetry export -f requirements.txt --with nlp --with generative -o package/requirements.txt --without-hashes
-        ;;
-      *)
-          echo "Unhandled function: $FUNCTION"
-          exit 1
-          ;;
-  esac
+  # assume that only functions within lambda_functions_nlp would have to be dockerized due to their usage of spacy
+  export LAMBDA_FILE=lambda_functions_nlp
+  export DOCKERFILE=Dockerfile-nlp.template
+
+  # create temporary directory to store relevant build files for Dockerfile
+  mkdir -p package
+  poetry export -f requirements.txt --with nlp --with generative -o package/requirements.txt.tmp --without-hashes
+
+  # poetry exports the path to the shared package as an absolute path on my file system
+  # that obviously does not work with docker, so when packaging, the shared package is simply manually copied
+  # into the root of the docker workdir, which is what the updated requirements.txt file reflects
+  sed 's/^shared.*$/.\/shared/g' package/requirements.txt.tmp > package/requirements.txt
+  cp -r ../shared/ package/shared/
 
   sed "s/\$LAMBDA_HANDLER/${FUNCTION}_handler/g" $DOCKERFILE | sed "s/\$LAMBDA_FILE/${LAMBDA_FILE}/g" > Dockerfile
-  docker build --no-cache -t "${FUNCTION}-lambda" --platform linux/x86_64 .
+  docker build -t "${FUNCTION}-lambda" --no-cache --platform linux/x86_64 .
 
   cleanup
 }

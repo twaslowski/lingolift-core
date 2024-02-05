@@ -1565,11 +1565,8 @@ emoji = "^2.9.0"
 pydantic = "^2.5.3"
 
 [package.source]
-type = "git"
-url = "https://github.com/tobiaswaslowski/lingolift.git#bb17237"
-reference = "HEAD"
-resolved_reference = "eab2baa49351ed44bdf03e98b3ce8ff39dd0fedd"
-subdirectory = "shared"
+type = "directory"
+url = "../shared"
 
 [[package]]
 name = "six"
@@ -1953,4 +1950,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9.18"
-content-hash = "fcb55cfe25878b0c0ae6ddf0852a7151ad8c6a0c452ef615fdf6d6542f9b0d1e"
+content-hash = "9c27bb476963888e01d0430e73d584a6a7dd64ec06c9e68ad3bf69dc00623e32"
