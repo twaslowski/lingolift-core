@@ -25,7 +25,7 @@ module "inflection_repository" {
 
   repository_read_write_access_arns = [
     data.aws_caller_identity.current.arn,
-    module.syntactical_analysis.lambda_role_arn
+    module.inflection.lambda_role_arn
   ]
 
   repository_lifecycle_policy = local.repository_lifecycle_policy
@@ -38,7 +38,7 @@ locals {
         rulePriority = 1,
         description  = "Keep 3 images",
         selection = {
-          tagStatus   = "untagged",
+          tagStatus   = "any",
           countType   = "imageCountMoreThan",
           countNumber = 2
         },
