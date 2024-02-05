@@ -105,7 +105,6 @@ jobs:
           pushd backend
           ./docker-util.sh build inflection
           ./docker-util.sh push inflection dev
-          ./docker-util.sh push inflection prod
 
   deploy_dev_infrastructure:
     needs: [build_syntactical_analysis_docker, build_inflection_docker]
