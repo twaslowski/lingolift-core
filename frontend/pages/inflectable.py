@@ -1,7 +1,7 @@
 import asyncio
 
 import streamlit as st
-from grammr import create_client
+from app import create_client
 from shared.rendering import Stringifier, MarkupLanguage
 
 
