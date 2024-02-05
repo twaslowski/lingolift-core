@@ -12,8 +12,6 @@ from shared.model.translation import Translation  # type: ignore[import-untyped]
 from shared.rendering import Stringifier, MarkupLanguage
 from shared.exception import ApplicationException
 
-TITLE = "grammr"
-
 
 def create_client(use_local: bool = False) -> Client:
     if use_local:
@@ -102,6 +100,7 @@ def render_message(string: str, interval: float = 0.025, placeholder=None) -> No
 
 if __name__ == '__main__':
     logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
+    st.set_page_config(page_title="GrammrBot")
     client = create_client()
     stringifier = Stringifier(MarkupLanguage.MARKDOWN)
     asyncio.run(chat(client, stringifier))
