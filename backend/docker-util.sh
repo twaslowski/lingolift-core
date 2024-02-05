@@ -4,7 +4,7 @@ VERB=$1
 FUNCTION=$2
 ENV=$3
 
-VALID_BUILD_FUNCTIONS=("translation" "literal_translation" "syntactical_analysis" "response_suggestion")
+VALID_BUILD_FUNCTIONS=("translation" "literal_translation" "syntactical_analysis" "response_suggestion" "inflection")
 
 if [ -z "$VERB" ]; then
   echo "Missing action."
@@ -34,7 +34,7 @@ function build() {
         mkdir -p package
         poetry export -f requirements.txt --with generative -o package/requirements.txt --without-hashes
         ;;
-      "syntactical_analysis")
+      "syntactical_analysis"|"inflection")
         export LAMBDA_FILE=lambda_functions_nlp
         export DOCKERFILE=Dockerfile-nlp.template
         mkdir -p package
