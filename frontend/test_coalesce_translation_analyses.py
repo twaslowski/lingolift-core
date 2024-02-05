@@ -4,7 +4,7 @@ from shared.exception import ApplicationException  # type: ignore[import-untyped
 from shared.model.literal_translation import LiteralTranslation  # type: ignore[import-untyped]
 from shared.model.syntactical_analysis import SyntacticalAnalysis  # type: ignore[import-untyped]
 
-from app import find_analysis, coalesce_analyses
+from grammr import find_analysis, coalesce_analyses
 
 
 class TestStreamlitApp(TestCase):

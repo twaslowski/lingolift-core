@@ -1568,7 +1568,7 @@ pydantic = "^2.5.3"
 type = "git"
 url = "https://github.com/tobiaswaslowski/lingolift.git#bb17237"
 reference = "HEAD"
-resolved_reference = "bb172372e97909150dc5b658827bcc97c0b0261f"
+resolved_reference = "eab2baa49351ed44bdf03e98b3ce8ff39dd0fedd"
 subdirectory = "shared"
 
 [[package]]

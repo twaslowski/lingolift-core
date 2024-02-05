@@ -15,15 +15,7 @@ from shared.exception import ApplicationException
 TITLE = "grammr"
 
 
-def main() -> None:
-    client = create_client()
-    stringifier = Stringifier(MarkupLanguage.MARKDOWN)
-
-    asyncio.run(chat(client, stringifier))
-
-
-def create_client():
-    use_local = False
+def create_client(use_local: bool = False) -> Client:
     if use_local:
         return Client(host="http://localhost:5001")
     else:
@@ -32,7 +24,6 @@ def create_client():
 
 
 async def chat(client: Client, stringifier: Stringifier):
-
     # Initialize chat history
     if "messages" not in st.session_state:
         st.session_state.messages = []
@@ -111,4 +102,6 @@ def render_message(string: str, interval: float = 0.025, placeholder=None) -> No
 
 if __name__ == '__main__':
     logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
-    main()
+    client = create_client()
+    stringifier = Stringifier(MarkupLanguage.MARKDOWN)
+    asyncio.run(chat(client, stringifier))

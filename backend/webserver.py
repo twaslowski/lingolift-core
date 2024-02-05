@@ -8,6 +8,7 @@ from generative.response_suggestion import generate_response_suggestions
 from generative.literal_translation import generate_literal_translation
 from shared.exception import LanguageNotAvailableException, SentenceTooLongException
 from nlp.syntactical_analysis import perform_analysis
+from nlp.morphologizer import retrieve_all_inflections
 
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 
@@ -48,6 +49,13 @@ def get_syntactical_analysis():
         return jsonify([a.model_dump() for a in analysis])
     except LanguageNotAvailableException as e:
         return jsonify(e.dict()), 400
+
+
+@app.route('/inflection', methods=['POST'])
+def get_inflections():
+    word = request.json.get('word')
+    inflections = retrieve_all_inflections(word)
+    return jsonify([i.model_dump() for i in inflections])
 
 
 @app.route('/health', methods=['GET'])

@@ -4,7 +4,7 @@ test:
 	@poetry run pytest
 
 run:
-	@poetry run streamlit run app.py
+	@poetry run streamlit run grammr.py
 
 lint:
 	@poetry run mypy .
