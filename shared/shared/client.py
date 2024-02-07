@@ -4,7 +4,7 @@ import aiohttp
 from aiohttp.client_reqrep import ClientResponse
 
 from shared.exception import ApplicationException
-from shared.model.inflection import Inflection
+from shared.model.inflection import Inflection, Inflections
 from shared.model.literal_translation import LiteralTranslation
 from shared.model.response_suggestion import ResponseSuggestion
 from shared.model.syntactical_analysis import SyntacticalAnalysis
@@ -87,14 +87,14 @@ class Client:
                 else:
                     await self.handle_failure("response-suggestion", response)
 
-    async def fetch_inflections(self, word: str) -> list[Inflection]:
+    async def fetch_inflections(self, word: str) -> Inflections:
         logging.info(f"fetching inflections for word '{word}'")
         async with aiohttp.ClientSession() as session:
             async with session.post(f"{self.host}/inflection", json={"word": word}) as response:
                 if response.status == 200:
                     inflections = await response.json()
                     logging.info(f"Received inflections for word '{word}': '{inflections}'")
-                    return [Inflection(**inflection) for inflection in inflections]
+                    return Inflections(**inflections)
                 else:
                     await self.handle_failure("inflection", response)
 
@@ -105,5 +105,5 @@ class Client:
             logging.error(f"Received 400 status code on {endpoint}. Error: '{error_data}'")
             raise ApplicationException(**error_data)
         else:
-            logging.error(f"Received unexpected error from {endpoint}: {response.status}, {response.json()}")
+            logging.error(f"Received unexpected error from {endpoint}: {response.status}, {error_data}")
             raise ApplicationException(error_message=error_data)

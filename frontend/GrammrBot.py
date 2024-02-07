@@ -1,5 +1,6 @@
 import asyncio
 import logging
+import sys
 import time
 from asyncio import create_task
 
@@ -98,9 +99,16 @@ def render_message(string: str, interval: float = 0.025, placeholder=None) -> No
     st.session_state.messages.append({"role": "assistant", "content": string})
 
 
+def parse_args():
+    args = sys.argv
+    if "local" in args:
+        return True
+
+
 if __name__ == '__main__':
+    local = parse_args()
     logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
     st.set_page_config(page_title="GrammrBot")
-    client = create_client()
+    client = create_client(use_local=local)
     stringifier = Stringifier(MarkupLanguage.MARKDOWN)
     asyncio.run(chat(client, stringifier))

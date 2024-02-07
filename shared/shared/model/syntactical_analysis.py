@@ -16,10 +16,7 @@ class Morphology(BaseModel):
         return '|'.join([f'{k}={v}' for k, v in self.tags.items()])
 
     def stringify_explanation(self) -> Union[str, None]:
-        if self.explanation:
-            return self.explanation
-        else:
-            return self.tags_to_string()
+        return self.explanation if self.explanation else None
 
 
 class SyntacticalAnalysis(BaseModel):

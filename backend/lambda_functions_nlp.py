@@ -27,4 +27,4 @@ def inflection_handler(event, _):
     body = json.loads(event.get('body'))
     word = body.get('word')
     inflections = retrieve_all_inflections(word)
-    return ok(inflections)
+    return ok(inflections.model_dump())

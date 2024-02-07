@@ -1,6 +1,6 @@
 from concurrent.futures import ThreadPoolExecutor
 
-from shared.model.inflection import Inflection
+from shared.model.inflection import Inflection, Inflections
 
 from llm.gpt_adapter import openai_exchange
 from llm.message import Message
@@ -12,15 +12,18 @@ from util.timing import timed
 
 
 @timed
-def retrieve_all_inflections(word: str) -> list[Inflection]:
-    feature_permutations = generate_feature_permutations(word)
+def retrieve_all_inflections(word: str) -> Inflections:
+    # Get the part of speech tag for the word
+    analysis = perform_analysis(word, "DE")[0]  # only analyze one word at a time right now, only support German
+    pos_tag = analysis.pos.value
+    feature_permutations = generate_feature_permutations(pos_tag)
     result = []
     with ThreadPoolExecutor() as executor:
         futures = [executor.submit(inflect, word, permutation) for permutation in
                    feature_permutations]
         for future in futures:
             result.append(future.result())
-    return result
+    return Inflections(pos=pos_tag, inflections=result)
 
 
 def inflect(word: str, morphology: dict[str, str]) -> Inflection:
@@ -30,7 +33,7 @@ def inflect(word: str, morphology: dict[str, str]) -> Inflection:
     return Inflection(**{'word': result, 'morphology': morphology})
 
 
-def generate_feature_permutations(word: str) -> list[dict]:
+def generate_feature_permutations(pos_tag: str) -> list[dict]:
     """
     Generates all possible feature instance permutations required for a declined or conjugated word.
     For a declined noun, this would be all possible combinations of Case and Number;
@@ -38,13 +41,10 @@ def generate_feature_permutations(word: str) -> list[dict]:
     More features can be added as required, but the amount of permutations grows exponentially and the
     complexity rises drastically, as German conjugations require auxiliary verbs for certain tenses,
     which my custom model does not support yet.
-    :param word: The word to generate feature permutations for.
+    :param pos_tag: VERB | NOUN
     Required to determine the exact features that should be permuted.
     :return:
     """
-    analysis = perform_analysis(word, "DE")[0]  # only analyze one word at a time right now, only support German
-    print(analysis)
-    pos_tag = analysis.pos.value
     match pos_tag:
         # define features on which to iterate
         case "NOUN":

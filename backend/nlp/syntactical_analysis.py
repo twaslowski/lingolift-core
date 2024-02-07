@@ -60,7 +60,8 @@ def convert_to_legible_features(tags: dict, token: Token) -> str:
     match token.pos_:
         case 'VERB' | 'AUX':
             return universal_features.convert_to_legible_tags(tags, universal_features.verbal_features)
-        case 'NOUN' | 'DET' | 'ADJ':
+        # Add PRON; in German, articles are referred to as Demonstrativpronomen, which sometimes is categorized as PRON
+        case 'NOUN' | 'DET' | 'PRON' | 'ADJ':
             return universal_features.convert_to_legible_tags(tags, universal_features.nominal_features)
         case _:
             return ''
@@ -90,6 +91,6 @@ def pos_tags_to_dict(token: Token) -> dict[str, str]:
 
 
 if __name__ == '__main__':
-    response = list(perform_analysis('Wie viel kostet das Bier?'))
+    response = list(perform_analysis('Das ist ein Test.'))
     for r in response:
         print(r.stringify())
