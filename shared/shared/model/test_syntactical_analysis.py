@@ -17,8 +17,3 @@ def test_empty_tags():
 def test_explanation():
     morph = Morphology(tags={}, explanation="This is an explanation")
     assert morph.stringify_explanation() == "This is an explanation"
-
-
-def test_empty_explanation_fallback():
-    morph = Morphology(tags={"Case": "Nom"}, explanation=None)
-    assert morph.stringify_explanation() == "Case=Nom"

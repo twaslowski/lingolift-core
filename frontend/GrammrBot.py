@@ -45,30 +45,37 @@ async def chat(client: Client, stringifier: Stringifier):
             st.markdown(prompt)
 
         # Display assistant response in chat message container
-        with st.chat_message("assistant"):
+        with (st.chat_message("assistant")):
             sentence = find_latest_user_message(st.session_state.messages)['content']
+
             # create futures for all requests
             translation_future = create_task(client.fetch_translation(sentence))
-            response_suggestions = create_task(client.fetch_response_suggestions(sentence))
+            if should_fetch_response_suggestions := should_generate_response_suggestions(sentence):
+                response_suggestions = create_task(client.fetch_response_suggestions(sentence))
             syntactical_translations_future = create_task(client.fetch_syntactical_analysis(sentence))
             literal_translations_future = create_task(client.fetch_literal_translations(sentence))
             try:
+                # render translation
                 with st.spinner("Translating"):
                     translation = await translation_future
                 translation_stringified = stringifier.stringify_translation(sentence, translation)
                 render_message(translation_stringified, 0.025)
 
+                # render syntactical analysis
                 with st.spinner("Fetching syntactical analysis ..."):
                     analysis = await syntactical_translations_future
                     literal_translation = await literal_translations_future
                 analysis_stringified = stringifier.coalesce_analyses(literal_translation, analysis)
                 render_message(analysis_stringified)
 
-                with st.spinner("Fetching suggestions ..."):
-                    await response_suggestions
-                response_suggestions_stringified = stringifier.stringify_suggestions(response_suggestions.result())
-                render_message(response_suggestions_stringified)
+                # optionally render response suggestions
+                if should_fetch_response_suggestions:
+                    with st.spinner("Fetching suggestions ..."):
+                        await response_suggestions
+                    response_suggestions_stringified = stringifier.stringify_suggestions(response_suggestions.result())
+                    render_message(response_suggestions_stringified)
 
+            # exception handling
             except ApplicationException as e:
                 st.error(e.error_message)
             except Exception as e:

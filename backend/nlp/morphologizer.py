@@ -47,9 +47,9 @@ def generate_feature_permutations(pos_tag: str) -> list[dict]:
     """
     match pos_tag:
         # define features on which to iterate
-        case "NOUN" | 'ADJ':
+        case "NOUN" | "ADJ":
             features = ["Case", "Number"]
-        case "VERB" | 'AUX':
+        case "VERB" | "AUX":
             features = ["Person", "Number"]
         case _:
             return []
