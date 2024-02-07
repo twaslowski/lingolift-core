@@ -7,4 +7,4 @@ lint:
 	@poetry run mypy  --no-namespace-packages --ignore-missing-imports shared/
 
 smoketest:
-	@poetry run pytest shared/smoke_test.py
+	@poetry run pytest shared/test/smoke_test.py
