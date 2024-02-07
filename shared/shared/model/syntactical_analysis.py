@@ -30,12 +30,13 @@ class SyntacticalAnalysis(BaseModel):
         return f' (from: {self.lemma})' if self.lemma else None
 
     def stringify_dependency(self) -> Union[str, None]:
-        # Only return something IF there is a dependency AND a the word is inflected in the first place
+        # Only return something IF there is a dependency AND the word is inflected in the first place
         return f' (refers to: {self.dependency})' if self.dependency and self.lemma else None
 
     def stringify(self) -> str:
         properties: List[str] = []
         add_property(properties, self.stringify_lemma())
+        add_property(properties, self.stringify_dependency())
         add_property(properties, self.pos.explanation)
         if self.morphology:
             add_property(properties, self.morphology.stringify_explanation())
