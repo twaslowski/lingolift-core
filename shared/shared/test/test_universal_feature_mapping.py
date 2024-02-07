@@ -1,4 +1,4 @@
-from nlp import universal_features
+from shared import universal_features
 
 
 def test_tags_for_noun():

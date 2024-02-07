@@ -1,6 +1,6 @@
 from shared.exception import LanguageNotAvailableException
 
-import nlp.universal_features as universal_features
+import shared.universal_features as universal_features
 import spacy
 from shared.model.syntactical_analysis import SyntacticalAnalysis, PartOfSpeech, Morphology
 from spacy.tokens.token import Token

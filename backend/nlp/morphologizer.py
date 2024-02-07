@@ -7,7 +7,7 @@ from llm.message import Message
 from nlp.syntactical_analysis import perform_analysis
 from itertools import product
 
-from nlp.universal_features import get_all_feature_instances
+from shared.universal_features import get_all_feature_instances
 from util.timing import timed
 
 
