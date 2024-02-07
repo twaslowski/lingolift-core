@@ -7,7 +7,7 @@ from nlp.syntactical_analysis import pos_tags_to_dict
 
 def test_feature_extraction_to_dict():
     token = Mock()
-    token.morph = 'Mood=Ind|Number=Sing|Person=3|Tense=Pres|VerbForm=Fin'
+    token.morph = "Mood=Ind|Number=Sing|Person=3|Tense=Pres|VerbForm=Fin"
     relevant_tags = pos_tags_to_dict(token)
     assert "Mood" in relevant_tags
     assert "Number" in relevant_tags
@@ -23,6 +23,6 @@ def test_feature_extraction_to_dict():
 
 def test_empty_feature_extraction():
     token = Mock()
-    token.morph = ''
+    token.morph = ""
     relevant_tags = pos_tags_to_dict(token)
     assert relevant_tags == {}

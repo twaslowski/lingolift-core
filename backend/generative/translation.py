@@ -6,10 +6,14 @@ from llm.message import Message, SYSTEM, USER
 
 
 def generate_translation(sentence: str) -> Translation:
-    context = [Message(role=SYSTEM, content=TRANSLATION_SYSTEM_PROMPT),
-               Message(role=USER, content=TRANSLATION_USER_PROMPT + sentence)]
+    context = [
+        Message(role=SYSTEM, content=TRANSLATION_SYSTEM_PROMPT),
+        Message(role=USER, content=TRANSLATION_USER_PROMPT + sentence),
+    ]
     response = parse_response(openai_exchange(context, json_mode=True))
-    response['language_name'] = iso639.Language.from_part1(response['language_code'].lower()).name
+    response["language_name"] = iso639.Language.from_part1(
+        response["language_code"].lower()
+    ).name
     return Translation(**response)
 
 
@@ -24,5 +28,5 @@ Provide the response in the following JSON structure. For example:
 """
 
 TRANSLATION_USER_PROMPT = """
-Translate the following sentence into English: 
+Translate the following sentence into English:
 """

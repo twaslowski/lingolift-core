@@ -72,7 +72,7 @@ jobs:
           ./docker-util.sh build syntactical_analysis
           ./docker-util.sh push syntactical_analysis dev
           ./docker-util.sh push syntactical_analysis prod
-    
+
   build_inflection_docker:
     needs: test
     runs-on: ubuntu-latest

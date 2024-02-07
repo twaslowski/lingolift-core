@@ -9,7 +9,13 @@ from shared.client import Client
 from shared.exception import ApplicationException
 from shared.rendering import Stringifier, MarkupLanguage
 from telegram import Update
-from telegram.ext import ApplicationBuilder, MessageHandler, Application, CommandHandler, ContextTypes
+from telegram.ext import (
+    ApplicationBuilder,
+    MessageHandler,
+    Application,
+    CommandHandler,
+    ContextTypes,
+)
 from telegram.ext import filters as Filters
 
 # setup
@@ -22,9 +28,13 @@ client = Client(host)
 stringifier = Stringifier(MarkupLanguage.HTML)
 
 # configure logging
-logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
+logging.basicConfig(
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.INFO
+)
 
-MESSAGE_RECEIVED = "Thanks! I've received your sentence, working on the translation now ..."
+MESSAGE_RECEIVED = (
+    "Thanks! I've received your sentence, working on the translation now ..."
+)
 
 
 async def handle_text_message(update: Update, _) -> None:
@@ -35,8 +45,12 @@ async def handle_text_message(update: Update, _) -> None:
 
         # send all requests to backend
         translation_future = create_task(client.fetch_translation(sentence))
-        syntactical_translations_future = create_task(client.fetch_syntactical_analysis(sentence))
-        literal_translations_future = create_task(client.fetch_literal_translations(sentence))
+        syntactical_translations_future = create_task(
+            client.fetch_syntactical_analysis(sentence)
+        )
+        literal_translations_future = create_task(
+            client.fetch_literal_translations(sentence)
+        )
 
         # receive and send translation
         translation = await translation_future
@@ -54,7 +68,7 @@ async def handle_text_message(update: Update, _) -> None:
         return
     except Exception as e:
         logging.error(f"error occurred: {e}")
-        await reply(update, 'An unexpected error occurred.')
+        await reply(update, "An unexpected error occurred.")
 
 
 async def reply(update: Update, message: str, html: bool = True):
@@ -70,7 +84,8 @@ async def handle_error(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def introduction_handler(update: Update, _):
     await update.message.reply_text(
         "Welcome! I will provide translations for you if you send me a sentence in a non-English language. "
-        "Try texting me something like '¿Donde esta la biblioteca?'")
+        "Try texting me something like '¿Donde esta la biblioteca?'"
+    )
 
 
 def init_app() -> Application:
@@ -82,7 +97,7 @@ def init_app() -> Application:
     return app
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     # create app
     application = init_app()
     logging.info("Starting application")

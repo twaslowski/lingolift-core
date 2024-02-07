@@ -15,4 +15,3 @@ pushd terraform > /dev/null || exit 1
 
 terraform init -backend-config="backend_${ENV}.hcl" -reconfigure
 TF_VAR_environment="${ENV}" TF_VAR_commit_sha=$(git rev-parse --short HEAD) terraform apply -auto-approve
-

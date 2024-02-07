@@ -9,72 +9,68 @@ from generative.response_suggestion import generate_response_suggestions
 from generative.literal_translation import generate_literal_translation
 from shared.exception import LanguageNotAvailableException, SentenceTooLongException
 
-from lambda_functions_generative import translation_handler, response_suggestion_handler, literal_translation_handler
+from lambda_functions_generative import (
+    translation_handler,
+    response_suggestion_handler,
+    literal_translation_handler,
+)
 from lambda_functions_nlp import inflection_handler, syntactical_analysis_handler
 from nlp.syntactical_analysis import perform_analysis
 
-logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
+logging.basicConfig(
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.INFO
+)
 
 app = Flask(__name__)
 CORS(app)
 
 
-@app.route('/translation', methods=['POST'])
+@app.route("/translation", methods=["POST"])
 def get_translation():
-    sentence = request.json.get('sentence')
-    lambda_body = create_lambda_event({
-        "sentence": sentence
-    })
+    sentence = request.json.get("sentence")
+    lambda_body = create_lambda_event({"sentence": sentence})
     translation_response = translation_handler(lambda_body, None)
     body, status = parse_lambda_response(translation_response)
     return jsonify(body), status
 
 
-@app.route('/response-suggestion', methods=['POST'])
+@app.route("/response-suggestion", methods=["POST"])
 def get_response_suggestions():
-    sentence = request.json.get('sentence')
-    lambda_body = create_lambda_event({
-        "sentence": sentence
-    })
+    sentence = request.json.get("sentence")
+    lambda_body = create_lambda_event({"sentence": sentence})
     response_suggestion_response = response_suggestion_handler(lambda_body, None)
     body, status = parse_lambda_response(response_suggestion_response)
     return jsonify(body), status
 
 
-@app.route('/literal-translation', methods=['POST'])
+@app.route("/literal-translation", methods=["POST"])
 def get_literal_translation():
-    sentence = request.json.get('sentence')
-    lambda_body = create_lambda_event({
-        "sentence": sentence
-    })
+    sentence = request.json.get("sentence")
+    lambda_body = create_lambda_event({"sentence": sentence})
     literal_translation_response = literal_translation_handler(lambda_body, None)
     body, status = parse_lambda_response(literal_translation_response)
     return jsonify(body), status
 
 
-@app.route('/syntactical-analysis', methods=['POST'])
+@app.route("/syntactical-analysis", methods=["POST"])
 def get_syntactical_analysis():
-    sentence = request.json.get('sentence')
-    lambda_body = create_lambda_event({
-        "sentence": sentence
-    })
+    sentence = request.json.get("sentence")
+    lambda_body = create_lambda_event({"sentence": sentence})
     translation_response = syntactical_analysis_handler(lambda_body, None)
     body, status = parse_lambda_response(translation_response)
     return jsonify(body), status
 
 
-@app.route('/inflection', methods=['POST'])
+@app.route("/inflection", methods=["POST"])
 def get_inflections():
-    word = request.json.get('word')
-    lambda_body = create_lambda_event({
-        "word": word
-    })
+    word = request.json.get("word")
+    lambda_body = create_lambda_event({"word": word})
     inflections_response = inflection_handler(lambda_body, None)
     body, status = parse_lambda_response(inflections_response)
     return jsonify(body), status
 
 
-@app.route('/health', methods=['GET'])
+@app.route("/health", methods=["GET"])
 def get_health():
     return jsonify({"status": "healthy"}), 200
 
@@ -84,8 +80,8 @@ def create_lambda_event(body: dict) -> dict:
 
 
 def parse_lambda_response(response: dict[str, str]) -> Tuple[str, str]:
-    status_code = response.get('statusCode')
-    body = json.loads(response.get('body'))
+    status_code = response.get("statusCode")
+    body = json.loads(response.get("body"))
     return body, status_code
 
 

@@ -6,15 +6,18 @@ from openai import OpenAI
 
 from llm.message import Message
 
-api_key = os.getenv('OPENAI_API_KEY', None)
-logger = logging.getLogger('root')
+api_key = os.getenv("OPENAI_API_KEY", None)
+logger = logging.getLogger("root")
 
 
 # todo: This breaks the literal_translations endpoint, because that relies on parsing the response to a JSON.
 
-def openai_exchange(messages: list[Message],
-                    model_name: str = "gpt-3.5-turbo-1106",
-                    json_mode: bool = False) -> dict | str:
+
+def openai_exchange(
+    messages: list[Message],
+    model_name: str = "gpt-3.5-turbo-1106",
+    json_mode: bool = False,
+) -> dict | str:
     """
     Abstraction layer for the OpenAI API.
     :param model_name: OpenAI model name.
@@ -33,7 +36,7 @@ def openai_exchange(messages: list[Message],
     completion = client.chat.completions.create(  # type: ignore
         model=model_name,
         response_format={"type": response_format},
-        messages=[message.asdict() for message in messages]
+        messages=[message.asdict() for message in messages],
     )
     response = completion.choices[0].message.content
     logger.info(f"Received response: {response}")
@@ -42,5 +45,5 @@ def openai_exchange(messages: list[Message],
 
 def parse_response(gpt_response: str) -> dict:
     # Sometimes, llm will hallucinate '```json' at the start of the JSON it returns. This solves that.
-    cleaned_response = gpt_response.replace('`', '').replace('json', '')
+    cleaned_response = gpt_response.replace("`", "").replace("json", "")
     return json.loads(cleaned_response)

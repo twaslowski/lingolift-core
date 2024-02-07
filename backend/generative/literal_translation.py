@@ -29,7 +29,10 @@ def generate_literal_translation(sentence: str) -> list[LiteralTranslation]:
     result = []
     # Create a ThreadPoolExecutor to process chunks concurrently
     with ThreadPoolExecutor() as executor:
-        futures = [executor.submit(generate_literal_translation_for_chunk, sentence, chunk) for chunk in chunks]
+        futures = [
+            executor.submit(generate_literal_translation_for_chunk, sentence, chunk)
+            for chunk in chunks
+        ]
 
         for future in futures:
             translation = future.result()
@@ -38,7 +41,9 @@ def generate_literal_translation(sentence: str) -> list[LiteralTranslation]:
     return result
 
 
-def generate_literal_translation_for_chunk(sentence: str, chunk: list[str]) -> list[LiteralTranslation]:
+def generate_literal_translation_for_chunk(
+    sentence: str, chunk: list[str]
+) -> list[LiteralTranslation]:
     """
     Submits a given chunk – a list of words – to the inference engine for translation.
     :param sentence: The base sentence containing the translated words
@@ -47,7 +52,9 @@ def generate_literal_translation_for_chunk(sentence: str, chunk: list[str]) -> l
     """
     context = [Message(role=SYSTEM, content=LITERAL_TRANSLATIONS_SYSTEM_PROMPT)]
     # Not using string interpolation here, like in the other functions, due to multithreading issues
-    prompt = "Translate the word(s) '{}' in the context of the following sentence: '{}'.".format(chunk, sentence)
+    prompt = "Translate the word(s) '{}' in the context of the following sentence: '{}'.".format(
+        chunk, sentence
+    )
     context.append(Message(role=USER, content=prompt))
     # OpenAI's JSON mode enforces a root level object; I want to return a list here, therefore JSON mode doesn't work
     response = parse_response(openai_exchange(context, json_mode=False))
@@ -65,12 +72,12 @@ def chunk_sentence(sentence: str, chunk_size: int = 1) -> list[list[str]]:
     Could probably be hardcoded to 1 entirely.
     :return:
     """
-    alphabetic_characters_regex = re.compile('[?!,.]')
-    sentence = list(alphabetic_characters_regex.sub('', word) for word in sentence.split(' '))  # type: ignore
+    alphabetic_characters_regex = re.compile("[?!,.]")
+    sentence = list(alphabetic_characters_regex.sub("", word) for word in sentence.split(" "))  # type: ignore
     chunks = []
     for i in range(0, len(sentence), chunk_size):
         # Get a chunk of the sentence and append it to the list of chunks
-        chunk = sentence[i:i + chunk_size]
+        chunk = sentence[i : i + chunk_size]
         if chunk not in chunks:
             chunks.append(chunk)
     return chunks  # type: ignore

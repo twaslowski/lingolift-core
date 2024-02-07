@@ -21,4 +21,6 @@ class LanguageNotIdentifiedException(ApplicationException):
 
 class SentenceTooLongException(ApplicationException):
     def __init__(self):
-        super().__init__("This sentence is too long for syntactical analysis and literal translation.")
+        super().__init__(
+            "This sentence is too long for syntactical analysis and literal translation."
+        )

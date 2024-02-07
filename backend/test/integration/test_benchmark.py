@@ -14,11 +14,14 @@ class Benchmark(unittest.TestCase):
         {"sentence": "Wie viel kostet ein Bier?‘", "language": "DE"},
         {"sentence": "donde esta la biblioteca?", "language": "ES"},
         {"sentence": "Como você está hoje?", "language": "PT"},
-        {"sentence": "c'est la vie", "language": "FR"}
+        {"sentence": "c'est la vie", "language": "FR"},
     ]
 
     def setUp(self) -> None:
-        logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
+        logging.basicConfig(
+            format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+            level=logging.INFO,
+        )
 
     def test_benchmark_translations(self):
         error_count = 0
@@ -26,7 +29,7 @@ class Benchmark(unittest.TestCase):
             logging.info(f"Getting translations for {sentence} ...")
             try:
                 openai_response = generate_translation(sentence["sentence"])
-                self.assertEqual(openai_response.language_code, sentence['language'])
+                self.assertEqual(openai_response.language_code, sentence["language"])
             except ValidationError as de:
                 logging.error(f"Error serializing JSON to dataclass: {de}")
                 error_count = error_count + 1
@@ -47,7 +50,9 @@ class Benchmark(unittest.TestCase):
             logging.info(f"Getting literal translations for {sentence} ...")
             try:
                 openai_response = generate_literal_translation(sentence["sentence"])
-                self.assertEqual(len(sentence['sentence'].split()), len(openai_response))
+                self.assertEqual(
+                    len(sentence["sentence"].split()), len(openai_response)
+                )
             except ValidationError as de:
                 logging.error(f"Error serializing JSON to dataclass: {de}")
                 error_count = error_count + 1
@@ -69,7 +74,9 @@ class Benchmark(unittest.TestCase):
         for sentence in self.BENCHMARK_SENTENCES:
             logging.info(f"Getting response suggestions for {sentence} ...")
             try:
-                openai_response = generate_response_suggestions(sentence["sentence"], expected_number_of_suggestions)
+                openai_response = generate_response_suggestions(
+                    sentence["sentence"], expected_number_of_suggestions
+                )
                 if len(openai_response) is not expected_number_of_suggestions:
                     bad_answer_count = bad_answer_count + 1
             except ValidationError as de:

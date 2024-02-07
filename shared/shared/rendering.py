@@ -11,8 +11,8 @@ from shared.model.translation import Translation
 
 
 class MarkupLanguage(Enum):
-    MARKDOWN = 'markdown'
-    HTML = 'html'
+    MARKDOWN = "markdown"
+    HTML = "html"
 
 
 class Stringifier:
@@ -21,12 +21,14 @@ class Stringifier:
 
     @staticmethod
     def introductory_text() -> str:
-        return emoji.emojize(f"""
+        return emoji.emojize(
+            f"""
         Hi! I'm the Grammr Bot. I will support you in learning German :Germany:.
         Send me a German sentence, and I will translate it for you and explain the Grammar.
-        
+
         Let's get started! Text me something – for example, 'Wie viel kostet ein Bier?' :beer:
-        """)
+        """
+        )
 
     def disclaimer(self) -> str:
         return f"""I'm currently under active development. You can
@@ -34,8 +36,11 @@ class Stringifier:
         or {self.hyperlink('contact my creator', 'https://www.linkedin.com/in/twaslowski/')}
         if you have any questions or remarks."""
 
-    def coalesce_analyses(self, literal_translations: Union[list[LiteralTranslation], ApplicationException],
-                          syntactical_analysis: list[SyntacticalAnalysis]) -> str:
+    def coalesce_analyses(
+        self,
+        literal_translations: Union[list[LiteralTranslation], ApplicationException],
+        syntactical_analysis: list[SyntacticalAnalysis],
+    ) -> str:
         """
         If both a literal translation of the words in the sentence and the syntactical analysis (i.e. part-of-speech
         tagging) are available, they get coalesced in this function, meaning each word gets displayed alongside its
@@ -47,7 +52,9 @@ class Stringifier:
         :return:
         """
         if isinstance(literal_translations, ApplicationException):
-            raise ApplicationException(error_message="An error occurred while fetching the literal translation.")
+            raise ApplicationException(
+                error_message="An error occurred while fetching the literal translation."
+            )
         response_string = self.headline("Vocabulary and Grammar breakdown")
         for word in literal_translations:
             analysis = self.find_analysis(word.word, syntactical_analysis)
@@ -59,8 +66,9 @@ class Stringifier:
         return response_string
 
     @staticmethod
-    def find_analysis(word: str, syntactical_analyses: list[SyntacticalAnalysis]) -> \
-            Optional[SyntacticalAnalysis]:
+    def find_analysis(
+        word: str, syntactical_analyses: list[SyntacticalAnalysis]
+    ) -> Optional[SyntacticalAnalysis]:
         """
         :param word: Word from the literal translation
         :param syntactical_analyses: Set of syntactical analyses for words in the sentence
@@ -74,9 +82,11 @@ class Stringifier:
         return None
 
     def stringify_translation(self, sentence: str, translation: Translation) -> str:
-        return f"{self.headline('Translation')}" \
-               f"'{self.italic(sentence)}' is {self.italic(translation.language_name.capitalize())} " \
-               f"and translates to '{self.italic(translation.translation)}' in English.\n"
+        return (
+            f"{self.headline('Translation')}"
+            f"'{self.italic(sentence)}' is {self.italic(translation.language_name.capitalize())} "
+            f"and translates to '{self.italic(translation.translation)}' in English.\n"
+        )
 
     def stringify_suggestions(self, suggestions: list[ResponseSuggestion]) -> str:
         response_string = self.headline("Response suggestions")

@@ -13,7 +13,7 @@ class Morphology(BaseModel):
     explanation: Union[str, None]
 
     def tags_to_string(self) -> str:
-        return '|'.join([f'{k}={v}' for k, v in self.tags.items()])
+        return "|".join([f"{k}={v}" for k, v in self.tags.items()])
 
     def stringify_explanation(self) -> Union[str, None]:
         return self.explanation if self.explanation else None
@@ -27,11 +27,15 @@ class SyntacticalAnalysis(BaseModel):
     dependency: Union[str, None]
 
     def stringify_lemma(self) -> str:
-        return f' (from: {self.lemma})' if self.lemma else None
+        return f" (from: {self.lemma})" if self.lemma else None
 
     def stringify_dependency(self) -> Union[str, None]:
         # Only return something IF there is a dependency AND the word is inflected in the first place
-        return f' (refers to: {self.dependency})' if self.dependency and self.lemma else None
+        return (
+            f" (refers to: {self.dependency})"
+            if self.dependency and self.lemma
+            else None
+        )
 
     def stringify(self) -> str:
         properties: List[str] = []
@@ -41,7 +45,7 @@ class SyntacticalAnalysis(BaseModel):
         if self.morphology:
             add_property(properties, self.morphology.stringify_explanation())
         # add_feature(features, self.dependency)
-        return '; '.join(properties)
+        return "; ".join(properties)
 
 
 def add_property(features: list[str], feature: Union[str, None]):

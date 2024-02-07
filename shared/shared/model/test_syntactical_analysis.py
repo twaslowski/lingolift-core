@@ -2,10 +2,7 @@ from shared.model.syntactical_analysis import Morphology
 
 
 def test_happy_path():
-    morph = Morphology(tags={
-        "Case": "Nom",
-        "Number": "Plur"
-    }, explanation=None)
+    morph = Morphology(tags={"Case": "Nom", "Number": "Plur"}, explanation=None)
     assert morph.tags_to_string() == "Case=Nom|Number=Plur"
 
 

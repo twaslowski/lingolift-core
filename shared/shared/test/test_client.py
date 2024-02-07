@@ -9,7 +9,7 @@ from shared.model.syntactical_analysis import SyntacticalAnalysis, PartOfSpeech
 from shared.model.translation import Translation
 from aioresponses import aioresponses
 
-client = Client('')
+client = Client("")
 
 
 # as per https://github.com/pnuckowski/aioresponses/issues/218
@@ -23,11 +23,17 @@ def mocked():
 async def test_translation_happy_path(mocked):
     # Create an instance of your client class
     # Mock the response from aiohttp post
-    mocked.post(f"{client.host}/translation", status=200, body=json.dumps({
-        "translation": "translation",
-        "language_name": "german",
-        "language_code": "de"
-    }))
+    mocked.post(
+        f"{client.host}/translation",
+        status=200,
+        body=json.dumps(
+            {
+                "translation": "translation",
+                "language_name": "german",
+                "language_code": "de",
+            }
+        ),
+    )
 
     # Call the fetch_translation method
     translation = await client.fetch_translation("some sentence")
@@ -41,16 +47,16 @@ async def test_translation_happy_path(mocked):
 
 @pytest.mark.asyncio
 async def test_literal_translation_happy_path(mocked):
-    mocked.post(f"{client.host}/literal-translation", status=200, body=json.dumps([
-        {
-            "word": "some",
-            "translation": "ein"
-        },
-        {
-            "word": "sentence",
-            "translation": "satz"
-        }
-    ]))
+    mocked.post(
+        f"{client.host}/literal-translation",
+        status=200,
+        body=json.dumps(
+            [
+                {"word": "some", "translation": "ein"},
+                {"word": "sentence", "translation": "satz"},
+            ]
+        ),
+    )
     literal_translations = await client.fetch_literal_translations("some sentence")
     assert isinstance(literal_translations, list)
     assert len(literal_translations) == 2
@@ -58,9 +64,11 @@ async def test_literal_translation_happy_path(mocked):
 
 @pytest.mark.asyncio
 async def test_literal_translation_expected_error(mocked):
-    mocked.post(f"{client.host}/literal-translation", status=400, body=json.dumps({
-        "error_message": "Too many words for literal translation"
-    }))
+    mocked.post(
+        f"{client.host}/literal-translation",
+        status=400,
+        body=json.dumps({"error_message": "Too many words for literal translation"}),
+    )
     with pytest.raises(ApplicationException) as e:
         await client.fetch_literal_translations("some sentence")
         assert e.value.error_message == "Too many words for literal translation"
@@ -68,22 +76,28 @@ async def test_literal_translation_expected_error(mocked):
 
 @pytest.mark.asyncio
 async def test_syntactical_analysis_happy_path(mocked):
-    mocked.post(f"{client.host}/syntactical-analysis", status=200, body=json.dumps([
-        SyntacticalAnalysis(
-            word="word",
-            lemma="lemma",
-            pos=PartOfSpeech(value="DET", explanation="determiner"),
-            morphology=None,
-            dependency=None
-        ).model_dump(),
-        SyntacticalAnalysis(
-            word="word",
-            lemma=None,
-            pos=PartOfSpeech(value="NOUN", explanation="noun"),
-            morphology=None,
-            dependency="word"
-        ).model_dump()]
-    ))
+    mocked.post(
+        f"{client.host}/syntactical-analysis",
+        status=200,
+        body=json.dumps(
+            [
+                SyntacticalAnalysis(
+                    word="word",
+                    lemma="lemma",
+                    pos=PartOfSpeech(value="DET", explanation="determiner"),
+                    morphology=None,
+                    dependency=None,
+                ).model_dump(),
+                SyntacticalAnalysis(
+                    word="word",
+                    lemma=None,
+                    pos=PartOfSpeech(value="NOUN", explanation="noun"),
+                    morphology=None,
+                    dependency="word",
+                ).model_dump(),
+            ]
+        ),
+    )
     analyses = await client.fetch_syntactical_analysis("some sentence")
     assert isinstance(analyses, list)
     assert len(analyses) == 2
@@ -92,9 +106,11 @@ async def test_syntactical_analysis_happy_path(mocked):
 
 @pytest.mark.asyncio
 async def test_syntactical_analysis_expected_error(mocked):
-    mocked.post(f"{client.host}/syntactical-analysis", status=400, body=json.dumps({
-        "error_message": "Language not available"
-    }))
+    mocked.post(
+        f"{client.host}/syntactical-analysis",
+        status=400,
+        body=json.dumps({"error_message": "Language not available"}),
+    )
     with pytest.raises(ApplicationException) as e:
         await client.fetch_syntactical_analysis("some sentence")
         assert e.value.error_message == "Language not available"

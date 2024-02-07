@@ -14,13 +14,17 @@ from util.timing import timed
 @timed
 def retrieve_all_inflections(word: str) -> Inflections:
     # Get the part of speech tag for the word
-    analysis = perform_analysis(word, "DE")[0]  # only analyze one word at a time right now, only support German
+    analysis = perform_analysis(word, "DE")[
+        0
+    ]  # only analyze one word at a time right now, only support German
     pos_tag = analysis.pos.value
     feature_permutations = generate_feature_permutations(pos_tag)
     result = []
     with ThreadPoolExecutor() as executor:
-        futures = [executor.submit(inflect, word, permutation) for permutation in
-                   feature_permutations]
+        futures = [
+            executor.submit(inflect, word, permutation)
+            for permutation in feature_permutations
+        ]
         for future in futures:
             result.append(future.result())
     return Inflections(pos=pos_tag, inflections=result)
@@ -28,9 +32,13 @@ def retrieve_all_inflections(word: str) -> Inflections:
 
 def inflect(word: str, morphology: dict[str, str]) -> Inflection:
     prompt = "Inflect the following word according to the CoNNL-U Universal Feature Tags: {}, {}"
-    msg = Message(role="user", content=prompt.format(word, stringify_morphology(morphology)))
-    result = openai_exchange([msg], model_name="ft:gpt-3.5-turbo-1106:tobiorg::8npM4Pcf", json_mode=False)
-    return Inflection(**{'word': result, 'morphology': morphology})
+    msg = Message(
+        role="user", content=prompt.format(word, stringify_morphology(morphology))
+    )
+    result = openai_exchange(
+        [msg], model_name="ft:gpt-3.5-turbo-1106:tobiorg::8npM4Pcf", json_mode=False
+    )
+    return Inflection(**{"word": result, "morphology": morphology})
 
 
 def generate_feature_permutations(pos_tag: str) -> list[dict]:
@@ -54,7 +62,9 @@ def generate_feature_permutations(pos_tag: str) -> list[dict]:
         case _:
             return []
     # magical chatgpt code
-    feature_instances_list = [get_all_feature_instances(feature) for feature in features]
+    feature_instances_list = [
+        get_all_feature_instances(feature) for feature in features
+    ]
     permutations = list(product(*feature_instances_list))
     result = []
     for values in permutations:
@@ -65,8 +75,8 @@ def generate_feature_permutations(pos_tag: str) -> list[dict]:
 
 # duplicate from shared/model/syntactical_analysis.py
 def stringify_morphology(permutation: dict) -> str:
-    return '|'.join([f'{k}={v}' for k, v in permutation.items()])
+    return "|".join([f"{k}={v}" for k, v in permutation.items()])
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     print(retrieve_all_inflections("gehen"))

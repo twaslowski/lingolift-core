@@ -9,7 +9,7 @@ def load_feature_set() -> dict:
     :return: The feature set with mappings of Universal Feature tags to legible descriptions.
     """
     dirname = os.path.dirname(__file__)
-    feature_set_de = os.path.join(dirname, 'features/features_de.json')
+    feature_set_de = os.path.join(dirname, "features/features_de.json")
     with open(feature_set_de) as f:
         return json.load(f)
 

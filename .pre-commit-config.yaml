@@ -1,0 +1,27 @@
+repos:
+  -   repo: https://github.com/pre-commit/pre-commit-hooks
+      rev: v2.3.0
+      hooks:
+        -   id: check-yaml
+        -   id: end-of-file-fixer
+        -   id: trailing-whitespace
+  -   repo: https://github.com/psf/black
+      rev: 22.10.0
+      hooks:
+        -   id: black
+
+  - repo: local
+    hooks:
+      - id: backend-test
+        name: backend-test
+        entry: bash -c "pushd backend && make test"
+        language: python
+        pass_filenames: false
+
+  - repo: local
+    hooks:
+      - id: shared-test
+        name: shared-test
+        entry: bash -c "pushd shared && make test"
+        language: python
+        pass_filenames: false

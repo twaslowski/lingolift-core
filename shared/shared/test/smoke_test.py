@@ -3,7 +3,11 @@ import os
 import pytest
 
 from shared.client import Client
-from shared.exception import ApplicationException, SentenceTooLongException, LanguageNotAvailableException
+from shared.exception import (
+    ApplicationException,
+    SentenceTooLongException,
+    LanguageNotAvailableException,
+)
 
 client = Client(host=os.environ["API_GATEWAY_HOST"])
 
@@ -17,7 +21,9 @@ async def test_translations_endpoint():
 
 @pytest.mark.asyncio
 async def test_literal_translations_endpoint():
-    literal_translation = await client.fetch_literal_translations("Donde esta la biblioteca?")
+    literal_translation = await client.fetch_literal_translations(
+        "Donde esta la biblioteca?"
+    )
     assert len(literal_translation) > 0
 
 
@@ -25,7 +31,8 @@ async def test_literal_translations_endpoint():
 async def test_literal_translation_error_message_for_long_sentences():
     with pytest.raises(ApplicationException) as e:
         await client.fetch_literal_translations(
-            "This sentence is too long for literal translation eins zwei drei vier fuenf sechs sieben acht neun zehn")
+            "This sentence is too long for literal translation eins zwei drei vier fuenf sechs sieben acht neun zehn"
+        )
     assert e.value.error_message == SentenceTooLongException().error_message
 
 

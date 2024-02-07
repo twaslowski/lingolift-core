@@ -18,4 +18,4 @@ def should_generate_response_suggestions(sentence: str) -> bool:
        potentially using the syntactical analysis of the sentence
     :return: is_question
     """
-    return '?' in sentence
+    return "?" in sentence

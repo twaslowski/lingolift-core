@@ -10,7 +10,6 @@ import app
 
 
 class TestLingoliftClient(IsolatedAsyncioTestCase):
-
     async def test_translation_errors(self):
         app.client = Client("")
         # if translation fails
@@ -36,7 +35,9 @@ class TestLingoliftClient(IsolatedAsyncioTestCase):
     async def test_syntactical_analysis_errors(self):
         app.client = Mock()
         # if syntactical analysis fails
-        app.client.fetch_translation = AsyncMock(return_value=self.mock_get_translation())
+        app.client.fetch_translation = AsyncMock(
+            return_value=self.mock_get_translation()
+        )
         app.client.fetch_literal_translations = AsyncMock(side_effect=self.mock_error())
 
         # set up mocks
