@@ -14,13 +14,9 @@ from GrammrBot import create_client
 async def inflectable():
     """
     The main function representing the inflection table for arbitrary German words.
-    # todo: The string manipulation here is atrocious. It works; next, make it pretty.
     :return:
     """
-
-    # stringifier = Stringifier(MarkupLanguage.MARKDOWN)
     word = st.text_input("Enter a word")
-
     if word:
         try:
             inflections = await client.fetch_inflections(word)
@@ -34,25 +30,36 @@ async def inflectable():
 
 
 def create_verb_table(inflections: list[Inflection]) -> str:
-    with open("pages/markdown/verb_table.md") as f:
-        table_template = f.read()
-        for inflection in inflections:
-            person = inflection.morphology.get("Person").upper()
-            number = inflection.morphology.get("Number").upper()
-            replacement_string = f"${person}${number}"
-            table_template = table_template.replace(replacement_string, inflection.word)
-        return table_template
+    table_template = (
+        "| Person    | Singular          | Plural      |\n"
+        "|-----------|-------------------|-------------|\n"
+        "| 1. Person | ich $1$SING       | wir $1$PLUR |\n"
+        "| 2. Person | du $2$SING        | ihr $2$PLUR |\n"
+        "| 3. Person | er/sie/es $3$SING | sie $3$PLUR |"
+    )
+    for inflection in inflections:
+        person = inflection.morphology.get("Person").upper()
+        number = inflection.morphology.get("Number").upper()
+        replacement_string = f"${person}${number}"
+        table_template = table_template.replace(replacement_string, inflection.word)
+    return table_template
 
 
 def create_noun_table(inflections: list[Inflection]) -> str:
-    with open("pages/markdown/noun_table.md") as f:
-        table_template = f.read()
-        for inflection in inflections:
-            case = inflection.morphology.get("Case").upper()
-            number = inflection.morphology.get("Number").upper()
-            replacement_string = f"${case}${number}"
-            table_template = table_template.replace(replacement_string, inflection.word)
-        return table_template
+    table_template = (
+        "| Casus      | Singular  | Plural    |\n"
+        "|------------|-----------|-----------|\n"
+        "| Nominativ  | $NOM$SING | $NOM$PLUR |\n"
+        "| Genitiv    | $GEN$SING | $GEN$PLUR |\n"
+        "| Dativ      | $DAT$SING | $DAT$PLUR |\n"
+        "| Akkusative | $ACC$SING | $ACC$PLUR |"
+    )
+    for inflection in inflections:
+        case = inflection.morphology.get("Case").upper()
+        number = inflection.morphology.get("Number").upper()
+        replacement_string = f"${case}${number}"
+        table_template = table_template.replace(replacement_string, inflection.word)
+    return table_template
 
 
 def create_inflections_table(inflections: Inflections) -> str:
