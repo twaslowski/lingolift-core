@@ -27,13 +27,18 @@ module "lambda" {
 }
 
 resource "aws_cloudwatch_event_rule" "keep_warm" {
+  # These are only required on the much slower container-based lambdas
+  count = var.package_type == "Image" ? 1 : 0
+
   name                = "every-ten-minutes"
   description         = "Fires every ten minutes"
   schedule_expression = "rate(10 minutes)"
 }
 
 resource "aws_cloudwatch_event_target" "keep_warm" {
-  rule      = aws_cloudwatch_event_rule.keep_warm.name
+  count = var.package_type == "Image" ? 1 : 0
+
+  rule      = aws_cloudwatch_event_rule.keep_warm[0].name
   target_id = "${module.lambda.lambda_function_name}-keep-warm"
   arn       = module.lambda.lambda_function_arn
 
@@ -51,7 +56,7 @@ locals {
     apigateway = {
       service    = "apigateway"
       source_arn = "arn:aws:execute-api:eu-central-1:${data.aws_caller_identity.current.account_id}:*"
-    }
+    },
     eventbridge = {
       service    = "events.amazonaws.com"
       source_arn = "arn:aws:events:eu-central-1:${data.aws_caller_identity.current.account_id}:rule/*"
