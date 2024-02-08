@@ -1,8 +1,6 @@
 import asyncio
 import logging
-import os
 import sys
-from typing import Tuple
 
 import streamlit as st
 from shared.exception import ApplicationException

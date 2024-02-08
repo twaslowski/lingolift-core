@@ -16,3 +16,9 @@ def fail(e: ApplicationException, status: int) -> dict:
         "headers": {"Content-Type": "application/json"},
         "body": json.dumps(e.dict()),
     }
+
+
+def check_pre_warm(event: dict) -> dict:
+    body = json.loads(event.get("body"))
+    if body.get("pre_warm") is not None:
+        return ok({"pre-warmed": "true"})
