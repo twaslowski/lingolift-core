@@ -1,4 +1,7 @@
+from typing import Union
+
 from pydantic import BaseModel
+from shared.model.syntactical_analysis import PartOfSpeech
 
 
 class Inflection(BaseModel):
@@ -12,5 +15,6 @@ class Inflections(BaseModel):
     Additionally contains the part-of-speech-tag ['NOUN', 'VERB'] of that word.
     """
 
-    pos: str
+    pos: PartOfSpeech
+    gender: Union[str, None]  # for nouns only
     inflections: list[Inflection]
