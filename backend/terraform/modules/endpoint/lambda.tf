@@ -57,7 +57,7 @@ locals {
       service    = "apigateway"
       source_arn = "arn:aws:execute-api:eu-central-1:${data.aws_caller_identity.current.account_id}:*"
     },
-    eventbridge = {
+    events = {
       service    = "events"
       source_arn = "arn:aws:events:eu-central-1:${data.aws_caller_identity.current.account_id}:rule/*"
     }
