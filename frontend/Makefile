@@ -11,3 +11,7 @@ lint:
 
 shared:
 	@poetry remove shared && poetry add ../shared/
+
+fmt:
+	@pre-commit run black --all-files
+	@pre-commit run end-of-file-fixer --all-files
