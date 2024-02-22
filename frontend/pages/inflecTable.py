@@ -15,6 +15,7 @@ async def inflectable():
     :return:
     """
     word = st.text_input("Enter a word")
+    st.text("Note: This feature is in beta right now and is very limited.")
     if word:
         try:
             inflections = await client.fetch_inflections(word)
@@ -58,6 +59,15 @@ def create_noun_table(inflections: list[Inflection]) -> str:
         replacement_string = f"${case}${number}"
         table_template = table_template.replace(replacement_string, inflection.word)
     return table_template
+
+
+def articles(gender: str):
+    if gender == "MASC":
+        return ["der", "des", "dem", "den", "die", "der", "den", "die"]
+    if gender == "FEM":
+        return ["die", "der", "der", "die", "die", "der", "den", "die"]
+    if gender == "NEUT":
+        return ["das", "des", "dem", "das", "die", "der", "den", "die"]
 
 
 def create_inflections_table(inflections: Inflections) -> str:
