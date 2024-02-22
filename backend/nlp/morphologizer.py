@@ -18,6 +18,7 @@ def retrieve_all_inflections(word: str) -> Inflections:
         0
     ]  # only analyze one word at a time right now, only support German
     pos = analysis.pos
+    gender = analysis.morphology.tags.get("Gender", None)
     feature_permutations = generate_feature_permutations(pos.value)
     result = []
     with ThreadPoolExecutor() as executor:
@@ -27,8 +28,7 @@ def retrieve_all_inflections(word: str) -> Inflections:
         ]
         for future in futures:
             result.append(future.result())
-    # todo extract gender where possible
-    return Inflections(pos=pos, gender=None, inflections=result)
+    return Inflections(pos=pos, gender=gender, inflections=result)
 
 
 def inflect(word: str, morphology: dict[str, str]) -> Inflection:
