@@ -48,10 +48,10 @@ def create_noun_table(inflections: Inflections) -> str:
     table_template = (
         "| Casus      | Singular  | Plural    |\n"
         "|------------|-----------|-----------|\n"
-        "| Nominativ  | $ART0$NOM$SING | $ART4$NOM$PLUR |\n"
-        "| Genitiv    | $ART1$GEN$SING | $ART5$GEN$PLUR |\n"
-        "| Dativ      | $ART2$DAT$SING | $ART6$DAT$PLUR |\n"
-        "| Akkusative | $ART3$ACC$SING | $ART7$ACC$PLUR |"
+        "| Nominativ  | $ART0 $NOM$SING | $ART4 $NOM$PLUR |\n"
+        "| Genitiv    | $ART1 $GEN$SING | $ART5 $GEN$PLUR |\n"
+        "| Dativ      | $ART2 $DAT$SING | $ART6 $DAT$PLUR |\n"
+        "| Akkusative | $ART3 $ACC$SING | $ART7 $ACC$PLUR |"
     )
     for inflection in inflections.inflections:
         case = inflection.morphology.get("Case").upper()
