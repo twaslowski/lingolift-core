@@ -10,7 +10,7 @@ python = "^3.9"
 python-telegram-bot = "^20.7"
 python-dotenv = "^1.0.0"
 requests = "^2.31.0"
-shared = { git = "https://github.com/tobiaswaslowski/lingolift.git", subdirectory = "shared" }
+shared = {path = "../shared"}
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^7.4.4"

@@ -4,7 +4,7 @@ import sys
 
 import streamlit as st
 from shared.exception import ApplicationException
-from shared.model.inflection import Inflections, Inflection
+from shared.model.inflection import Inflections
 
 from GrammrBot import create_client
 
