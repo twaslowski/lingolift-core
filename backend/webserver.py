@@ -5,17 +5,12 @@ from typing import Tuple
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 
-from generative.response_suggestion import generate_response_suggestions
-from generative.literal_translation import generate_literal_translation
-from shared.exception import LanguageNotAvailableException, SentenceTooLongException
-
 from lambda_functions_generative import (
     translation_handler,
     response_suggestion_handler,
     literal_translation_handler,
 )
 from lambda_functions_nlp import inflection_handler, syntactical_analysis_handler
-from nlp.syntactical_analysis import perform_analysis
 
 logging.basicConfig(
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.INFO
@@ -80,8 +75,8 @@ def create_lambda_event(body: dict) -> dict:
 
 
 def parse_lambda_response(response: dict[str, str]) -> Tuple[str, str]:
-    status_code = response.get("statusCode")
-    body = json.loads(response.get("body"))
+    status_code = response["statusCode"]
+    body = json.loads(response["body"])
     return body, status_code
 
 

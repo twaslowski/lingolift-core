@@ -12,6 +12,14 @@ repos:
 
   - repo: local
     hooks:
+      - id: type-linting
+        name: type-linting
+        entry: bash -c "pushd backend && make lint"
+        language: python
+        pass_filenames: false
+
+  - repo: local
+    hooks:
       - id: backend-test
         name: backend-test
         entry: bash -c "pushd backend && make test"

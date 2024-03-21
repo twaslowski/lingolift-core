@@ -1,7 +1,7 @@
 import logging
 import json
 
-from shared.exception import *
+from shared.exception import LanguageNotAvailableException, ApplicationException
 
 from nlp.syntactical_analysis import perform_analysis
 from nlp.morphologizer import retrieve_all_inflections
@@ -15,8 +15,8 @@ logger.setLevel(logging.INFO)
 
 
 def syntactical_analysis_handler(event, _) -> dict:
-    if res := check_pre_warm(event):
-        return res
+    if pre_warm_response := check_pre_warm(event):
+        return pre_warm_response
     body = json.loads(event.get("body"))
     sentence = body.get("sentence")
     logger.info(f"Received sentence, language: {sentence}")
@@ -28,8 +28,8 @@ def syntactical_analysis_handler(event, _) -> dict:
 
 
 def inflection_handler(event, _) -> dict:
-    if res := check_pre_warm(event):
-        return res
+    if pre_warm_response := check_pre_warm(event):
+        return pre_warm_response
     body = json.loads(event.get("body"))
     word = body.get("word")
     inflections = retrieve_all_inflections(word)

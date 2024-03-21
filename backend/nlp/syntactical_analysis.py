@@ -10,6 +10,8 @@ from shared.model.syntactical_analysis import (
 from spacy.tokens.token import Token
 from nlp.language_detection import llm_detect_language
 
+from typing import Optional
+
 models = {
     "DE": "de_core_news_sm",
     "RU": "ru_core_news_sm",
@@ -20,7 +22,7 @@ models = {
 
 
 def perform_analysis(
-    sentence: str, language_code: str = None
+    sentence: str, language_code: Optional[str] = None
 ) -> list[SyntacticalAnalysis]:
     """
     Performs a syntactical analysis on a sentence in a given language.
@@ -44,7 +46,7 @@ def _analyze_token(token: Token) -> SyntacticalAnalysis | None:
     tags = pos_tags_to_dict(token)
     morphology = None
     if token.pos_ == "PUNCT":
-        return
+        return None
     if tags:
         morphology = Morphology(
             tags=tags, explanation=convert_to_legible_features(tags, token)
