@@ -13,7 +13,7 @@ from lingolift.lambda_handlers import (
 )
 
 
-def test_translation_handler_happy_path(translation_generator):
+def test_translation_handler_happy_path():
     event = {"body": json.dumps({"sentence": "test"})}
     response = translation_handler(event, None)
     assert response.get("statusCode") == 200

@@ -78,4 +78,4 @@ def test_inflection_regular_call(real_event, mocker, inflections):
     assert response["statusCode"] == 200
     assert json.loads(response["body"]) == inflections.model_dump()
 
-    lambda_functions_nlp.retrieve_all_inflections.assert_called_once()
+    lambda_handler.retrieve_all_inflections.assert_called_once()

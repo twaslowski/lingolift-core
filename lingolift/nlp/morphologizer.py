@@ -63,7 +63,3 @@ class Morphologizer:
             feature_permutation = dict(zip(features, values))
             result.append(feature_permutation)
         return result
-
-
-if __name__ == "__main__":
-    print(retrieve_all_inflections("gehen"))
