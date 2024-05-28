@@ -2,10 +2,11 @@ import json
 import logging
 
 import iso639
+from shared.exception import *
+
 from lingolift.generative.literal_translation import generate_literal_translation
 from lingolift.generative.response_suggestion import generate_response_suggestions
 from lingolift.generative.translation import generate_translation
-from shared.exception import *
 from lingolift.util.lambda_proxy_return import fail, ok
 
 logging.basicConfig(format="%(asctime)s - %(name)s - %(levelname)s - %(message)s")

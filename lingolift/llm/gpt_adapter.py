@@ -2,8 +2,9 @@ import logging
 import os
 
 import json5 as json
-from lingolift.llm.message import Message
 from openai import OpenAI
+
+from lingolift.llm.message import Message
 
 api_key = os.getenv("OPENAI_API_KEY", None)
 logger = logging.getLogger("root")

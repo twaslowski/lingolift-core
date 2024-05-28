@@ -1,4 +1,3 @@
-import lingolift.nlp.morphologizer as morphologizer
 import pytest
 from shared.model.inflection import Inflections
 from shared.model.syntactical_analysis import (
@@ -6,6 +5,8 @@ from shared.model.syntactical_analysis import (
     PartOfSpeech,
     SyntacticalAnalysis,
 )
+
+import lingolift.nlp.morphologizer as morphologizer
 
 
 @pytest.fixture
@@ -48,7 +49,9 @@ def syntactical_analysis_adverb() -> list[SyntacticalAnalysis]:
 
 
 def test_inflection_happy_path(mocker):
-    mocker.patch("lingolift.nlp.morphologizer.openai_exchange", return_value="word_infl")
+    mocker.patch(
+        "lingolift.nlp.morphologizer.openai_exchange", return_value="word_infl"
+    )
     morphology = {"A": "B", "C": "D"}
     inflection = morphologizer.inflect("word", morphology)
     assert inflection.word == "word_infl"
@@ -57,7 +60,8 @@ def test_inflection_happy_path(mocker):
 
 def test_retrieve_inflections_for_noun(mocker, syntactical_analysis_noun):
     mocker.patch(
-        "lingolift.nlp.morphologizer.perform_analysis", return_value=syntactical_analysis_noun
+        "lingolift.nlp.morphologizer.perform_analysis",
+        return_value=syntactical_analysis_noun,
     )
     mocker.patch(
         "lingolift.nlp.morphologizer.generate_feature_permutations",
@@ -81,7 +85,8 @@ def test_retrieve_inflections_for_noun(mocker, syntactical_analysis_noun):
 
 def test_retrieve_inflections_for_verb(mocker, syntactical_analysis_verb):
     mocker.patch(
-        "lingolift.nlp.morphologizer.perform_analysis", return_value=syntactical_analysis_verb
+        "lingolift.nlp.morphologizer.perform_analysis",
+        return_value=syntactical_analysis_verb,
     )
     mocker.patch(
         "lingolift.nlp.morphologizer.generate_feature_permutations",
@@ -105,7 +110,8 @@ def test_throws_exception_for_unsupported_word_type(
     mocker, syntactical_analysis_adverb
 ):
     mocker.patch(
-        "lingolift.nlp.morphologizer.perform_analysis", return_value=syntactical_analysis_adverb
+        "lingolift.nlp.morphologizer.perform_analysis",
+        return_value=syntactical_analysis_adverb,
     )
     with pytest.raises(Exception):
         morphologizer.retrieve_all_inflections("wie")

@@ -1,11 +1,15 @@
 import json
 
-import lingolift
 import pytest
-from lingolift.lambda_functions_nlp import inflection_handler, syntactical_analysis_handler
 from shared.exception import LanguageNotAvailableException
 from shared.model.inflection import Inflections
 from shared.model.syntactical_analysis import PartOfSpeech
+
+import lingolift
+from lingolift.lambda_functions_nlp import (
+    inflection_handler,
+    syntactical_analysis_handler,
+)
 
 
 @pytest.fixture
@@ -70,7 +74,8 @@ def test_pre_warm_inflection(pre_warm_event, mocker):
 
 def test_inflection_regular_call(real_event, mocker, inflections):
     mocker.patch(
-        "lingolift.lambda_functions_nlp.retrieve_all_inflections", return_value=inflections
+        "lingolift.lambda_functions_nlp.retrieve_all_inflections",
+        return_value=inflections,
     )
     response = inflection_handler(real_event, None)
 

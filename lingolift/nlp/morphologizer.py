@@ -1,11 +1,12 @@
 from concurrent.futures import ThreadPoolExecutor
 from itertools import product
 
+from shared.model.inflection import Inflection, Inflections
+from shared.universal_features import get_all_feature_instances
+
 from lingolift.llm.gpt_adapter import openai_exchange
 from lingolift.llm.message import Message
 from lingolift.nlp.syntactical_analysis import perform_analysis
-from shared.model.inflection import Inflection, Inflections
-from shared.universal_features import get_all_feature_instances
 from lingolift.util.timing import timed
 
 

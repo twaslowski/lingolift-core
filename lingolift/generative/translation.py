@@ -1,7 +1,8 @@
 import iso639
+from shared.model.translation import Translation
+
 from lingolift.llm.gpt_adapter import openai_exchange, parse_response
 from lingolift.llm.message import SYSTEM, USER, Message
-from shared.model.translation import Translation
 
 
 def generate_translation(sentence: str) -> Translation:

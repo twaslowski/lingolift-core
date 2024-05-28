@@ -2,10 +2,11 @@ import logging
 import re
 from concurrent.futures import ThreadPoolExecutor
 
-from lingolift.llm.gpt_adapter import openai_exchange, parse_response
-from lingolift.llm.message import SYSTEM, USER, Message
 from shared.exception import SentenceTooLongException
 from shared.model.literal_translation import LiteralTranslation
+
+from lingolift.llm.gpt_adapter import openai_exchange, parse_response
+from lingolift.llm.message import SYSTEM, USER, Message
 
 LITERAL_TRANSLATION_MAX_UNIQUE_WORDS = 15
 

@@ -1,15 +1,16 @@
 import json
 
 from iso639 import LanguageNotFoundError
+from shared.exception import ApplicationException, LanguageNotIdentifiedException
+from shared.model.literal_translation import LiteralTranslation
+from shared.model.response_suggestion import ResponseSuggestion
+from shared.model.translation import Translation
+
 from lingolift.lambda_functions_generative import (
     literal_translation_handler,
     response_suggestion_handler,
     translation_handler,
 )
-from shared.exception import ApplicationException, LanguageNotIdentifiedException
-from shared.model.literal_translation import LiteralTranslation
-from shared.model.response_suggestion import ResponseSuggestion
-from shared.model.translation import Translation
 
 
 def test_translation_handler_happy_path(mocker):

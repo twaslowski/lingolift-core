@@ -1,6 +1,7 @@
 from unittest.mock import Mock
 
 import pytest
+
 from lingolift.nlp.syntactical_analysis import pos_tags_to_dict
 
 

@@ -1,10 +1,11 @@
 import logging
 import unittest
 
+from pydantic import ValidationError
+
 from lingolift.generative.literal_translation import generate_literal_translation
 from lingolift.generative.response_suggestion import generate_response_suggestions
 from lingolift.generative.translation import generate_translation
-from pydantic import ValidationError
 
 
 class Benchmark(unittest.TestCase):

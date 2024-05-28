@@ -2,7 +2,6 @@ from typing import Optional
 
 import shared.universal_features as universal_features
 import spacy
-from lingolift.nlp.language_detection import llm_detect_language
 from shared.exception import LanguageNotAvailableException
 from shared.model.syntactical_analysis import (
     Morphology,
@@ -10,6 +9,8 @@ from shared.model.syntactical_analysis import (
     SyntacticalAnalysis,
 )
 from spacy.tokens.token import Token
+
+from lingolift.nlp.language_detection import llm_detect_language
 
 models = {
     "DE": "de_core_news_sm",

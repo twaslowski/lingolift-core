@@ -1,6 +1,7 @@
 import pytest
-from lingolift.nlp.language_detection import detect_language
 from shared.exception import LanguageNotIdentifiedException
+
+from lingolift.nlp.language_detection import detect_language
 
 
 def test_detect_language_happy_path():

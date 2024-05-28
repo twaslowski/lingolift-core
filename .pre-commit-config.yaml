@@ -9,19 +9,3 @@ repos:
       rev: 22.10.0
       hooks:
         -   id: black
-
-  - repo: local
-    hooks:
-      - id: type-linting
-        name: type-linting
-        entry: bash -c "pushd lingolift && make lint"
-        language: python
-        pass_filenames: false
-
-  - repo: local
-    hooks:
-      - id: lingolift-test
-        name: lingolift-test
-        entry: bash -c "pushd lingolift && make test"
-        language: python
-        pass_filenames: false

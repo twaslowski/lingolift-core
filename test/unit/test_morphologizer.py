@@ -1,7 +1,8 @@
 from unittest.mock import Mock
 
-import lingolift.nlp.morphologizer as morphologizer
 from shared.model.syntactical_analysis import PartOfSpeech
+
+import lingolift.nlp.morphologizer as morphologizer
 
 
 def test_feature_permutations_for_non_supported_pos_tag():

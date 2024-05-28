@@ -1,6 +1,7 @@
+from shared.model.response_suggestion import ResponseSuggestion
+
 from lingolift.llm.gpt_adapter import openai_exchange, parse_response
 from lingolift.llm.message import SYSTEM, USER, Message
-from shared.model.response_suggestion import ResponseSuggestion
 
 
 def generate_response_suggestions(
