@@ -1,3 +1,5 @@
+import os
+
 from lingolift.generative.literal_translation import LiteralTranslationGenerator
 from lingolift.generative.morphology_generator import MorphologyGenerator
 from lingolift.generative.response_suggestion import ResponseSuggestionGenerator

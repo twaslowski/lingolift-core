@@ -5,6 +5,7 @@ import iso639
 from shared.exception import *
 
 from lingolift.lambda_context_container import ContextContainer
+from lingolift.nlp.syntactical_analysis import perform_analysis
 from lingolift.util.lambda_proxy_return import check_pre_warm, fail, ok
 
 """
@@ -72,7 +73,7 @@ def syntactical_analysis_handler(event, _) -> dict:
     sentence = body.get("sentence")
     logger.info(f"Received sentence, language: {sentence}")
     try:
-        analyses = context_containerperform_analysis(sentence)
+        analyses = perform_analysis(sentence)
         return ok([a.model_dump() for a in analyses])
     except LanguageNotAvailableException as e:
         return fail(ApplicationException(e.error_message), 400)

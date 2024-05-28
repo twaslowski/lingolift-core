@@ -1,7 +1,4 @@
-from lingolift.llm import gpt_adapter
-
-
-def test_parse_gpt_response():
+def test_parse_gpt_response(gpt_adapter):
     happy_path = """{
         "literal_translation": "Hello! How are you?",
         "words": [
@@ -31,7 +28,7 @@ def test_parse_gpt_response():
     assert isinstance(result, dict)
 
 
-def test_parser_manages_trailing_commas():
+def test_parser_manages_trailing_commas(gpt_adapter):
     happy_path = """{
         "literal_translation": "Hello! How are you?",
         "words": [

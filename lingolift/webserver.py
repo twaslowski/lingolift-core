@@ -5,14 +5,10 @@ from typing import Tuple
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 
-from lingolift.lambda_functions_generative import (
+from lingolift.lambda_handlers import (
     literal_translation_handler,
     response_suggestion_handler,
     translation_handler,
-)
-from lingolift.lambda_functions_nlp import (
-    inflection_handler,
-    syntactical_analysis_handler,
 )
 
 logging.basicConfig(
