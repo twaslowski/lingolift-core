@@ -1,16 +1,25 @@
 import iso639
 from shared.model.translation import Translation
 
-from lingolift.llm.gpt_adapter import openai_exchange, parse_response
+from lingolift.llm.gpt_adapter import GPTAdapter
 from lingolift.llm.message import SYSTEM, USER, Message
 
 
-def generate_translation(sentence: str) -> Translation:
+def generate_translation(sentence: str, gpt_adapter: GPTAdapter) -> Translation:
+    """
+    Generate a translation for a sentence from an arbitrary language into English.
+    Additionally identify the source language, represented as an ISO-3166 alpha-2 code.
+    :param sentence: Sentence to translate.
+    :param gpt_adapter: GPTAdapter instance used to retrieve the translation.
+    :return: Translation object
+    """
     context = [
         Message(role=SYSTEM, content=TRANSLATION_SYSTEM_PROMPT),
         Message(role=USER, content=TRANSLATION_USER_PROMPT + sentence),
     ]
-    response = parse_response(openai_exchange(context, json_mode=True))
+    response = gpt_adapter.parse_response(
+        gpt_adapter.openai_exchange(context, json_mode=True)
+    )
     response["language_name"] = iso639.Language.from_part1(
         response["language_code"].lower()
     ).name

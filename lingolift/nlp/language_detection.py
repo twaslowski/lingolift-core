@@ -1,7 +1,7 @@
 from lingua import Language, LanguageDetectorBuilder
 from shared.exception import LanguageNotIdentifiedException
 
-from lingolift.llm.gpt_adapter import openai_exchange, parse_response
+from lingolift.llm.gpt_adapter import GPTAdapter
 from lingolift.llm.message import SYSTEM, USER, Message
 
 MIN_DISTANCE = 0.6

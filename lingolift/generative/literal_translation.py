@@ -47,7 +47,7 @@ def generate_literal_translation_for_chunk(
     """
     Submits a given chunk – a list of words – to the inference engine for translation.
     :param sentence: The base sentence containing the translated words
-    :param chunk: Words to be translated
+    :param chunk: words to be translated
     :return:
     """
     context = [Message(role=SYSTEM, content=LITERAL_TRANSLATIONS_SYSTEM_PROMPT)]
