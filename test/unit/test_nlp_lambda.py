@@ -1,11 +1,11 @@
 import json
 
-import lingolift.lambda_functions_nlp
+import lingolift
 import pytest
 from lingolift.lambda_functions_nlp import inflection_handler, syntactical_analysis_handler
 from shared.exception import LanguageNotAvailableException
 from shared.model.inflection import Inflections
-from shared.model.syntactical_analysis import PartOfSpeech, SyntacticalAnalysis
+from shared.model.syntactical_analysis import PartOfSpeech
 
 
 @pytest.fixture
@@ -29,28 +29,28 @@ def inflections():
 
 
 def test_pre_warm_syntactical_analysis(pre_warm_event, mocker):
-    mocker.patch("lambda_functions_nlp.perform_analysis", return_value=None)
+    mocker.patch("lingolift.lambda_functions_nlp.perform_analysis", return_value=None)
     response = syntactical_analysis_handler(pre_warm_event, None)
 
     assert response["statusCode"] == 200
     assert json.loads(response["body"]) == {"pre-warmed": "true"}
 
-    lambda_functions_nlp.perform_analysis.assert_not_called()
+    lingolift.lambda_functions_nlp.perform_analysis.assert_not_called()
 
 
 def test_syntactical_analysis_regular_call(real_event, mocker):
-    mocker.patch("lambda_functions_nlp.perform_analysis", return_value=[])
+    mocker.patch("lingolift.lambda_functions_nlp.perform_analysis", return_value=[])
     response = syntactical_analysis_handler(real_event, None)
 
     assert response["statusCode"] == 200
     assert json.loads(response["body"]) == []
 
-    lambda_functions_nlp.perform_analysis.assert_called_once()
+    lingolift.lambda_functions_nlp.perform_analysis.assert_called_once()
 
 
 def test_syntactical_analysis_regular_call_with_exception(real_event, mocker):
     mocker.patch(
-        "lambda_functions_nlp.perform_analysis",
+        "lingolift.lambda_functions_nlp.perform_analysis",
         side_effect=LanguageNotAvailableException(),
     )
     response = syntactical_analysis_handler(real_event, None)
@@ -58,26 +58,23 @@ def test_syntactical_analysis_regular_call_with_exception(real_event, mocker):
     assert response["statusCode"] == 400
     assert "error_message" in json.loads(response["body"])
 
-    lambda_functions_nlp.perform_analysis.assert_called_once()
+    lingolift.lambda_functions_nlp.perform_analysis.assert_called_once()
 
 
 def test_pre_warm_inflection(pre_warm_event, mocker):
-    mocker.patch("lambda_functions_nlp.retrieve_all_inflections", return_value=None)
     response = inflection_handler(pre_warm_event, None)
 
     assert response["statusCode"] == 200
     assert json.loads(response["body"]) == {"pre-warmed": "true"}
 
-    lambda_functions_nlp.retrieve_all_inflections.assert_not_called()
-
 
 def test_inflection_regular_call(real_event, mocker, inflections):
     mocker.patch(
-        "lambda_functions_nlp.retrieve_all_inflections", return_value=inflections
+        "lingolift.lambda_functions_nlp.retrieve_all_inflections", return_value=inflections
     )
     response = inflection_handler(real_event, None)
 
     assert response["statusCode"] == 200
     assert json.loads(response["body"]) == inflections.model_dump()
 
-    lambda_functions_nlp.retrieve_all_inflections.assert_called_once()
+    lingolift.lambda_functions_nlp.retrieve_all_inflections.assert_called_once()

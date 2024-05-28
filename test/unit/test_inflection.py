@@ -57,14 +57,14 @@ def test_inflection_happy_path(mocker):
 
 def test_retrieve_inflections_for_noun(mocker, syntactical_analysis_noun):
     mocker.patch(
-        "nlp.morphologizer.perform_analysis", return_value=syntactical_analysis_noun
+        "lingolift.nlp.morphologizer.perform_analysis", return_value=syntactical_analysis_noun
     )
     mocker.patch(
-        "nlp.morphologizer.generate_feature_permutations",
+        "lingolift.nlp.morphologizer.generate_feature_permutations",
         return_value=[{"Case": "Nom", "Number": "Sing"}],
     )
     mocker.patch(
-        "nlp.morphologizer.inflect",
+        "lingolift.nlp.morphologizer.inflect",
         return_value=morphologizer.Inflection(
             word="Hund", morphology={"Case": "Nom", "Number": "Sing"}
         ),
@@ -81,14 +81,14 @@ def test_retrieve_inflections_for_noun(mocker, syntactical_analysis_noun):
 
 def test_retrieve_inflections_for_verb(mocker, syntactical_analysis_verb):
     mocker.patch(
-        "nlp.morphologizer.perform_analysis", return_value=syntactical_analysis_verb
+        "lingolift.nlp.morphologizer.perform_analysis", return_value=syntactical_analysis_verb
     )
     mocker.patch(
-        "nlp.morphologizer.generate_feature_permutations",
+        "lingolift.nlp.morphologizer.generate_feature_permutations",
         return_value=[{"Person": "1", "Number": "Sing"}],
     )
     mocker.patch(
-        "nlp.morphologizer.inflect",
+        "lingolift.nlp.morphologizer.inflect",
         return_value=morphologizer.Inflection(
             word="gehe", morphology={"Person": "1", "Number": "Sing"}
         ),
@@ -105,7 +105,7 @@ def test_throws_exception_for_unsupported_word_type(
     mocker, syntactical_analysis_adverb
 ):
     mocker.patch(
-        "nlp.morphologizer.perform_analysis", return_value=syntactical_analysis_adverb
+        "lingolift.nlp.morphologizer.perform_analysis", return_value=syntactical_analysis_adverb
     )
     with pytest.raises(Exception):
         morphologizer.retrieve_all_inflections("wie")

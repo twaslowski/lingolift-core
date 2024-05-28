@@ -30,7 +30,7 @@ def test_translation_handler_happy_path(mocker):
 
 def test_translation_handler_unhappy_path(mocker):
     mocker.patch(
-        "lambda_functions_generative.generate_translation",
+        "lingolift.lambda_functions_generative.generate_translation",
         side_effect=LanguageNotFoundError,
     )
 
@@ -43,7 +43,7 @@ def test_translation_handler_unhappy_path(mocker):
 
 def test_literal_translation_handler_happy_path(mocker):
     mocker.patch(
-        "lambda_functions_generative.generate_literal_translation",
+        "lingolift.lambda_functions_generative.generate_literal_translation",
         return_value=[LiteralTranslation(word="test", translation="test")],
     )
     event = {"body": json.dumps({"sentence": "test"})}
@@ -57,7 +57,7 @@ def test_literal_translation_handler_happy_path(mocker):
 
 def test_response_suggestions_happy_path(mocker):
     mocker.patch(
-        "lambda_functions_generative.generate_response_suggestions",
+        "lingolift.lambda_functions_generative.generate_response_suggestions",
         return_value=[ResponseSuggestion(suggestion="test", translation="test")],
     )
     event = {"body": json.dumps({"sentence": "test"})}
