@@ -29,7 +29,7 @@ jobs:
           pipx ensurepath
           pipx install poetry
 
-      - name: set up backend
+      - name: set up lingolift
         run: |
           cd backend && poetry install --with dev --with nlp --with generative
           make test

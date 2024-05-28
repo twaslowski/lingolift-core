@@ -14,22 +14,14 @@ repos:
     hooks:
       - id: type-linting
         name: type-linting
-        entry: bash -c "pushd backend && make lint"
+        entry: bash -c "pushd lingolift && make lint"
         language: python
         pass_filenames: false
 
   - repo: local
     hooks:
-      - id: backend-test
-        name: backend-test
-        entry: bash -c "pushd backend && make test"
-        language: python
-        pass_filenames: false
-
-  - repo: local
-    hooks:
-      - id: shared-test
-        name: shared-test
-        entry: bash -c "pushd shared && make test"
+      - id: lingolift-test
+        name: lingolift-test
+        entry: bash -c "pushd lingolift && make test"
         language: python
         pass_filenames: false

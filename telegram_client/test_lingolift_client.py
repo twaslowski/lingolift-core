@@ -1,12 +1,11 @@
 from unittest import IsolatedAsyncioTestCase
 from unittest.mock import AsyncMock, Mock
 
+import app
 from shared.client import Client
 from shared.exception import ApplicationException
 from shared.model.response_suggestion import ResponseSuggestion
 from shared.model.translation import Translation
-
-import app
 
 
 class TestLingoliftClient(IsolatedAsyncioTestCase):

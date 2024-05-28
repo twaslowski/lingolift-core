@@ -1,7 +1,7 @@
 .idea
 __pycache__
 venv
-backend/package*
+lingolift/package*
 
 */shared.egg-info
 
@@ -38,7 +38,7 @@ yarn-error.log
 .terraform/
 terraform.tfstate
 terraform.tfstate.backup
-backend/terraform/builds
+terraform/builds/
 
 # Visual Studio Code
 .vscode/*

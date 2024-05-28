@@ -6,14 +6,14 @@ import telegram.constants
 from dotenv import load_dotenv
 from shared.client import Client
 from shared.exception import ApplicationException
-from shared.rendering import Stringifier, MarkupLanguage
+from shared.rendering import MarkupLanguage, Stringifier
 from telegram import Update
 from telegram.ext import (
-    ApplicationBuilder,
-    MessageHandler,
     Application,
+    ApplicationBuilder,
     CommandHandler,
     ContextTypes,
+    MessageHandler,
 )
 from telegram.ext import filters as Filters
 
@@ -42,7 +42,7 @@ async def handle_text_message(update: Update, _) -> None:
     try:
         await reply(update, MESSAGE_RECEIVED, html=False)
 
-        # send all requests to backend
+        # send all requests to lingolift
         translation_future = create_task(client.fetch_translation(sentence))
         syntactical_translations_future = create_task(
             client.fetch_syntactical_analysis(sentence)
