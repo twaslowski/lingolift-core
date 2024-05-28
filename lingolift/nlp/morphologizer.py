@@ -1,46 +1,39 @@
 from concurrent.futures import ThreadPoolExecutor
 from itertools import product
 
-from shared.model.inflection import Inflection, Inflections
+from shared.model.inflection import Inflections
 from shared.universal_features import get_all_feature_instances
 
-from lingolift.llm.gpt_adapter import GPTAdapter
-from lingolift.llm.message import Message
+from lingolift.generative.morphology_generator import MorphologyGenerator
 from lingolift.nlp.syntactical_analysis import perform_analysis
 from lingolift.util.timing import timed
 
 
 class Morphologizer:
+    def __init__(self, morphology_generator: MorphologyGenerator):
+        self.morphology_generator = morphology_generator
+
     @timed
-    def retrieve_all_inflections(word: str) -> Inflections:
+    def retrieve_all_inflections(self, word: str) -> Inflections:
         # Get the part of speech tag for the word
         analysis = perform_analysis(word, "DE")[
             0
         ]  # only analyze one word at a time right now, only support German
         pos = analysis.pos
         gender = analysis.morphology.tags.get("Gender", None)
-        feature_permutations = generate_feature_permutations(pos.value)
+        feature_permutations = self._generate_feature_permutations(pos.value)
         result = []
         with ThreadPoolExecutor() as executor:
             futures = [
-                executor.submit(inflect, word, permutation)
+                executor.submit(self.morphology_generator.inflect, word, permutation)
                 for permutation in feature_permutations
             ]
             for future in futures:
                 result.append(future.result())
         return Inflections(pos=pos, gender=gender, inflections=result)
 
-    def inflect(word: str, morphology: dict[str, str]) -> Inflection:
-        prompt = "Inflect the following word according to the CoNNL-U Universal Feature Tags: {}, {}"
-        msg = Message(
-            role="user", content=prompt.format(word, stringify_morphology(morphology))
-        )
-        result = openai_exchange(
-            [msg], model_name="ft:gpt-3.5-turbo-1106:tobiorg::8npM4Pcf", json_mode=False
-        )
-        return Inflection(**{"word": result, "morphology": morphology})
-
-    def generate_feature_permutations(pos_tag: str) -> list[dict]:
+    @staticmethod
+    def _generate_feature_permutations(pos_tag: str) -> list[dict]:
         """
         Generates all possible feature instance permutations required for a declined or conjugated word.
         For a declined noun, this would be all possible combinations of Case and Number;
@@ -71,6 +64,6 @@ class Morphologizer:
             result.append(feature_permutation)
         return result
 
-    # duplicate from shared/model/syntactical_analysis.py
-    def stringify_morphology(permutation: dict) -> str:
-        return "|".join([f"{k}={v}" for k, v in permutation.items()])
+
+if __name__ == "__main__":
+    print(retrieve_all_inflections("gehen"))

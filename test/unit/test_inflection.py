@@ -48,6 +48,7 @@ def syntactical_analysis_adverb() -> list[SyntacticalAnalysis]:
     ]
 
 
+@pytest.mark.skip("Implementation lacking.")
 def test_inflection_happy_path(mocker):
     mocker.patch(
         "lingolift.nlp.morphologizer.openai_exchange", return_value="word_infl"

@@ -13,13 +13,7 @@ from lingolift.lambda_functions_generative import (
 )
 
 
-def test_translation_handler_happy_path(mocker):
-    mocker.patch(
-        "lingolift.lambda_functions_generative.generate_translation",
-        return_value=Translation(
-            translation="test", language_name="test", language_code="test"
-        ),
-    )
+def test_translation_handler_happy_path(translation_generator):
     event = {"body": json.dumps({"sentence": "test"})}
     response = translation_handler(event, None)
     assert response.get("statusCode") == 200
