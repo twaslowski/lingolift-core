@@ -10,7 +10,7 @@ from shared.model.syntactical_analysis import (
 )
 from spacy.tokens.token import Token
 
-from lingolift.nlp.language_detection import llm_detect_language
+from lingolift.nlp.language_detection import detect_language
 
 models = {
     "DE": "de_core_news_sm",
@@ -31,7 +31,7 @@ def perform_analysis(
     :return:
     """
     if not language_code:
-        language_code = str(llm_detect_language(sentence))
+        language_code = str(detect_language(sentence))
     try:
         model = models[language_code]
         nlp = spacy.load(model)

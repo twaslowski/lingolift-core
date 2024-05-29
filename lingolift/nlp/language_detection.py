@@ -1,8 +1,6 @@
 from lingua import Language, LanguageDetectorBuilder
 from shared.exception import LanguageNotIdentifiedException
 
-from lingolift.llm.message import SYSTEM, USER, Message
-
 MIN_DISTANCE = 0.6
 LANGUAGES = [
     Language.SPANISH,
@@ -18,14 +16,6 @@ DETECTOR = (
     .build()
 )
 
-SYSTEM_PROMPT = """Identify the language of a sentence.
-Return a JSON containing the ISO-639 Part 1 code of that language.
-Your response should look like this:
-{"iso_code": "DE"}
-"""
-
-USER_PROMPT = "Identify the language of the following sentence: "
-
 
 def detect_language(sentence: str) -> str:
     language = DETECTOR.detect_language_of(sentence)
@@ -33,12 +23,3 @@ def detect_language(sentence: str) -> str:
         raise LanguageNotIdentifiedException()
     else:
         return str(language.iso_code_639_1).split(".")[1]
-
-
-def llm_detect_language(sentence: str) -> str:
-    context = [
-        Message(role=SYSTEM, content=SYSTEM_PROMPT),
-        Message(role=USER, content=USER_PROMPT + sentence),
-    ]
-    response = parse_response(openai_exchange(context, json_mode=True))
-    return response.get("iso_code").upper()

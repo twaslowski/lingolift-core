@@ -15,6 +15,7 @@ class TranslationGenerator(AbstractGenerator):
         Generate a translation for a sentence from an arbitrary language into English.
         Additionally identify the source language, represented as an ISO-3166 alpha-2 code.
         :param sentence: Sentence to translate.
+        :raises LanguageNotFoundError implicitly: if iso639 cannot find the language code.
         :return: Translation object
         """
         messages = [
