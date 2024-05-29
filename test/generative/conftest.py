@@ -3,7 +3,7 @@ import pytest
 from lingolift.generative.literal_translation import LiteralTranslationGenerator
 from lingolift.generative.response_suggestion import ResponseSuggestionGenerator
 from lingolift.generative.translation import TranslationGenerator
-from lingolift.llm.gpt_adapter import OpenAIAdapter
+from lingolift.llm.openai_adapter import OpenAIAdapter
 
 
 @pytest.fixture

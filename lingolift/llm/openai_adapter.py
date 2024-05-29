@@ -14,7 +14,7 @@ class OpenAIAdapter(AbstractLLMAdapter):
     def exchange(
         self,
         messages: list[Message],
-        model_name: str = "gpt-3.5-turbo-1106",
+        model_name: str = "gpt-4o",
         json_mode: bool = False,
     ) -> dict | str:
         """

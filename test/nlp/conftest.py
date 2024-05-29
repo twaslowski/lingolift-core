@@ -1,7 +1,7 @@
 import pytest
 
 from lingolift.generative.morphology_generator import MorphologyGenerator
-from lingolift.llm.gpt_adapter import OpenAIAdapter
+from lingolift.llm.openai_adapter import OpenAIAdapter
 from lingolift.nlp.morphologizer import Morphologizer
 
 

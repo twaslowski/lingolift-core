@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from lingolift.llm.gpt_adapter import OpenAIAdapter
+from lingolift.llm.abstract_adapter import AbstractLLMAdapter
 
 
 class AbstractGenerator(ABC):
@@ -8,8 +8,8 @@ class AbstractGenerator(ABC):
     Abstract base class for all generative tasks in the lingolift application.
     """
 
-    gpt_adapter: OpenAIAdapter
+    llm_adapter: AbstractLLMAdapter
 
     @abstractmethod
-    def __init__(self, gpt_adapter: OpenAIAdapter):
-        self.gpt_adapter = gpt_adapter
+    def __init__(self, llm_adapter: AbstractLLMAdapter):
+        self.llm_adapter = llm_adapter
