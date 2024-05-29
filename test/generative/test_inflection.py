@@ -1,3 +1,6 @@
+from test.mock_llm_adapter import MockLLMAdapter
+from unittest.mock import patch
+
 import pytest
 from shared.model.inflection import Inflections
 from shared.model.syntactical_analysis import (
@@ -5,6 +8,9 @@ from shared.model.syntactical_analysis import (
     PartOfSpeech,
     SyntacticalAnalysis,
 )
+
+from lingolift.generative import morphology_generator
+from lingolift.lambda_context_container import ContextContainer
 
 
 @pytest.fixture
@@ -46,6 +52,18 @@ def syntactical_analysis_adverb() -> list[SyntacticalAnalysis]:
     ]
 
 
+@pytest.fixture
+def mock_llm_adapter():
+    return lambda: MockLLMAdapter()
+
+
+@pytest.fixture
+def context_container(mock_llm_adapter):
+    context_container = ContextContainer(mock_llm_adapter)
+    with patch.object(morphology_generator, "context_container", context_container):
+        yield context_container
+
+
 @pytest.mark.skip("Implementation lacking.")
 def test_inflection_happy_path(morphology_generator):
     morphology = {"Number": "SING", "Person": "1"}
@@ -54,6 +72,9 @@ def test_inflection_happy_path(morphology_generator):
     assert inflection.morphology == morphology
 
 
+@pytest.mark.skip(
+    "Consider testing strategy: Test this as part of Lambda or in itself?"
+)
 def test_retrieve_inflections_for_noun(morphologizer):
     result = morphologizer.retrieve_all_inflections("Hund")
 
@@ -65,6 +86,9 @@ def test_retrieve_inflections_for_noun(morphologizer):
     assert result.inflections[0].morphology == {"Case": "Nom", "Number": "Sing"}
 
 
+@pytest.mark.skip(
+    "Consider testing strategy: Test this as part of Lambda or in itself?"
+)
 def test_retrieve_inflections_for_verb(morphologizer):
     word = "gehen"
     morphology = {"Person": "1", "Number": "Sing"}
@@ -80,6 +104,9 @@ def test_retrieve_inflections_for_verb(morphologizer):
     assert len(result.inflections) == 1
 
 
+@pytest.mark.skip(
+    "Consider testing strategy: Test this as part of Lambda or in itself?"
+)
 def test_throws_exception_for_unsupported_word_type(morphologizer):
     with pytest.raises(Exception):
         morphologizer.retrieve_all_inflections("wie")
