@@ -6,8 +6,6 @@ from shared.model.syntactical_analysis import (
     SyntacticalAnalysis,
 )
 
-import lingolift.nlp.morphologizer as morphologizer
-
 
 @pytest.fixture
 def syntactical_analysis_noun() -> list[SyntacticalAnalysis]:
@@ -49,31 +47,14 @@ def syntactical_analysis_adverb() -> list[SyntacticalAnalysis]:
 
 
 @pytest.mark.skip("Implementation lacking.")
-def test_inflection_happy_path(mocker):
-    mocker.patch(
-        "lingolift.nlp.morphologizer.openai_exchange", return_value="word_infl"
-    )
-    morphology = {"A": "B", "C": "D"}
-    inflection = morphologizer.inflect("word", morphology)
-    assert inflection.word == "word_infl"
+def test_inflection_happy_path(morphology_generator):
+    morphology = {"Number": "SING", "Person": "1"}
+    inflection = morphology_generator.inflect("some-word", morphology)
+    assert inflection.word == "some-word-inflection"
     assert inflection.morphology == morphology
 
 
-def test_retrieve_inflections_for_noun(mocker, syntactical_analysis_noun):
-    mocker.patch(
-        "lingolift.nlp.morphologizer.perform_analysis",
-        return_value=syntactical_analysis_noun,
-    )
-    mocker.patch(
-        "lingolift.nlp.morphologizer.generate_feature_permutations",
-        return_value=[{"Case": "Nom", "Number": "Sing"}],
-    )
-    mocker.patch(
-        "lingolift.nlp.morphologizer.inflect",
-        return_value=morphologizer.Inflection(
-            word="Hund", morphology={"Case": "Nom", "Number": "Sing"}
-        ),
-    )
+def test_retrieve_inflections_for_noun(morphologizer):
     result = morphologizer.retrieve_all_inflections("Hund")
 
     assert isinstance(result, Inflections)
@@ -84,22 +65,14 @@ def test_retrieve_inflections_for_noun(mocker, syntactical_analysis_noun):
     assert result.inflections[0].morphology == {"Case": "Nom", "Number": "Sing"}
 
 
-def test_retrieve_inflections_for_verb(mocker, syntactical_analysis_verb):
-    mocker.patch(
-        "lingolift.nlp.morphologizer.perform_analysis",
-        return_value=syntactical_analysis_verb,
-    )
-    mocker.patch(
-        "lingolift.nlp.morphologizer.generate_feature_permutations",
-        return_value=[{"Person": "1", "Number": "Sing"}],
-    )
-    mocker.patch(
-        "lingolift.nlp.morphologizer.inflect",
-        return_value=morphologizer.Inflection(
-            word="gehe", morphology={"Person": "1", "Number": "Sing"}
-        ),
-    )
-    result = morphologizer.retrieve_all_inflections("gehen")
+def test_retrieve_inflections_for_verb(morphologizer):
+    word = "gehen"
+    morphology = {"Person": "1", "Number": "Sing"}
+    # Given exactly one feature permutation (as opposed to the whole six for a verb)
+    morphologizer._generate_feature_permutations = lambda pos_tag: [morphology]
+
+    # When retrieving inflections for a verb
+    result = morphologizer.retrieve_all_inflections(word)
 
     assert isinstance(result, Inflections)
     assert result.pos.value == "VERB"
@@ -107,12 +80,6 @@ def test_retrieve_inflections_for_verb(mocker, syntactical_analysis_verb):
     assert len(result.inflections) == 1
 
 
-def test_throws_exception_for_unsupported_word_type(
-    mocker, syntactical_analysis_adverb
-):
-    mocker.patch(
-        "lingolift.nlp.morphologizer.perform_analysis",
-        return_value=syntactical_analysis_adverb,
-    )
+def test_throws_exception_for_unsupported_word_type(morphologizer):
     with pytest.raises(Exception):
         morphologizer.retrieve_all_inflections("wie")

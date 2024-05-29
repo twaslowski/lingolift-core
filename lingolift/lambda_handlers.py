@@ -2,7 +2,12 @@ import json
 import logging
 
 import iso639
-from shared.exception import *
+from shared.exception import (
+    ApplicationException,
+    LanguageNotAvailableException,
+    LanguageNotIdentifiedException,
+    SentenceTooLongException,
+)
 
 from lingolift.lambda_context_container import ContextContainer
 from lingolift.nlp.syntactical_analysis import perform_analysis

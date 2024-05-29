@@ -1,25 +1,5 @@
 #!/usr/bin/env bash
 
-
-## quality-gates: Quick and easy quality confirmations
-function task_quality_gates {
-  set -e
-  task_fmt
-  task_type_check
-  task_test
-}
-
-## formatting: Applies formatting
-function task_fmt {
-  poetry run isort .
-  poetry run black .
-}
-
-## type-check: Runs mypy static type analysis
-function task_type_check {
-  poetry run mypy
-}
-
 ## test: Runs unit tests
 function task_test {
   poetry run coverage run -m pytest
@@ -32,6 +12,9 @@ function task_coverage() {
   poetry run coverage-badge -f -o test/coverage.svg
 }
 
+function task_pc() {
+  poetry run pre-commit run --all-files
+}
 
 #-------- All task definitions go above this line --------#
 

@@ -10,6 +10,13 @@ class MorphologyGenerator(AbstractGenerator):
         super().__init__(gpt_adapter)
 
     def inflect(self, word: str, morphology: dict[str, str]) -> Inflection:
+        """
+        Inflects a word according to the given morphology. For example, the German word "gehen" with the features
+        Person=1 Number=1 would yield the inflection "gehe".
+        :param word: The word to be inflected.
+        :param morphology: The morphology to inflect the word with.
+        :return:
+        """
         prompt = "Inflect the following word according to the CoNNL-U Universal Feature Tags: {}, {}"
         msg = Message(
             role="user",
