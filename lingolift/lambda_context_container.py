@@ -4,7 +4,7 @@ from lingolift.generative.literal_translation import LiteralTranslationGenerator
 from lingolift.generative.morphology_generator import MorphologyGenerator
 from lingolift.generative.response_suggestion import ResponseSuggestionGenerator
 from lingolift.generative.translation import TranslationGenerator
-from lingolift.llm.gpt_adapter import GPTAdapter
+from lingolift.llm.gpt_adapter import OpenAIAdapter
 from lingolift.nlp.morphologizer import Morphologizer
 
 
@@ -15,7 +15,7 @@ class ContextContainer:
     Previously this would have to be done with monkey-patching or global variables; this is a cleaner solution.
     """
 
-    gpt_adapter: GPTAdapter
+    gpt_adapter: OpenAIAdapter
     translation_generator: TranslationGenerator
     literal_translation_generator: LiteralTranslationGenerator
     response_suggestion_generator: ResponseSuggestionGenerator
@@ -35,6 +35,6 @@ class ContextContainer:
         self.morphologizer = Morphologizer(self.morphology_generator)
 
     @staticmethod
-    def initialize_gpt_adapter() -> GPTAdapter:
+    def initialize_gpt_adapter() -> OpenAIAdapter:
         openai_api_key = os.getenv("OPENAI_API_KEY")
-        return GPTAdapter(openai_api_key)
+        return OpenAIAdapter(openai_api_key)

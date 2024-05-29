@@ -3,14 +3,15 @@ import logging
 import json5 as json
 from openai import OpenAI
 
+from lingolift.llm.abstract_adapter import AbstractLLMAdapter
 from lingolift.llm.message import Message
 
 
-class GPTAdapter:
+class OpenAIAdapter(AbstractLLMAdapter):
     def __init__(self, api_key: str, base_url: str = "https://api.openai.com/v1/"):
         self.client = OpenAI(api_key=api_key, base_url=base_url)
 
-    def openai_exchange(
+    def exchange(
         self,
         messages: list[Message],
         model_name: str = "gpt-3.5-turbo-1106",

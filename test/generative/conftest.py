@@ -3,12 +3,12 @@ import pytest
 from lingolift.generative.literal_translation import LiteralTranslationGenerator
 from lingolift.generative.response_suggestion import ResponseSuggestionGenerator
 from lingolift.generative.translation import TranslationGenerator
-from lingolift.llm.gpt_adapter import GPTAdapter
+from lingolift.llm.gpt_adapter import OpenAIAdapter
 
 
 @pytest.fixture
-def gpt_adapter() -> GPTAdapter:
-    adapter = GPTAdapter(api_key="some-token", base_url="http://localhost:5002/v1/")
+def gpt_adapter() -> OpenAIAdapter:
+    adapter = OpenAIAdapter(api_key="some-token", base_url="http://localhost:5002/v1/")
     return adapter
 
 

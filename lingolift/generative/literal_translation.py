@@ -6,14 +6,14 @@ from shared.exception import SentenceTooLongException
 from shared.model.literal_translation import LiteralTranslation
 
 from lingolift.generative.abstract_generator import AbstractGenerator
-from lingolift.llm.gpt_adapter import GPTAdapter
+from lingolift.llm.gpt_adapter import OpenAIAdapter
 from lingolift.llm.message import SYSTEM, USER, Message
 
 LITERAL_TRANSLATION_MAX_UNIQUE_WORDS = 15
 
 
 class LiteralTranslationGenerator(AbstractGenerator):
-    def __init__(self, gpt_adapter: GPTAdapter):
+    def __init__(self, gpt_adapter: OpenAIAdapter):
         super().__init__(gpt_adapter)
 
     def generate_literal_translation(self, sentence: str) -> list[LiteralTranslation]:
@@ -65,7 +65,7 @@ class LiteralTranslationGenerator(AbstractGenerator):
         # OpenAI's JSON mode enforces a root level object
         # I want to return a list here, therefore JSON mode doesn't work
         response = self.gpt_adapter.parse_response(
-            self.gpt_adapter.openai_exchange(context, json_mode=False)
+            self.gpt_adapter.exchange(context, json_mode=False)
         )
 
         return [LiteralTranslation(**word) for word in response]

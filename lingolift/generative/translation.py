@@ -2,12 +2,12 @@ import iso639
 from shared.model.translation import Translation
 
 from lingolift.generative.abstract_generator import AbstractGenerator
-from lingolift.llm.gpt_adapter import GPTAdapter
+from lingolift.llm.gpt_adapter import OpenAIAdapter
 from lingolift.llm.message import SYSTEM, USER, Message
 
 
 class TranslationGenerator(AbstractGenerator):
-    def __init__(self, gpt_adapter: GPTAdapter):
+    def __init__(self, gpt_adapter: OpenAIAdapter):
         super().__init__(gpt_adapter)
 
     def generate_translation(self, sentence: str) -> Translation:
@@ -22,7 +22,7 @@ class TranslationGenerator(AbstractGenerator):
             Message(role=USER, content=TRANSLATION_USER_PROMPT + sentence),
         ]
         response = self.gpt_adapter.parse_response(
-            self.gpt_adapter.openai_exchange(messages=messages, json_mode=True)
+            self.gpt_adapter.exchange(messages=messages, json_mode=True)
         )
         response["language_name"] = iso639.Language.from_part1(
             response["language_code"].lower()

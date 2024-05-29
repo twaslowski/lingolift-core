@@ -1,12 +1,12 @@
 from shared.model.inflection import Inflection
 
 from lingolift.generative.abstract_generator import AbstractGenerator
-from lingolift.llm.gpt_adapter import GPTAdapter
+from lingolift.llm.gpt_adapter import OpenAIAdapter
 from lingolift.llm.message import Message
 
 
 class MorphologyGenerator(AbstractGenerator):
-    def __init__(self, gpt_adapter: GPTAdapter):
+    def __init__(self, gpt_adapter: OpenAIAdapter):
         super().__init__(gpt_adapter)
 
     def inflect(self, word: str, morphology: dict[str, str]) -> Inflection:
@@ -22,7 +22,7 @@ class MorphologyGenerator(AbstractGenerator):
             role="user",
             content=prompt.format(word, self.stringify_morphology(morphology)),
         )
-        result = self.gpt_adapter.openai_exchange(
+        result = self.gpt_adapter.exchange(
             [msg], model_name="ft:gpt-3.5-turbo-1106:tobiorg::8npM4Pcf", json_mode=False
         )
         return Inflection(**{"word": result, "morphology": morphology})

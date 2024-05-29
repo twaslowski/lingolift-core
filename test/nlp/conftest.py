@@ -1,13 +1,13 @@
 import pytest
 
 from lingolift.generative.morphology_generator import MorphologyGenerator
-from lingolift.llm.gpt_adapter import GPTAdapter
+from lingolift.llm.gpt_adapter import OpenAIAdapter
 from lingolift.nlp.morphologizer import Morphologizer
 
 
 @pytest.fixture
-def gpt_adapter() -> GPTAdapter:
-    adapter = GPTAdapter(api_key="some-token", base_url="http://localhost:5002/v1/")
+def gpt_adapter() -> OpenAIAdapter:
+    adapter = OpenAIAdapter(api_key="some-token", base_url="http://localhost:5002/v1/")
     return adapter
 
 

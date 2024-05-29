@@ -1,11 +1,14 @@
 import json
+import os
 
+import pytest
 from iso639 import LanguageNotFoundError
 from shared.exception import ApplicationException, LanguageNotIdentifiedException
 from shared.model.literal_translation import LiteralTranslation
 from shared.model.response_suggestion import ResponseSuggestion
 from shared.model.translation import Translation
 
+from lingolift.lambda_context_container import ContextContainer
 from lingolift.lambda_handlers import (
     literal_translation_handler,
     response_suggestion_handler,
@@ -13,7 +16,14 @@ from lingolift.lambda_handlers import (
 )
 
 
-def test_translation_handler_happy_path():
+@pytest.fixture
+def context_container():
+    # Set the OPENAI_API_KEY environment variable to avoid errors
+    os.environ["OPENAI_API_KEY"] = "test"
+    return ContextContainer()
+
+
+def test_translation_handler_happy_path(context_container):
     event = {"body": json.dumps({"sentence": "test"})}
     response = translation_handler(event, None)
     assert response.get("statusCode") == 200
