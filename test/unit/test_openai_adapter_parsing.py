@@ -1,4 +1,14 @@
-def test_parse_gpt_response(gpt_adapter):
+import pytest
+
+from lingolift.llm.openai_adapter import OpenAIAdapter
+
+
+@pytest.fixture
+def openai_adapter():
+    return OpenAIAdapter("some-token")
+
+
+def test_parse_gpt_response(openai_adapter):
     happy_path = """{
         "literal_translation": "Hello! How are you?",
         "words": [
@@ -24,11 +34,11 @@ def test_parse_gpt_response(gpt_adapter):
             }
         ]
     }"""
-    result = gpt_adapter.parse_response(happy_path)
+    result = openai_adapter.parse_response(happy_path)
     assert isinstance(result, dict)
 
 
-def test_parser_manages_trailing_commas(gpt_adapter):
+def test_parser_manages_trailing_commas(openai_adapter):
     happy_path = """{
         "literal_translation": "Hello! How are you?",
         "words": [
@@ -54,5 +64,5 @@ def test_parser_manages_trailing_commas(gpt_adapter):
             }
         ]
     }"""
-    result = gpt_adapter.parse_response(happy_path)
+    result = openai_adapter.parse_response(happy_path)
     assert isinstance(result, dict)

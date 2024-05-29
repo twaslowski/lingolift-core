@@ -1,13 +1,6 @@
 import pytest
 from shared.exception import SentenceTooLongException
 
-from lingolift.generative.literal_translation import LiteralTranslationGenerator
-
-
-@pytest.fixture
-def literal_translation_generator(gpt_adapter):
-    return LiteralTranslationGenerator(gpt_adapter)
-
 
 def test_chunking_size_two(literal_translation_generator):
     assert literal_translation_generator._chunk_sentence(

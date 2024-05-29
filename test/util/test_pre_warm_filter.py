@@ -2,7 +2,7 @@ import json
 
 import pytest
 
-from lingolift.util.lambda_proxy_return import check_pre_warm
+from lingolift.util.lambda_proxy import check_pre_warm
 
 
 @pytest.fixture

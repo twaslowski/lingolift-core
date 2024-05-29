@@ -11,7 +11,7 @@ from shared.exception import (
 
 from lingolift.lambda_context_container import ContextContainer
 from lingolift.nlp.syntactical_analysis import perform_analysis
-from lingolift.util.lambda_proxy_return import check_pre_warm, fail, ok
+from lingolift.util.lambda_proxy import check_pre_warm, fail, ok
 
 """
 This module contains the handlers for the AWS Lambda functions that are responsible for the generative tasks of the
