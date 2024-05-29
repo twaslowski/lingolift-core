@@ -1,5 +1,6 @@
 import json
-import os
+from test.mock_llm_adapter import MockLLMAdapter
+from unittest.mock import patch
 
 import pytest
 from iso639 import LanguageNotFoundError
@@ -8,6 +9,7 @@ from shared.model.literal_translation import LiteralTranslation
 from shared.model.response_suggestion import ResponseSuggestion
 from shared.model.translation import Translation
 
+import lingolift.lambda_handlers
 from lingolift.lambda_context_container import ContextContainer
 from lingolift.lambda_handlers import (
     literal_translation_handler,
@@ -17,25 +19,45 @@ from lingolift.lambda_handlers import (
 
 
 @pytest.fixture
-def context_container():
-    # Set the OPENAI_API_KEY environment variable to avoid errors
-    os.environ["OPENAI_API_KEY"] = "test"
-    return ContextContainer()
+def mock_llm_adapter():
+    return lambda: MockLLMAdapter()
+
+
+@pytest.fixture
+def context_container(mock_llm_adapter):
+    context_container = ContextContainer(mock_llm_adapter)
+    with patch.object(
+        lingolift.lambda_handlers, "context_container", context_container
+    ):
+        yield context_container
+
+
+def set_llm_response(context_container: ContextContainer, response: dict):
+    context_container.llm_adapter.next_response(json.dumps(response))  # noqa
 
 
 def test_translation_handler_happy_path(context_container):
+    # Given the LLM Adapter returns a translation
+    set_llm_response(
+        context_container,
+        {"translation": "Where is the Library?", "language_code": "ES"},
+    )
+
+    # When a translation request is received
     event = {"body": json.dumps({"sentence": "test"})}
     response = translation_handler(event, None)
+
+    # Then the translation is sucessful
     assert response.get("statusCode") == 200
     t = Translation(**json.loads(response.get("body")))
-    assert t.translation == "test"
-    assert t.language_name == "test"
-    assert t.language_code == "test"
+    assert t.translation == "Where is the Library?"
+    assert t.language_name == "Spanish"
+    assert t.language_code == "ES"
 
 
 def test_translation_handler_unhappy_path(mocker):
     mocker.patch(
-        "lingolift.lambda_functions_generative.generate_translation",
+        "lingolift.lambda_functions.generate_translation",
         side_effect=LanguageNotFoundError,
     )
 

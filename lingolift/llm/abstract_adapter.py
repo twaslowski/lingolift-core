@@ -12,5 +12,10 @@ class AbstractLLMAdapter(ABC):
 
     @staticmethod
     @abstractmethod
-    def parse_response(self, gpt_response: str) -> dict:
-        pass
+    def parse_response(gpt_response: str) -> dict:
+        """
+        Parse the response from an LLM.
+        Remove potential hallucinations from the response and load the JSON.
+        :param gpt_response: the string response from the model
+        :return:
+        """
