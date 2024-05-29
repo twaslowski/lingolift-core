@@ -1,5 +1,4 @@
 import os
-from typing import Callable
 
 from lingolift.generative.literal_translation import LiteralTranslationGenerator
 from lingolift.generative.morphology_generator import MorphologyGenerator
@@ -24,12 +23,8 @@ class ContextContainer:
     morphology_generator: MorphologyGenerator
     morphologizer: Morphologizer
 
-    def __init__(self, gpt_adapter_factory: Callable = None):
-        self.llm_adapter = (
-            gpt_adapter_factory()
-            if gpt_adapter_factory
-            else self.default_openai_adapter()
-        )
+    def __init__(self, llm_adapter: AbstractLLMAdapter = None):
+        self.llm_adapter = llm_adapter or self.default_openai_adapter()
         self.translation_generator = TranslationGenerator(self.llm_adapter)
         self.literal_translation_generator = LiteralTranslationGenerator(
             self.llm_adapter

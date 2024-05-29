@@ -1,17 +1,12 @@
 import json
-from test.mock_llm_adapter import MockLLMAdapter
-from unittest.mock import patch
 
 import pytest
 from iso639 import LanguageNotFoundError
 from shared.exception import ApplicationException, LanguageNotIdentifiedException
-from shared.model.inflection import Inflections
 from shared.model.literal_translation import LiteralTranslation
 from shared.model.response_suggestion import ResponseSuggestion
-from shared.model.syntactical_analysis import PartOfSpeech
 from shared.model.translation import Translation
 
-import lingolift.lambda_handlers
 from lingolift.lambda_context_container import ContextContainer
 from lingolift.lambda_handlers import (
     inflection_handler,
@@ -20,40 +15,6 @@ from lingolift.lambda_handlers import (
     syntactical_analysis_handler,
     translation_handler,
 )
-
-
-@pytest.fixture
-def mock_llm_adapter():
-    return lambda: MockLLMAdapter()
-
-
-@pytest.fixture
-def context_container(mock_llm_adapter):
-    context_container = ContextContainer(mock_llm_adapter)
-    with patch.object(
-        lingolift.lambda_handlers, "context_container", context_container
-    ):
-        yield context_container
-
-
-@pytest.fixture
-def real_event():
-    return {
-        # one event for both lambdas; additional fields don't cause issues
-        "body": json.dumps({"sentence": "This is a test.", "word": "test"})
-    }
-
-
-@pytest.fixture
-def pre_warm_event():
-    return {"body": json.dumps({"pre_warm": "true"})}
-
-
-@pytest.fixture
-def inflections():
-    return Inflections(
-        pos=PartOfSpeech(value="VERB", explanation=""), gender=None, inflections=[]
-    )
 
 
 def set_llm_response(context_container: ContextContainer, response: list | dict):
