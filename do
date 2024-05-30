@@ -56,8 +56,9 @@ function task_build_core_lambdas() {
     cp -r lingolift/llm \
       lingolift/generative \
       lingolift/util \
-      lingolift/lambda_handlers.py \
-      lingolift/lambda_context_container.py \
+      lingolift/core_lambda_context_container.py \
+      lingolift/abstract_context_container.py \
+      lingolift/core_lambda_handlers.py \
       package_core/lingolift
     cd package_core && zip -r ../package_core.zip .
 }
