@@ -65,4 +65,4 @@ Thumbs.db
 # test coverage
 .coverage
 test/coverage.xml
-package
+package*

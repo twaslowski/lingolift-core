@@ -1,13 +1,13 @@
-module "generative_dependencies_layer" {
+module "core_dependencies" {
   source = "terraform-aws-modules/lambda/aws"
 
   create_layer = true
 
-  layer_name          = "lingolift-generative-deps-layer-${var.environment}"
-  description         = "Layer containing core dependencies like openai"
+  layer_name          = "lingolift-core-dependencies-layer-${var.environment}"
+  description         = "Core dependencies for non-NLP related tasks, including lingolift-shared and the OpenAI SDK"
   compatible_runtimes = ["python3.11"]
 
 
   create_package         = false
-  local_existing_package = "../package_generative_deps.zip"
+  local_existing_package = "../package_core_dependencies.zip"
 }

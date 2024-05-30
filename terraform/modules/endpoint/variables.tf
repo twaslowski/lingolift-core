@@ -22,6 +22,8 @@ variable "openai_api_key" {
 
 variable "handler" {
   type = string
+  default = ""
+  description = "Entrypoint for the Lambda. Not required for dockerized Lambda functions."
 }
 
 variable "package_type" {

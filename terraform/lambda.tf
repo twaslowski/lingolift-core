@@ -7,9 +7,9 @@ module "translation" {
   name                   = "translation"
   local_existing_package = "../package_generative.zip"
   layers                 = [
-    module.generative_dependencies_layer.lambda_layer_arn
+    module.core_dependencies.lambda_layer_arn
   ]
-  handler        = "lambda_functions_generative.translation_handler"
+  handler        = "lambda_handlers.translation_handler"
   openai_api_key = var.openai_api_key
 }
 
@@ -22,9 +22,9 @@ module "literal_translation" {
   name                   = "literal-translation"
   local_existing_package = "../package_generative.zip"
   layers                 = [
-    module.generative_dependencies_layer.lambda_layer_arn
+    module.core_dependencies.lambda_layer_arn
   ]
-  handler        = "lambda_functions_generative.literal_translation_handler"
+  handler        = "lambda_handlers.literal_translation_handler"
   openai_api_key = var.openai_api_key
 }
 
@@ -38,9 +38,9 @@ module "response_suggestion" {
   name                   = "response-suggestion"
   local_existing_package = "../package_generative.zip"
   layers                 = [
-    module.generative_dependencies_layer.lambda_layer_arn
+    module.core_dependencies.lambda_layer_arn
   ]
-  handler        = "lambda_functions_generative.response_suggestion_handler"
+  handler        = "lambda_handlers.response_suggestion_handler"
   openai_api_key = var.openai_api_key
 }
 
@@ -56,7 +56,6 @@ module "syntactical_analysis" {
 
   memory = 2048
 
-  handler        = "lambda_functions_generative.response_suggestion_handler"
   openai_api_key = var.openai_api_key
 }
 
@@ -72,6 +71,5 @@ module "inflection" {
 
   memory = 2048
 
-  handler        = "lambda_functions_generative.response_suggestion_handler"
   openai_api_key = var.openai_api_key
 }
