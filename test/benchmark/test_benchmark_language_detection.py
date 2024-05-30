@@ -1,4 +1,4 @@
-from lingolift.nlp.language_detection import detect_language
+from lingolift.nlp.lingua_language_detector import detect_language
 
 
 # todo this process needs to become more reliable

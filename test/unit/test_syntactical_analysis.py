@@ -1,16 +1,10 @@
-import pytest
-
 from lingolift.nlp.syntactical_analysis import perform_analysis
 
 
-@pytest.mark.skip("Mocking broken. Fix via dependency injection.")
-def test_happy_path(mocker):
-    mocker.patch(
-        "lingolift.nlp.syntactical_analysis.llm_detect_language", return_value="DE"
-    )
+def test_happy_path():
     # Perform one comprehensive test, because analyses are quite slow.
     sentence = "Satzzeichen werden nicht gezählt."
-    result = list(perform_analysis(sentence))
+    result = list(perform_analysis(sentence, "DE"))
 
     # ensure punctuation tokens are omitted from the analysis
     assert len(result) == 4

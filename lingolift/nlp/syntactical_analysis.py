@@ -10,7 +10,8 @@ from shared.model.syntactical_analysis import (
 )
 from spacy.tokens.token import Token
 
-from lingolift.nlp.language_detection import detect_language
+from lingolift.nlp.abstract_language_detector import AbstractLanguageDetector
+from lingolift.nlp.lingua_language_detector import LinguaLanguageDetector
 
 models = {
     "DE": "de_core_news_sm",
@@ -22,16 +23,19 @@ models = {
 
 
 def perform_analysis(
-    sentence: str, language_code: Optional[str] = None
+    sentence: str,
+    language_code: Optional[str] = None,
+    language_detector: AbstractLanguageDetector = LinguaLanguageDetector(),
 ) -> list[SyntacticalAnalysis]:
     """
     Performs a syntactical analysis on a sentence in a given language.
+    :param language_detector: LanguageDetector to detect languages if language code is not provided.
     :param language_code: Can optionally be supplied to override the language detection.
     :param sentence: Source sentence
     :return:
     """
     if not language_code:
-        language_code = str(detect_language(sentence))
+        language_code = str(language_detector.detect_language(sentence))
     try:
         model = models[language_code]
         nlp = spacy.load(model)
