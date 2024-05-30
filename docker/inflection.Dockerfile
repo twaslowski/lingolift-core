@@ -12,4 +12,4 @@ COPY lingolift ./
 COPY package/requirements.txt ./
 RUN pip install -r requirements.txt
 
-CMD [ "nlp_lambda_handlers.inflection_handler" ]
+CMD [ "lingolift.nlp_lambda_handlers.inflection_handler" ]
