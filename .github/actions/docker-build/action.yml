@@ -27,6 +27,11 @@ runs:
       with:
         python-version: 3.11.6
 
+    - name: Export requirements.txt
+      shell: bash
+      run: |
+        ./do export_requirements --with nlp
+
     - name: Set up QEMU
       uses: docker/setup-qemu-action@v3
 
