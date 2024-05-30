@@ -147,7 +147,6 @@ def test_inflection_regular_call(context_container, real_event):
     assert response["statusCode"] == 200
     body = json.loads(response["body"])
     inflections = Inflections(**body)
-    print(inflections)
 
     assert len(inflections.inflections) == 8  # for a noun
     assert inflections.inflections[0].word == "Hund"
