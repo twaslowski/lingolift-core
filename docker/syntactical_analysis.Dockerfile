@@ -12,4 +12,4 @@ COPY lingolift ./
 COPY package/requirements.txt ./
 RUN pip install -r requirements.txt
 
-CMD [ "lambda_handlers.syntactical_analysis_handler" ]
+CMD [ "nlp_lambda_handlers.syntactical_analysis_handler" ]
