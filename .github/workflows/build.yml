@@ -267,7 +267,7 @@ jobs:
         run: ./do build_core_lambda_dependencies
 
       - name: Build core lambda function zip
-        run: ./do build_core_lambda
+        run: ./do build_core_lambdas
 
       - name: deploy terraform
         env:
