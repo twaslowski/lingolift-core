@@ -5,7 +5,7 @@ from typing import Tuple
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 
-from lingolift.lambda_handlers import (
+from lingolift.core_lambda_handlers import (
     literal_translation_handler,
     response_suggestion_handler,
     translation_handler,

@@ -1,14 +1,16 @@
+from test.integration.conftest import set_llm_response
+
 import pytest
 from shared.model.inflection import Inflections
 
 
-def test_retrieve_inflections_for_noun(morphologizer, mock_llm_adapter):
+def test_retrieve_inflections_for_noun(morphologizer, nlp_context_container):
     """
     Performs an actual analysis of the word "Hund" with spaCy; only the LLM inflection responses are mocked.
     """
 
     # Mock: Inflected word will be "Hund" for all feature sets for simplicity's sake
-    mock_llm_adapter.next_response("Hund")
+    set_llm_response(nlp_context_container, "Hund")
 
     # Given a noun to be inflected
     result = morphologizer.retrieve_all_inflections("Hund")

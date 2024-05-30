@@ -3,7 +3,7 @@ import logging
 
 from shared.exception import LanguageNotIdentifiedException, SentenceTooLongException
 
-from lingolift.lambda_context_container import ContextContainer
+from lingolift.core_lambda_context_container import CoreLambdaContextContainer
 from lingolift.util.lambda_proxy import fail, ok
 
 """
@@ -21,7 +21,7 @@ logger = logging.getLogger("root")
 logger.setLevel(logging.INFO)
 
 # instantiate context object
-context_container = ContextContainer()
+context_container = CoreLambdaContextContainer()
 
 
 def translation_handler(event, _):

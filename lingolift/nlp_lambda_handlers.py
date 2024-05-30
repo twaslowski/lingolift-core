@@ -6,9 +6,8 @@ from shared.exception import (
     LanguageNotIdentifiedException,
 )
 
-from lingolift.lambda_context_container import ContextContainer
-from lingolift.lambda_handlers import context_container
 from lingolift.nlp.syntactical_analysis import perform_analysis
+from lingolift.nlp_lambda_context_container import NLPLambdaContextContainer
 from lingolift.util.lambda_proxy import check_pre_warm, fail, ok
 
 """
@@ -23,7 +22,7 @@ logger = logging.getLogger("root")
 logger.setLevel(logging.INFO)
 
 # instantiate context object
-context_container = ContextContainer()
+context_container = NLPLambdaContextContainer()
 
 
 def syntactical_analysis_handler(event, _) -> dict:

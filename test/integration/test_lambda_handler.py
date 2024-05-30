@@ -1,4 +1,5 @@
 import json
+from test.integration.conftest import set_llm_response
 
 from shared.exception import ApplicationException, LanguageNotIdentifiedException
 from shared.model.inflection import Inflections
@@ -6,32 +7,21 @@ from shared.model.literal_translation import LiteralTranslation
 from shared.model.response_suggestion import ResponseSuggestion
 from shared.model.translation import Translation
 
-from lingolift.lambda_context_container import ContextContainer
-from lingolift.lambda_handlers import (
+from lingolift.core_lambda_handlers import (
     literal_translation_handler,
     response_suggestion_handler,
     translation_handler,
 )
-from lingolift.lambda_handlers_nlp import (
+from lingolift.nlp_lambda_handlers import (
     inflection_handler,
     syntactical_analysis_handler,
 )
 
 
-def set_llm_response(context_container: ContextContainer, response: str):
-    """
-    Set the response for the mocked LLM Adapter.
-    :param context_container: context container holding the LLM adapter and wider application context
-    :param response: JSON-like object
-    :return:
-    """
-    context_container.llm_adapter.next_response(response)
-
-
-def test_translation_handler_happy_path(context_container):
+def test_translation_handler_happy_path(core_context_container):
     # Given the LLM Adapter returns a translation
     set_llm_response(
-        context_container,
+        core_context_container,
         json.dumps({"translation": "Where is the Library?", "language_code": "ES"}),
     )
 
@@ -47,10 +37,10 @@ def test_translation_handler_happy_path(context_container):
     assert t.language_code == "ES"
 
 
-def test_translation_handler_language_not_identified(context_container):
+def test_translation_handler_language_not_identified(core_context_container):
     # Given the LLM Adapter returns a language not identified exception
     set_llm_response(
-        context_container,
+        core_context_container,
         json.dumps(
             {
                 "translation": "Where is the Library?",
@@ -66,10 +56,10 @@ def test_translation_handler_language_not_identified(context_container):
     assert e.error_message == LanguageNotIdentifiedException().error_message
 
 
-def test_literal_translation_handler_happy_path(context_container):
+def test_literal_translation_handler_happy_path(core_context_container):
     # Given the LLM Adapter returns a literal translation
     set_llm_response(
-        context_container, json.dumps([{"word": "test", "translation": "test"}])
+        core_context_container, json.dumps([{"word": "test", "translation": "test"}])
     )
 
     # When a literal translation request is received
@@ -84,10 +74,10 @@ def test_literal_translation_handler_happy_path(context_container):
     assert translations[0].translation == "test"
 
 
-def test_response_suggestions_happy_path(context_container):
+def test_response_suggestions_happy_path(core_context_container):
     # Given the LLM Adapter returns a response suggestion
     set_llm_response(
-        context_container,
+        core_context_container,
         json.dumps(
             {
                 "response_suggestions": [
@@ -116,7 +106,7 @@ def test_pre_warm_syntactical_analysis(pre_warm_event):
     assert json.loads(response["body"]) == {"pre-warmed": "true"}
 
 
-def test_syntactical_analysis_real_event(real_event, context_container):
+def test_syntactical_analysis_real_event(real_event, core_context_container):
     response = syntactical_analysis_handler(real_event, None)
 
     assert response["statusCode"] == 200
@@ -139,9 +129,9 @@ def test_pre_warm_inflection(pre_warm_event):
     assert json.loads(response["body"]) == {"pre-warmed": "true"}
 
 
-def test_inflection_regular_call(context_container, real_event):
+def test_inflection_regular_call(nlp_context_container, real_event):
     set_llm_response(
-        context_container,
+        nlp_context_container,
         "Hund",
     )
     response = inflection_handler(real_event, None)
