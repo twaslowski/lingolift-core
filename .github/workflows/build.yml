@@ -139,6 +139,8 @@ jobs:
   build_inflection_docker:
     needs: test
     runs-on: ubuntu-latest
+    env:
+      AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
     steps:
       - name: checkout
         uses: actions/checkout@v4
@@ -148,6 +150,10 @@ jobs:
         with:
           role-to-assume: arn:aws:iam::246770851643:role/github-actions
           aws-region: eu-central-1
+
+      - name: Fetch ECR credentials
+        id: ecr
+        uses: aws-actions/amazon-ecr-login@v2
 
       - name: Set up Python 3.11
         id: setup-python
@@ -176,6 +182,43 @@ jobs:
         with:
           path: .venv
           key: venv-${{ runner.os }}-${{ steps.setup-python.outputs.python-version }}-${{ hashFiles('**/poetry.lock') }}
+
+      - name: Export requirements.txt
+        run: |
+          ./do export_requirements --with nlp
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Docker meta
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: |
+            246770851643.dkr.ecr.eu-central-1.amazonaws.com/inflection-lambda-dev
+            246770851643.dkr.ecr.eu-central-1.amazonaws.com/inflection-lambda-prod
+          flavor: |
+            latest=true
+          # generate Docker tags based on the following events/attributes
+          tags: |
+            type=ref,event=pr
+            type=semver,pattern={{version}}
+            type=sha
+
+      - name: Build and push
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./docker/inflection.Dockerfile
+          platforms: linux/amd64
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
 
   deploy_dev_infrastructure:
     needs: [build_syntactical_analysis_docker, build_inflection_docker]
