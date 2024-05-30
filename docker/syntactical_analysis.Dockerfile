@@ -3,7 +3,7 @@ FROM public.ecr.aws/lambda/python:3.11.2024.02.07.18
 RUN yum install -y git
 
 # Set up a working directory
-WORKDIR /lingolift
+WORKDIR /var/task
 
 # Copy project
 COPY lingolift/generative ./generative/
