@@ -4,13 +4,13 @@ from itertools import product
 from shared.model.inflection import Inflections
 from shared.universal_features import get_all_feature_instances
 
-from lingolift.generative.morphology_generator import MorphologyGenerator
+from lingolift.generative.inflection_generator import InflectionGenerator
 from lingolift.nlp.syntactical_analysis import perform_analysis
 from lingolift.util.timing import timed
 
 
 class Morphologizer:
-    def __init__(self, morphology_generator: MorphologyGenerator):
+    def __init__(self, morphology_generator: InflectionGenerator):
         self.morphology_generator = morphology_generator
 
     @timed

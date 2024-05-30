@@ -1,9 +1,7 @@
 import json
 import logging
 
-import iso639
 from shared.exception import (
-    ApplicationException,
     LanguageNotAvailableException,
     LanguageNotIdentifiedException,
     SentenceTooLongException,
@@ -40,9 +38,9 @@ def translation_handler(event, _):
             sentence
         )
         return ok(response.model_dump())
-    except iso639.LanguageNotFoundError:
+    except LanguageNotIdentifiedException as e:
         logger.error(f"Language for sentence {sentence} could not be identified.")
-        return fail(LanguageNotIdentifiedException(), 400)
+        return fail(e, 400)
 
 
 def response_suggestion_handler(event, _):
@@ -76,12 +74,15 @@ def syntactical_analysis_handler(event, _) -> dict:
         return pre_warm_response
     body = json.loads(event.get("body"))
     sentence = body.get("sentence")
-    logger.info(f"Received sentence, language: {sentence}")
+    language_code = body.get("language_code")
+    logger.info(
+        f"Received sentence, language: {sentence}, language_code: {language_code}"
+    )
     try:
-        analyses = perform_analysis(sentence)
+        analyses = perform_analysis(sentence, language_code)
         return ok([a.model_dump() for a in analyses])
-    except LanguageNotAvailableException as e:
-        return fail(ApplicationException(e.error_message), 400)
+    except (LanguageNotAvailableException, LanguageNotIdentifiedException) as e:
+        return fail(e, 400)
 
 
 def inflection_handler(event, _) -> dict:

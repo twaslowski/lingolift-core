@@ -1,8 +1,7 @@
 import json
 
-import pytest
-from iso639 import LanguageNotFoundError
 from shared.exception import ApplicationException, LanguageNotIdentifiedException
+from shared.model.inflection import Inflections
 from shared.model.literal_translation import LiteralTranslation
 from shared.model.response_suggestion import ResponseSuggestion
 from shared.model.translation import Translation
@@ -17,21 +16,21 @@ from lingolift.lambda_handlers import (
 )
 
 
-def set_llm_response(context_container: ContextContainer, response: list | dict):
+def set_llm_response(context_container: ContextContainer, response: str):
     """
     Set the response for the mocked LLM Adapter.
     :param context_container: context container holding the LLM adapter and wider application context
     :param response: JSON-like object
     :return:
     """
-    context_container.llm_adapter.next_response(json.dumps(response))  # noqa
+    context_container.llm_adapter.next_response(response)
 
 
 def test_translation_handler_happy_path(context_container):
     # Given the LLM Adapter returns a translation
     set_llm_response(
         context_container,
-        {"translation": "Where is the Library?", "language_code": "ES"},
+        json.dumps({"translation": "Where is the Library?", "language_code": "ES"}),
     )
 
     # When a translation request is received
@@ -46,11 +45,16 @@ def test_translation_handler_happy_path(context_container):
     assert t.language_code == "ES"
 
 
-@pytest.mark.skip("Mocking broken. Fix via dependency injection.")
-def test_translation_handler_unhappy_path(mocker):
-    mocker.patch(
-        "lingolift.lambda_functions.generate_translation",
-        side_effect=LanguageNotFoundError,
+def test_translation_handler_language_not_identified(context_container):
+    # Given the LLM Adapter returns a language not identified exception
+    set_llm_response(
+        context_container,
+        json.dumps(
+            {
+                "translation": "Where is the Library?",
+                "language_code": "XY",
+            }
+        ),
     )
 
     event = {"body": json.dumps({"sentence": "test"})}
@@ -62,7 +66,9 @@ def test_translation_handler_unhappy_path(mocker):
 
 def test_literal_translation_handler_happy_path(context_container):
     # Given the LLM Adapter returns a literal translation
-    set_llm_response(context_container, [{"word": "test", "translation": "test"}])
+    set_llm_response(
+        context_container, json.dumps([{"word": "test", "translation": "test"}])
+    )
 
     # When a literal translation request is received
     event = {"body": json.dumps({"sentence": "test"})}
@@ -80,11 +86,13 @@ def test_response_suggestions_happy_path(context_container):
     # Given the LLM Adapter returns a response suggestion
     set_llm_response(
         context_container,
-        {
-            "response_suggestions": [
-                {"suggestion": "test", "translation": "test"},
-            ]
-        },
+        json.dumps(
+            {
+                "response_suggestions": [
+                    {"suggestion": "test", "translation": "test"},
+                ]
+            }
+        ),
     )
 
     # When a response suggestion request is received
@@ -106,29 +114,20 @@ def test_pre_warm_syntactical_analysis(pre_warm_event):
     assert json.loads(response["body"]) == {"pre-warmed": "true"}
 
 
-@pytest.mark.skip("Not sure what this is actually supposed to test.")
-def test_syntactical_analysis_regular_call(real_event, mocker):
-    mocker.patch("lingolift.lambda_functions_nlp.perform_analysis", return_value=[])
+def test_syntactical_analysis_real_event(real_event, context_container):
     response = syntactical_analysis_handler(real_event, None)
 
     assert response["statusCode"] == 200
-    assert json.loads(response["body"]) == []
+    body = json.loads(response["body"])
+    assert len(body) == 4
 
-    lambda_functions_nlp.perform_analysis.assert_called_once()
 
-
-@pytest.mark.skip("Mocking broken. Fix via dependency injection.")
-def test_syntactical_analysis_regular_call_with_exception(real_event, mocker):
-    mocker.patch(
-        "lambda_functions_nlp.perform_analysis",
-        side_effect=LanguageNotAvailableException(),
-    )
+def test_syntactical_analysis_regular_call_with_exception(real_event):
+    real_event["body"] = json.dumps({"sentence": "bleep blurp"})
     response = syntactical_analysis_handler(real_event, None)
 
     assert response["statusCode"] == 400
     assert "error_message" in json.loads(response["body"])
-
-    lambda_functions_nlp.perform_analysis.assert_called_once()
 
 
 def test_pre_warm_inflection(pre_warm_event):
@@ -138,15 +137,17 @@ def test_pre_warm_inflection(pre_warm_event):
     assert json.loads(response["body"]) == {"pre-warmed": "true"}
 
 
-@pytest.mark.skip("Not sure what this is actually supposed to test.")
-def test_inflection_regular_call(real_event, mocker, inflections):
-    mocker.patch(
-        "lambda_functions_nlp.retrieve_all_inflections",
-        return_value=inflections,
+def test_inflection_regular_call(context_container, real_event):
+    set_llm_response(
+        context_container,
+        "Hund",
     )
     response = inflection_handler(real_event, None)
 
     assert response["statusCode"] == 200
-    assert json.loads(response["body"]) == inflections.model_dump()
+    body = json.loads(response["body"])
+    inflections = Inflections(**body)
+    print(inflections)
 
-    lambda_handler.retrieve_all_inflections.assert_called_once()
+    assert len(inflections.inflections) == 8  # for a noun
+    assert inflections.inflections[0].word == "Hund"

@@ -1,4 +1,5 @@
 import iso639
+from shared.exception import LanguageNotIdentifiedException
 from shared.model.translation import Translation
 
 from lingolift.generative.abstract_generator import AbstractGenerator
@@ -27,10 +28,21 @@ class TranslationGenerator(AbstractGenerator):
                 messages=messages, json_mode=True, model_name="gpt-4o"
             )
         )
-        response["language_name"] = iso639.Language.from_part1(
-            response["language_code"].lower()
-        ).name
+        response["language_name"] = language_name_from_code(response["language_code"])
         return Translation(**response)
+
+
+def language_name_from_code(language_code: str) -> str:
+    """
+    Get the language name from the language code.
+    :param language_code: ISO-3166 alpha-2 code
+    :raises LanguageNotFoundError: if the language code is not found.
+    :return: Language name
+    """
+    try:
+        return iso639.Language.from_part1(language_code.lower()).name
+    except iso639.LanguageNotFoundError:
+        raise LanguageNotIdentifiedException()
 
 
 TRANSLATION_SYSTEM_PROMPT = """

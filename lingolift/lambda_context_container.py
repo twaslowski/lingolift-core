@@ -1,7 +1,7 @@
 import os
 
+from lingolift.generative.inflection_generator import InflectionGenerator
 from lingolift.generative.literal_translation import LiteralTranslationGenerator
-from lingolift.generative.morphology_generator import MorphologyGenerator
 from lingolift.generative.response_suggestion import ResponseSuggestionGenerator
 from lingolift.generative.translation import TranslationGenerator
 from lingolift.llm.abstract_adapter import AbstractLLMAdapter
@@ -20,7 +20,7 @@ class ContextContainer:
     translation_generator: TranslationGenerator
     literal_translation_generator: LiteralTranslationGenerator
     response_suggestion_generator: ResponseSuggestionGenerator
-    morphology_generator: MorphologyGenerator
+    morphology_generator: InflectionGenerator
     morphologizer: Morphologizer
 
     def __init__(self, llm_adapter: AbstractLLMAdapter = None):
@@ -32,7 +32,7 @@ class ContextContainer:
         self.response_suggestion_generator = ResponseSuggestionGenerator(
             self.llm_adapter
         )
-        self.morphology_generator = MorphologyGenerator(self.llm_adapter)
+        self.morphology_generator = InflectionGenerator(self.llm_adapter)
         self.morphologizer = Morphologizer(self.morphology_generator)
 
     @staticmethod

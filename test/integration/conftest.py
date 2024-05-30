@@ -5,7 +5,7 @@ from unittest.mock import patch
 import pytest
 
 from lingolift import lambda_handlers
-from lingolift.generative.morphology_generator import MorphologyGenerator
+from lingolift.generative.inflection_generator import InflectionGenerator
 from lingolift.lambda_context_container import ContextContainer
 from lingolift.nlp.morphologizer import Morphologizer
 
@@ -23,7 +23,7 @@ def context_container(mock_llm_adapter):
 
 
 @pytest.fixture
-def morphology_generator(context_container) -> MorphologyGenerator:
+def morphology_generator(context_container) -> InflectionGenerator:
     return context_container.morphology_generator
 
 
@@ -36,17 +36,12 @@ def morphologizer(context_container) -> Morphologizer:
 def real_event():
     return {
         # one event for both lambdas; additional fields don't cause issues
-        "body": json.dumps({"sentence": "This is a test.", "word": "test"})
+        "body": json.dumps(
+            {"sentence": "Das ist ein Test", "word": "Test", "language_code": "DE"}
+        )
     }
 
 
 @pytest.fixture
 def pre_warm_event():
     return {"body": json.dumps({"pre_warm": "true"})}
-
-
-# @pytest.fixture
-# def inflections():
-#     return Inflections(
-#         pos=PartOfSpeech(value="VERB", explanation=""), gender=None, inflections=[]
-#     )

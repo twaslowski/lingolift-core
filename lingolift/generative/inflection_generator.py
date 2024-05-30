@@ -5,7 +5,7 @@ from lingolift.llm.abstract_adapter import AbstractLLMAdapter
 from lingolift.llm.message import Message
 
 
-class MorphologyGenerator(AbstractGenerator):
+class InflectionGenerator(AbstractGenerator):
     def __init__(self, llm_adapter: AbstractLLMAdapter):
         super().__init__(llm_adapter)
 
