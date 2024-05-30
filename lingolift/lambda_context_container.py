@@ -37,5 +37,12 @@ class ContextContainer:
 
     @staticmethod
     def default_openai_adapter() -> OpenAIAdapter:
-        openai_api_key = os.getenv("OPENAI_API_KEY")
+        """
+        Creates a default OpenAIAdapter instance.
+        Notably, the "NO_KEY_PROVIDED" fallback is used to allow for testing without an API key.
+        It defers the error message if the key is not provided to the OpenAIAdapter
+        until when the first request is made.
+        :return:
+        """
+        openai_api_key = os.getenv("OPENAI_API_KEY", "NO_KEY_PROVIDED")
         return OpenAIAdapter(openai_api_key)
