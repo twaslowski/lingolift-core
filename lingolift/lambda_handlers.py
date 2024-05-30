@@ -1,15 +1,10 @@
 import json
 import logging
 
-from shared.exception import (
-    LanguageNotAvailableException,
-    LanguageNotIdentifiedException,
-    SentenceTooLongException,
-)
+from shared.exception import LanguageNotIdentifiedException, SentenceTooLongException
 
 from lingolift.lambda_context_container import ContextContainer
-from lingolift.nlp.syntactical_analysis import perform_analysis
-from lingolift.util.lambda_proxy import check_pre_warm, fail, ok
+from lingolift.util.lambda_proxy import fail, ok
 
 """
 This module contains the handlers for the AWS Lambda functions that are responsible for the generative tasks of the
@@ -67,28 +62,3 @@ def literal_translation_handler(event, _):
     except SentenceTooLongException as e:
         logger.error(f"Sentence {sentence} too long for literal translation.")
         return fail(e, 400)
-
-
-def syntactical_analysis_handler(event, _) -> dict:
-    if pre_warm_response := check_pre_warm(event):
-        return pre_warm_response
-    body = json.loads(event.get("body"))
-    sentence = body.get("sentence")
-    language_code = body.get("language_code")
-    logger.info(
-        f"Received sentence, language: {sentence}, language_code: {language_code}"
-    )
-    try:
-        analyses = perform_analysis(sentence, language_code)
-        return ok([a.model_dump() for a in analyses])
-    except (LanguageNotAvailableException, LanguageNotIdentifiedException) as e:
-        return fail(e, 400)
-
-
-def inflection_handler(event, _) -> dict:
-    if pre_warm_response := check_pre_warm(event):
-        return pre_warm_response
-    body = json.loads(event.get("body"))
-    word = body.get("word")
-    inflections = context_container.morphologizer.retrieve_all_inflections(word)
-    return ok(inflections.model_dump())

@@ -9,7 +9,7 @@ module "translation" {
   layers                 = [
     module.core_dependencies.lambda_layer_arn
   ]
-  handler        = "lambda_handlers.translation_handler"
+  handler        = "lingolift.lambda_handlers.translation_handler"
   openai_api_key = var.openai_api_key
 }
 
@@ -24,7 +24,7 @@ module "literal_translation" {
   layers                 = [
     module.core_dependencies.lambda_layer_arn
   ]
-  handler        = "lambda_handlers.literal_translation_handler"
+  handler        = "lingolift.lambda_handlers.literal_translation_handler"
   openai_api_key = var.openai_api_key
 }
 
@@ -40,7 +40,7 @@ module "response_suggestion" {
   layers                 = [
     module.core_dependencies.lambda_layer_arn
   ]
-  handler        = "lambda_handlers.response_suggestion_handler"
+  handler        = "lingolift.lambda_handlers.response_suggestion_handler"
   openai_api_key = var.openai_api_key
 }
 

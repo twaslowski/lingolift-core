@@ -17,37 +17,10 @@ jobs:
       - name: checkout
         uses: actions/checkout@v4
 
-      - name: Set up Python 3.11
-        id: setup-python
-        uses: actions/setup-python@v5
+      - name: Setup Python and Poetry
+        uses: ./.github/actions/setup-python-poetry
         with:
           python-version: 3.11.6
-
-      - name: Load cached poetry
-        id: cached-poetry
-        uses: actions/cache@v4
-        with:
-          path: ~/.local
-          key: dotlocal-${{ runner.os }}-${{ hashFiles('**/poetry.lock') }}
-
-      - name: Install and configure Poetry
-        if: steps.cached-poetry.outputs.cache-hit != 'true'
-        uses: snok/install-poetry@v1
-        with:
-          virtualenvs-create: true
-          virtualenvs-in-project: true
-          installer-parallel: true
-
-      - name: Load cached venv
-        id: cached-poetry-dependencies
-        uses: actions/cache@v4
-        with:
-          path: .venv
-          key: venv-${{ runner.os }}-${{ steps.setup-python.outputs.python-version }}-${{ hashFiles('**/poetry.lock') }}
-
-      - name: Install dependencies
-        if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
-        run: poetry install --no-interaction --no-root --with dev
 
       - name: Run tests
         run: ./do test
@@ -61,81 +34,11 @@ jobs:
       - name: checkout
         uses: actions/checkout@v4
 
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v4
+      - name: Docker Build and Push
+        uses: ./.github/actions/docker-build
         with:
-          role-to-assume: arn:aws:iam::246770851643:role/github-actions
-          aws-region: eu-central-1
-
-      - name: Fetch ECR credentials
-        id: ecr
-        uses: aws-actions/amazon-ecr-login@v2
-
-      - name: Set up Python 3.11
-        id: setup-python
-        uses: actions/setup-python@v5
-        with:
-          python-version: 3.11.6
-
-      - name: Load cached poetry
-        id: cached-poetry
-        uses: actions/cache@v4
-        with:
-          path: ~/.local
-          key: dotlocal-${{ runner.os }}-${{ hashFiles('**/poetry.lock') }}
-
-      - name: Install and configure Poetry
-        if: steps.cached-poetry.outputs.cache-hit != 'true'
-        uses: snok/install-poetry@v1
-        with:
-          virtualenvs-create: true
-          virtualenvs-in-project: true
-          installer-parallel: true
-
-      - name: Load cached venv
-        id: cached-poetry-dependencies
-        uses: actions/cache@v4
-        with:
-          path: .venv
-          key: venv-${{ runner.os }}-${{ steps.setup-python.outputs.python-version }}-${{ hashFiles('**/poetry.lock') }}
-
-      - name: Export requirements.txt
-        run: |
-          ./do export_requirements --with nlp
-
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
-      - name: Docker meta
-        id: meta
-        uses: docker/metadata-action@v5
-        with:
-          images: |
-            246770851643.dkr.ecr.eu-central-1.amazonaws.com/syntactical_analysis-lambda-dev
-            246770851643.dkr.ecr.eu-central-1.amazonaws.com/syntactical_analysis-lambda-prod
-          flavor: |
-            latest=true
-          # generate Docker tags based on the following events/attributes
-          tags: |
-            type=ref,event=pr
-            type=semver,pattern={{version}}
-            type=sha
-
-      - name: Build and push
-        uses: docker/build-push-action@v5
-        with:
-          context: .
-          file: ./docker/syntactical_analysis.Dockerfile
-          provenance: false
-          platforms: linux/amd64
-          push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          dockerfile: ./docker/syntactical_analysis.Dockerfile
+          image-name: syntactical_analysis-lambda
 
   build_inflection_docker:
     needs: test
@@ -146,81 +49,11 @@ jobs:
       - name: checkout
         uses: actions/checkout@v4
 
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v4
+      - name: Docker Build and Push
+        uses: ./.github/actions/docker-build
         with:
-          role-to-assume: arn:aws:iam::246770851643:role/github-actions
-          aws-region: eu-central-1
-
-      - name: Fetch ECR credentials
-        id: ecr
-        uses: aws-actions/amazon-ecr-login@v2
-
-      - name: Set up Python 3.11
-        id: setup-python
-        uses: actions/setup-python@v5
-        with:
-          python-version: 3.11.6
-
-      - name: Load cached poetry
-        id: cached-poetry
-        uses: actions/cache@v4
-        with:
-          path: ~/.local
-          key: dotlocal-${{ runner.os }}-${{ hashFiles('**/poetry.lock') }}
-
-      - name: Install and configure Poetry
-        if: steps.cached-poetry.outputs.cache-hit != 'true'
-        uses: snok/install-poetry@v1
-        with:
-          virtualenvs-create: true
-          virtualenvs-in-project: true
-          installer-parallel: true
-
-      - name: Load cached venv
-        id: cached-poetry-dependencies
-        uses: actions/cache@v4
-        with:
-          path: .venv
-          key: venv-${{ runner.os }}-${{ steps.setup-python.outputs.python-version }}-${{ hashFiles('**/poetry.lock') }}
-
-      - name: Export requirements.txt
-        run: |
-          ./do export_requirements --with nlp
-
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
-      - name: Docker meta
-        id: meta
-        uses: docker/metadata-action@v5
-        with:
-          images: |
-            246770851643.dkr.ecr.eu-central-1.amazonaws.com/inflection-lambda-dev
-            246770851643.dkr.ecr.eu-central-1.amazonaws.com/inflection-lambda-prod
-          flavor: |
-            latest=true
-          # generate Docker tags based on the following events/attributes
-          tags: |
-            type=ref,event=pr
-            type=semver,pattern={{version}}
-            type=sha
-
-      - name: Build and push
-        uses: docker/build-push-action@v5
-        with:
-          context: .
-          file: ./docker/inflection.Dockerfile
-          provenance: false
-          platforms: linux/amd64
-          push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          dockerfile: ./docker/inflection.Dockerfile
+          image-name: inflection-lambda
 
   deploy_dev_infrastructure:
     needs: [build_syntactical_analysis_docker, build_inflection_docker]
@@ -237,33 +70,10 @@ jobs:
           role-to-assume: arn:aws:iam::246770851643:role/github-actions
           aws-region: eu-central-1
 
-      - name: Set up Python 3.11
-        id: setup-python
-        uses: actions/setup-python@v5
+      - name: Setup Python and Poetry
+        uses: ./.github/actions/setup-python-poetry
         with:
           python-version: 3.11.6
-
-      - name: Load cached poetry
-        id: cached-poetry
-        uses: actions/cache@v4
-        with:
-          path: ~/.local
-          key: dotlocal-${{ runner.os }}-${{ hashFiles('**/poetry.lock') }}
-
-      - name: Install and configure Poetry
-        if: steps.cached-poetry.outputs.cache-hit != 'true'
-        uses: snok/install-poetry@v1
-        with:
-          virtualenvs-create: true
-          virtualenvs-in-project: true
-          installer-parallel: true
-
-      - name: Load cached venv
-        id: cached-poetry-dependencies
-        uses: actions/cache@v4
-        with:
-          path: .venv
-          key: venv-${{ runner.os }}-${{ steps.setup-python.outputs.python-version }}-${{ hashFiles('**/poetry.lock') }}
 
       - name: Build core dependency layer zip
         run: ./do build_core_lambda_dependencies
@@ -284,33 +94,10 @@ jobs:
       - name: checkout
         uses: actions/checkout@v4
 
-      - name: Set up Python 3.11
-        id: setup-python
-        uses: actions/setup-python@v5
+      - name: Setup Python and Poetry
+        uses: ./.github/actions/setup-python-poetry
         with:
           python-version: 3.11.6
-
-      - name: Load cached poetry
-        id: cached-poetry
-        uses: actions/cache@v4
-        with:
-          path: ~/.local
-          key: dotlocal-${{ runner.os }}-${{ hashFiles('**/poetry.lock') }}
-
-      - name: Install and configure Poetry
-        if: steps.cached-poetry.outputs.cache-hit != 'true'
-        uses: snok/install-poetry@v1
-        with:
-          virtualenvs-create: true
-          virtualenvs-in-project: true
-          installer-parallel: true
-
-      - name: Load cached venv
-        id: cached-poetry-dependencies
-        uses: actions/cache@v4
-        with:
-          path: .venv
-          key: venv-${{ runner.os }}-${{ steps.setup-python.outputs.python-version }}-${{ hashFiles('**/poetry.lock') }}
 
       - name: Smoke test
         env:

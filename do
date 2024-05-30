@@ -52,8 +52,13 @@ function task_deploy() {
 
 ## build_core_lambdas: packages and zips non-dockerized lambda functions (translation, literal-translation, response suggestions)
 function task_build_core_lambdas() {
-    mkdir -p package_core
-    cp -r lingolift/lambda_handlers.py lingolift/generative lingolift/llm lingolift/util package_core
+    mkdir -p package_core/lingolift
+    cp -r lingolift/llm \
+      lingolift/generative \
+      lingolift/util \
+      lingolift/lambda_handlers.py \
+      lingolift/lambda_context_container.py \
+      package_core/lingolift
     cd package_core && zip -r ../package_core.zip .
 }
 
@@ -71,8 +76,8 @@ function task_build_core_lambda_dependencies() {
   cd "${PACKAGE_DIRECTORY}" && zip -r "../${PACKAGE_DIRECTORY}.zip" . && cd ..
 }
 
-## clean_lambda_packages: Removes all
-function task_clean_lambda_packages() {
+## clean: Removes all lambda package files
+function task_clean() {
   rm -rf package*
 }
 

@@ -1,0 +1,61 @@
+name: 'Docker Build and Push'
+description: 'Build and push Docker image with caching'
+
+inputs:
+  dockerfile:
+    description: 'Path to the Dockerfile'
+    required: true
+  image-name:
+    description: 'Name of the Docker image'
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        role-to-assume: arn:aws:iam::246770851643:role/github-actions
+        aws-region: eu-central-1
+
+    - name: Fetch ECR credentials
+      id: ecr
+      uses: aws-actions/amazon-ecr-login@v2
+
+    - name: Setup Python and Poetry
+      uses: ./.github/actions/setup-python-poetry
+      with:
+        python-version: 3.11.6
+
+    - name: Set up QEMU
+      uses: docker/setup-qemu-action@v3
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+
+    - name: Docker meta
+      id: meta
+      uses: docker/metadata-action@v5
+      with:
+        images: |
+          246770851643.dkr.ecr.eu-central-1.amazonaws.com/${{ inputs.image-name }}-dev
+          246770851643.dkr.ecr.eu-central-1.amazonaws.com/${{ inputs.image-name }}-prod
+        flavor: |
+          latest=true
+        tags: |
+          type=ref,event=pr
+          type=semver,pattern={{version}}
+          type=sha
+
+    - name: Build and push
+      uses: docker/build-push-action@v5
+      with:
+        context: .
+        file: ${{ inputs.dockerfile }}
+        provenance: false
+        platforms: linux/amd64
+        push: true
+        tags: ${{ steps.meta.outputs.tags }}
+        labels: ${{ steps.meta.outputs.labels }}
+        cache-from: type=gha
+        cache-to: type=gha,mode=max

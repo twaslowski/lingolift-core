@@ -8,11 +8,13 @@ from shared.model.translation import Translation
 
 from lingolift.lambda_context_container import ContextContainer
 from lingolift.lambda_handlers import (
-    inflection_handler,
     literal_translation_handler,
     response_suggestion_handler,
-    syntactical_analysis_handler,
     translation_handler,
+)
+from lingolift.lambda_handlers_nlp import (
+    inflection_handler,
+    syntactical_analysis_handler,
 )
 
 

@@ -4,7 +4,7 @@ from unittest.mock import patch
 
 import pytest
 
-from lingolift import lambda_handlers
+from lingolift import lambda_handlers, lambda_handlers_nlp
 from lingolift.generative.inflection_generator import InflectionGenerator
 from lingolift.lambda_context_container import ContextContainer
 from lingolift.nlp.morphologizer import Morphologizer
@@ -19,7 +19,8 @@ def mock_llm_adapter():
 def context_container(mock_llm_adapter):
     context_container = ContextContainer(mock_llm_adapter)
     with patch.object(lambda_handlers, "context_container", context_container):
-        yield context_container
+        with patch.object(lambda_handlers_nlp, "context_container", context_container):
+            yield context_container
 
 
 @pytest.fixture

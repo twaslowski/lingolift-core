@@ -104,9 +104,3 @@ def pos_tags_to_dict(token: Token) -> dict[str, str]:
     """
     tags = str(token.morph).split("|")
     return {tag.split("=")[0]: tag.split("=")[1] for tag in tags if tag != ""}
-
-
-if __name__ == "__main__":
-    response = list(perform_analysis("Das ist ein Test."))
-    for r in response:
-        print(r.stringify())
