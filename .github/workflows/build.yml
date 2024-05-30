@@ -67,6 +67,10 @@ jobs:
           role-to-assume: arn:aws:iam::246770851643:role/github-actions
           aws-region: eu-central-1
 
+      - name: Fetch ECR credentials
+        id: ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
       - name: Set up Python 3.11
         id: setup-python
         uses: actions/setup-python@v5
@@ -221,10 +225,6 @@ jobs:
         with:
           role-to-assume: arn:aws:iam::246770851643:role/github-actions
           aws-region: eu-central-1
-
-      - name: Fetch ECR credentials
-        id: ecr
-        uses: aws-actions/amazon-ecr-login@v2
 
       - name: Set up Python 3.11
         uses: actions/setup-python@v5
