@@ -52,7 +52,7 @@ module "syntactical_analysis" {
 
   name         = "syntactical-analysis"
   package_type = "Image"
-  image_uri    = "${module.syntactical_analysis_repository.repository_url}:${var.commit_sha}"
+  image_uri    = "${module.syntactical_analysis_repository.repository_url}:sha-${var.commit_sha}"
 
   memory = 2048
 
@@ -67,7 +67,7 @@ module "inflection" {
 
   name         = "inflection"
   package_type = "Image"
-  image_uri    = "${module.inflection_repository.repository_url}:${var.commit_sha}"
+  image_uri    = "${module.inflection_repository.repository_url}:sha-${var.commit_sha}"
 
   memory = 2048
 
