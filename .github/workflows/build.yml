@@ -99,6 +99,12 @@ jobs:
         run: |
           ./do export_requirements --with nlp
 
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
       - name: Docker meta
         id: meta-ecr
         uses: docker/metadata-action@v5
