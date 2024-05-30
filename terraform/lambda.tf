@@ -5,7 +5,7 @@ module "translation" {
   root_resource_id       = aws_api_gateway_rest_api.lingolift_api.root_resource_id
   runtime                = "python3.11"
   name                   = "translation"
-  local_existing_package = "../package_generative.zip"
+  local_existing_package = "../package_core.zip"
   layers                 = [
     module.core_dependencies.lambda_layer_arn
   ]
@@ -20,7 +20,7 @@ module "literal_translation" {
   root_resource_id       = aws_api_gateway_rest_api.lingolift_api.root_resource_id
   runtime                = "python3.11"
   name                   = "literal-translation"
-  local_existing_package = "../package_generative.zip"
+  local_existing_package = "../package_core.zip"
   layers                 = [
     module.core_dependencies.lambda_layer_arn
   ]
@@ -36,7 +36,7 @@ module "response_suggestion" {
 
   runtime                = "python3.11"
   name                   = "response-suggestion"
-  local_existing_package = "../package_generative.zip"
+  local_existing_package = "../package_core.zip"
   layers                 = [
     module.core_dependencies.lambda_layer_arn
   ]
