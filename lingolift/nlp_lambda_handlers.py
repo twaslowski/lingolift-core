@@ -1,14 +1,13 @@
 import json
 import logging
 
+from nlp.syntactical_analysis import perform_analysis
+from nlp_lambda_context_container import NLPLambdaContextContainer
 from shared.exception import (
     LanguageNotAvailableException,
     LanguageNotIdentifiedException,
 )
-
-from lingolift.nlp.syntactical_analysis import perform_analysis
-from lingolift.nlp_lambda_context_container import NLPLambdaContextContainer
-from lingolift.util.lambda_proxy import check_pre_warm, fail, ok
+from util.lambda_proxy import check_pre_warm, fail, ok
 
 """
 The split into lambda_handlers and lambda_handlers_nlp is unfortunately required.
