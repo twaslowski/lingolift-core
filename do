@@ -16,6 +16,13 @@ function task_pc() {
   poetry run pre-commit run --all-files
 }
 
+function task_export_requirements() {
+  # Export requirements to package/requirements.txt
+  # Any additional input arguments are passed to poetry export, such as `--with dev`.
+  mkdir package
+  poetry export -f requirements.txt -o package/requirements.txt --without-hashes "$@"
+}
+
 #-------- All task definitions go above this line --------#
 
 function task_usage {
