@@ -5,6 +5,10 @@ function task_test {
   poetry run coverage run -m pytest
 }
 
+function task_smoke_test() {
+  poetry run pytest test/smoketest.py
+}
+
 ## coverage: Generates test coverage report
 function task_coverage() {
   task_test

@@ -129,6 +129,7 @@ jobs:
         with:
           context: .
           file: ./docker/syntactical_analysis.Dockerfile
+          provenance: false
           platforms: linux/amd64
           push: true
           tags: ${{ steps.meta.outputs.tags }}
@@ -213,6 +214,7 @@ jobs:
         with:
           context: .
           file: ./docker/inflection.Dockerfile
+          provenance: false
           platforms: linux/amd64
           push: true
           tags: ${{ steps.meta.outputs.tags }}
