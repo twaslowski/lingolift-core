@@ -118,6 +118,17 @@ jobs:
           role-to-assume: arn:aws:iam::246770851643:role/github-actions
           aws-region: eu-central-1
 
+      - name: Setup Python and Poetry
+        uses: ./.github/actions/setup-python-poetry
+        with:
+          python-version: 3.11.6
+
+      - name: Build core dependency layer zip
+        run: ./do build_core_lambda_dependencies
+
+      - name: Build core lambda function zip
+        run: ./do build_core_lambdas
+
       - name: Deploy prod
         env:
           TF_VAR_openai_api_key: ${{ secrets.OPENAI_API_KEY }}
