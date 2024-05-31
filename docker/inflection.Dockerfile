@@ -2,21 +2,20 @@ FROM public.ecr.aws/lambda/python:3.11.2024.02.07.18
 
 RUN yum install -y git
 
-ENV LAMBDA_TASK_ROOT=/var/task/lingolift
 ENV PYTHONPATH=/var/task/
 
 # Set up a working directory
-WORKDIR /var/task/lingolift
+WORKDIR /var/task
 
 # Copy project
-COPY lingolift/generative ./generative/
-COPY lingolift/llm ./llm/
-COPY lingolift/util ./util/
-COPY lingolift/nlp ./nlp/
+COPY lingolift/generative ./lingolift/generative/
+COPY lingolift/llm ./lingolift/llm/
+COPY lingolift/util ./lingolift/util/
+COPY lingolift/nlp ./lingolift/nlp/
 
-COPY lingolift/nlp_lambda_handlers.py .
-COPY lingolift/abstract_context_container.py .
-COPY lingolift/nlp_lambda_context_container.py .
+COPY lingolift/nlp_lambda_handlers.py ./nlp_lambda_handlers.py
+COPY lingolift/abstract_context_container.py ./lingolift/abstract_context_container.py
+COPY lingolift/nlp_lambda_context_container.py ./lingolift/nlp_lambda_context_container.py
 
 # Install dependencies
 COPY package/requirements.txt ./
