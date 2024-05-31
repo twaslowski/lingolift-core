@@ -2570,7 +2570,7 @@ testing = ["build[virtualenv] (>=1.0.3)", "filelock (>=3.4.0)", "importlib-metad
 
 [[package]]
 name = "shared"
-version = "0.5.0"
+version = "0.6.0"
 description = ""
 optional = false
 python-versions = "^3.11"
@@ -2586,8 +2586,8 @@ pydantic = "^2.5.3"
 [package.source]
 type = "git"
 url = "https://github.com/twaslowski/lingolift-shared"
-reference = "HEAD"
-resolved_reference = "903ee47e1b739b8a787bf776051b817a9f6bcf9e"
+reference = "0.6.0"
+resolved_reference = "e7db70faec86e217aa968de94df57016a4bf9ff6"
 
 [[package]]
 name = "shellingham"
@@ -3238,4 +3238,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "jaraco.test", "more
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "ff1b063a1e4ad538330be77b1bb58478ecd5bb9a474908eecd5f094443d3fe5f"
+content-hash = "ff209c9f544b4dc28b35974b827d6141278ff880819b6cc62a93b9f2157d7d08"

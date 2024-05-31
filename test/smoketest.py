@@ -37,7 +37,9 @@ async def test_literal_translation_error_message_for_long_sentences():
 
 @pytest.mark.asyncio
 async def test_syntactical_analysis_endpoint():
-    analysis = await client.fetch_syntactical_analysis("Donde esta la biblioteca?")
+    analysis = await client.fetch_syntactical_analysis(
+        sentence="Donde esta la biblioteca?", language_code="ES"
+    )
     assert len(analysis) > 0
 
 
