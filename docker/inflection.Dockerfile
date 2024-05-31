@@ -2,8 +2,11 @@ FROM public.ecr.aws/lambda/python:3.11.2024.02.07.18
 
 RUN yum install -y git
 
+ENV LAMBDA_TASK_ROOT=/var/task/lingolift
+ENV PYTHONPATH=/var/task/
+
 # Set up a working directory
-WORKDIR /var/task
+WORKDIR /var/task/lingolift
 
 # Copy project
 COPY lingolift/generative ./generative/

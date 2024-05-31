@@ -5,7 +5,6 @@ function task_test {
   # nlp_lambda_handlers.py has to reside in /var/task for the lambda handler
   # however, if the PYTHONPATH does not point to ./lingolift/, the tests fail
   # This solves that issue by setting the PYTHONPATH appropriately
-  export PYTHONPATH=./lingolift
   poetry run coverage run -m pytest
 }
 
