@@ -1,6 +1,6 @@
 [tool.poetry]
-name = "backend"
-version = "0.1.0"
+name = "lingolift"
+version = "0.2.0"
 description = ""
 authors = ["Tobias Waslowski <tobiaswaslowski@gmail.com>"]
 readme = "README.md"
@@ -35,6 +35,12 @@ pytest-asyncio = "^0.23.7"
 [tool.poetry.group.webserver.dependencies]
 flask = "^3.0.1"
 flask-cors = "^4.0.0"
+
+[tool.poetry.group.cli.dependencies]
+click = "^8.0.1"
+
+[tool.poetry.scripts]
+detect_language = "lingolift.cli:detect_language"
 
 [build-system]
 requires = ["poetry-core"]

@@ -44,7 +44,7 @@ async def test_syntactical_analysis_endpoint():
 @pytest.mark.asyncio
 async def test_syntactical_analysis_error_message_for_invalid_language():
     sentence = "Det er en norsk setning"
-    with pytest.raises(ApplicationException) as e:
+    with pytest.raises(LanguageNotIdentifiedException) as e:
         await client.fetch_syntactical_analysis(sentence)
     # Only a small subset of languages can be identified. This is dependent on the languages the
     # language detector is configured to recognize. Currently, Norwegian simply will not be identified properly.
