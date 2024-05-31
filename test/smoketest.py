@@ -4,7 +4,7 @@ import pytest
 from shared.client import Client
 from shared.exception import (
     ApplicationException,
-    LanguageNotAvailableException,
+    LanguageNotIdentifiedException,
     SentenceTooLongException,
 )
 
@@ -46,7 +46,9 @@ async def test_syntactical_analysis_error_message_for_invalid_language():
     sentence = "Det er en norsk setning"
     with pytest.raises(ApplicationException) as e:
         await client.fetch_syntactical_analysis(sentence)
-    assert e.value.error_message == LanguageNotAvailableException().error_message
+    # Only a small subset of languages can be identified. This is dependent on the languages the
+    # language detector is configured to recognize. Currently, Norwegian simply will not be identified properly.
+    assert e.value.error_message == LanguageNotIdentifiedException().error_message
 
 
 @pytest.mark.asyncio
