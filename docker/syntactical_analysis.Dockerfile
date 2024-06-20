@@ -7,6 +7,10 @@ ENV PYTHONPATH=/var/task/
 # Set up a working directory
 WORKDIR /var/task
 
+# And corresponding spacy model id, e.g. "en_core_web_sm"
+ARG SPACY_MODEL
+ENV SPACY_MODEL=${SPACY_MODEL}
+
 # Copy project
 COPY lingolift/generative ./lingolift/generative/
 COPY lingolift/llm ./lingolift/llm/
@@ -20,5 +24,8 @@ COPY lingolift/nlp_lambda_context_container.py ./lingolift/nlp_lambda_context_co
 # Install dependencies
 COPY package/requirements.txt ./
 RUN python3 -m pip install -r requirements.txt
+
+# Install spaCy model
+RUN python3 -m spacy download ${SPACY_MODEL}
 
 CMD [ "nlp_lambda_handlers.syntactical_analysis_handler" ]

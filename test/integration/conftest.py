@@ -22,6 +22,11 @@ def set_llm_response(context_container: AbstractLambdaContextContainer, response
     context_container.llm_adapter.next_response(response)
 
 
+@pytest.fixture(autouse=True)
+def spacy_model_env(monkeypatch):
+    monkeypatch.setenv("SPACY_MODEL", "de_core_news_sm")
+
+
 @pytest.fixture
 def mock_llm_adapter():
     return MockLLMAdapter()

@@ -1,19 +1,14 @@
 import json
 import logging
 
-from shared.exception import (
-    LanguageNotAvailableException,
-    LanguageNotIdentifiedException,
-)
-
 from lingolift.nlp.syntactical_analysis import perform_analysis
 from lingolift.nlp_lambda_context_container import NLPLambdaContextContainer
-from lingolift.util.lambda_proxy import check_pre_warm, fail, ok
+from lingolift.util.lambda_proxy import check_pre_warm, ok
 
 """
-The split into lambda_handlers and lambda_handlers_nlp is unfortunately required.
+The split into the lambda_handlers and lambda_handlers_nlp files is unfortunately required.
 When importing from the syntactical_analysis module, spaCy gets imported transitively.
-For memory reasons, spaCy is only included where required.
+For memory reasons, spaCy is only included where required, so its import will fail in the non-dockerized lambdas.
 """
 
 # configure logging
@@ -30,15 +25,9 @@ def syntactical_analysis_handler(event, _) -> dict:
         return pre_warm_response
     body = json.loads(event.get("body"))
     sentence = body.get("sentence")
-    language_code = body.get("language_code")
-    logger.info(
-        f"Received sentence, language: {sentence}, language_code: {language_code}"
-    )
-    try:
-        analyses = perform_analysis(sentence, language_code)
-        return ok([a.model_dump() for a in analyses])
-    except (LanguageNotAvailableException, LanguageNotIdentifiedException) as e:
-        return fail(e, 400)
+    logger.info(f"Received sentence, language: {sentence}")
+    analyses = perform_analysis(sentence)
+    return ok([a.model_dump() for a in analyses])
 
 
 def inflection_handler(event, _) -> dict:

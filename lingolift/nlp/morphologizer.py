@@ -16,7 +16,7 @@ class Morphologizer:
     @timed
     def retrieve_all_inflections(self, word: str) -> Inflections:
         # Get the part of speech tag for the word
-        analysis = perform_analysis(word, "DE")[
+        analysis = perform_analysis(word)[
             0
         ]  # only analyze one word at a time right now, only support German
         pos = analysis.pos

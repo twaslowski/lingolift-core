@@ -114,14 +114,6 @@ def test_syntactical_analysis_real_event(real_event, core_context_container):
     assert len(body) == 4
 
 
-def test_syntactical_analysis_regular_call_with_exception(real_event):
-    real_event["body"] = json.dumps({"sentence": "bleep blurp"})
-    response = syntactical_analysis_handler(real_event, None)
-
-    assert response["statusCode"] == 400
-    assert "error_message" in json.loads(response["body"])
-
-
 def test_pre_warm_inflection(pre_warm_event):
     response = inflection_handler(pre_warm_event, None)
 

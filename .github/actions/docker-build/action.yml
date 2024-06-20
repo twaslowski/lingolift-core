@@ -8,6 +8,9 @@ inputs:
   image-name:
     description: 'Name of the Docker image'
     required: true
+  spacy_model:
+    description: 'Spacy model to download'
+    required: true
 
 runs:
   using: "composite"
@@ -56,6 +59,8 @@ runs:
       uses: docker/build-push-action@v5
       with:
         context: .
+        build-args: |
+          SPACY_MODEL=${{ inputs.spacy_model }}
         file: ${{ inputs.dockerfile }}
         provenance: false
         platforms: linux/amd64

@@ -85,11 +85,6 @@ function task_build_webserver() {
 
   while [[ $# -gt 0 ]]; do
     case $1 in
-      --source-lang)
-        SOURCE_LANG="$2"
-        shift # past argument
-        shift # past value
-        ;;
       --spacy-model)
         SPACY_MODEL="$2"
         shift # past argument

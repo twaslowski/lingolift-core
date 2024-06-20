@@ -25,7 +25,7 @@ jobs:
       - name: Run tests
         run: ./do test
 
-  build_syntactical_analysis_docker:
+  build_syntactical_analysis_docker_german:
     needs: test
     runs-on: ubuntu-latest
     env:
@@ -39,8 +39,9 @@ jobs:
         with:
           dockerfile: ./docker/syntactical_analysis.Dockerfile
           image-name: syntactical_analysis-lambda
+          spacy_model: de_core_news_sm
 
-  build_inflection_docker:
+  build_inflection_docker_german:
     needs: test
     runs-on: ubuntu-latest
     env:
@@ -54,6 +55,7 @@ jobs:
         with:
           dockerfile: ./docker/inflection.Dockerfile
           image-name: inflection-lambda
+          spacy_model: de_core_news_sm
 
   deploy_dev_infrastructure:
     needs: [build_syntactical_analysis_docker, build_inflection_docker]

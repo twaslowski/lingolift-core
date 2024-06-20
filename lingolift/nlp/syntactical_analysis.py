@@ -1,8 +1,7 @@
-from typing import Optional
+import os
 
 import shared.universal_features as universal_features
 import spacy
-from shared.exception import LanguageNotAvailableException
 from shared.model.syntactical_analysis import (
     Morphology,
     PartOfSpeech,
@@ -10,39 +9,16 @@ from shared.model.syntactical_analysis import (
 )
 from spacy.tokens.token import Token
 
-from lingolift.nlp.abstract_language_detector import AbstractLanguageDetector
-from lingolift.nlp.lingua_language_detector import LinguaLanguageDetector
-
-models = {
-    "DE": "de_core_news_sm",
-    "RU": "ru_core_news_sm",
-    "ES": "es_core_news_sm",
-    "FR": "fr_core_news_md",
-    "PT": "pt_core_news_sm",
-}
 
 
-def perform_analysis(
-    sentence: str,
-    language_code: Optional[str] = None,
-    language_detector: AbstractLanguageDetector = LinguaLanguageDetector(),
-) -> list[SyntacticalAnalysis]:
+def perform_analysis(sentence: str) -> list[SyntacticalAnalysis]:
     """
     Performs a syntactical analysis on a sentence in a given language.
-    :param language_detector: LanguageDetector to detect languages if language code is not provided.
-    :param language_code: Can optionally be supplied to override the language detection.
     :param sentence: Source sentence
     :return:
     """
-    if not language_code:
-        language_code = str(language_detector.detect_language(sentence))
-    try:
-        model = models[language_code]
-        nlp = spacy.load(model)
-    except KeyError:
-        raise LanguageNotAvailableException()
+    nlp = spacy.load(os.getenv("SPACY_MODEL"))
     doc = nlp(sentence)
-
     return [_analyze_token(token) for token in doc if _analyze_token(token) is not None]
 
 
