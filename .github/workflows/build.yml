@@ -57,7 +57,7 @@ jobs:
           image-name: inflection-lambda
           spacy_model: de_core_news_sm
 
-  build_webserver_german:
+  build_webserver_docker:
     needs: test
     runs-on: ubuntu-latest
     strategy:
@@ -91,12 +91,7 @@ jobs:
             latest=true
           # generate Docker tags based on the following events/attributes
           tags: |
-            type=schedule
-            type=ref,event=branch
-            type=ref,event=pr
             type=semver,pattern={{version}}
-            type=semver,pattern={{major}}.{{minor}}
-            type=semver,pattern={{major}}
             type=sha
 
       - name: Build and push
