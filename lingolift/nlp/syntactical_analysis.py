@@ -10,7 +10,6 @@ from shared.model.syntactical_analysis import (
 from spacy.tokens.token import Token
 
 
-
 def perform_analysis(sentence: str) -> list[SyntacticalAnalysis]:
     """
     Performs a syntactical analysis on a sentence in a given language.
