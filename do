@@ -81,7 +81,35 @@ function task_build_core_lambda_dependencies() {
 }
 
 function task_build_webserver() {
-  docker build -t lingolift-webserver -f docker/webserver.Dockerfile .
+  POSITIONAL_ARGS=()
+
+  while [[ $# -gt 0 ]]; do
+    case $1 in
+      --source-lang)
+        SOURCE_LANG="$2"
+        shift # past argument
+        shift # past value
+        ;;
+      --spacy-model)
+        SPACY_MODEL="$2"
+        shift # past argument
+        shift # past value
+        ;;
+      -*|--*)
+        echo "Unknown option $1"
+        exit 1
+        ;;
+      *)
+        POSITIONAL_ARGS+=("$1") # save positional arg
+        shift # past argument
+        ;;
+    esac
+  done
+
+  docker build -t lingolift-webserver \
+   --build-arg SOURCE_LANG="$SOURCE_LANG" \
+   --build-arg SPACY_MODEL="$SPACY_MODEL" \
+   -f docker/webserver.Dockerfile .
 }
 
 ## clean: Removes all lambda package files

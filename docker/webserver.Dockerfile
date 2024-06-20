@@ -16,10 +16,18 @@ ENV FLASK_APP=lingolift/webserver.py
 ARG SOURCE_LANG
 ENV SOURCE_LANG=${SOURCE_LANG}
 
-# Copy files
+# And corresponding spacy model id, e.g. "en_core_web_sm"
+ARG SPACY_MODEL
+ENV SPACY_MODEL=${SPACY_MODEL}
+
+# Verify that neither values are empty
+RUN test -n "${SOURCE_LANG}" && test -n "${SPACY_MODEL}"
+
+# Copy source files
 COPY pyproject.toml poetry.lock ./
 COPY lingolift ./lingolift
 
 RUN poetry install --no-root --with webserver --with nlp
+RUN poetry run spacy download ${SPACY_MODEL}
 
 ENTRYPOINT ["poetry", "run", "flask", "run", "--host=0.0.0.0", "--port=5001"]
