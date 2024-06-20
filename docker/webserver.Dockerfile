@@ -23,7 +23,7 @@ RUN test -n "${SPACY_MODEL}"
 COPY pyproject.toml poetry.lock ./
 COPY lingolift ./lingolift
 
-RUN poetry install --no-root --with webserver --with nlp
+RUN poetry install --no-root --without dev
 RUN poetry run spacy download ${SPACY_MODEL}
 
 ENTRYPOINT ["poetry", "run", "flask", "run", "--host=0.0.0.0", "--port=5001"]
