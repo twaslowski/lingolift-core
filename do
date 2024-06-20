@@ -90,6 +90,11 @@ function task_build_webserver() {
         shift # past argument
         shift # past value
         ;;
+      --source-lang)
+        SOURCE_LANG="$2"
+        shift # past argument
+        shift # past value
+        ;;
       -*|--*)
         echo "Unknown option $1"
         exit 1
@@ -101,8 +106,7 @@ function task_build_webserver() {
     esac
   done
 
-  docker build -t lingolift-webserver \
-   --build-arg SOURCE_LANG="$SOURCE_LANG" \
+  docker build -t "lingolift-webserver-$SOURCE_LANG:latest" \
    --build-arg SPACY_MODEL="$SPACY_MODEL" \
    -f docker/webserver.Dockerfile .
 }

@@ -39,13 +39,23 @@ of serverless functions on AWS Lambda, abstracted behind an API Gateway.
 
 ## Running
 
-You can run the application locally as a dockerized Flask server. To do so, you need to have Docker installed
-on your machine. Then, you can run the following commands:
+You can run lingolift locally as a dockerized Flask server. To do so, you need to have Docker installed
+on your machine. You can simply pull a pre-built Docker image (amd64 only) for a given language from Docker Hub:
 
 ```bash
-git clone git@github.com:twaslowski/lingolift-core.git && cd lingolift-core
-./do build_webserver
-docker run -p 5001:5001 --env OPENAI_API_KEY=<YOUR_API_KEY> lingolift-webserver
+docker pull tobiaswaslowski/lingolift-webserver-de:latest
+docker run -p 5001:5001 tobiaswaslowski/lingolift-webserver-de:latest
+```
+
+Note that this image can only perform syntactical analysis for German. I host another model for the Russian language
+(`tobiaswaslowski/lingolift-webserver-ru`); if you would like more images, you have to build them yourself. This
+is not terribly difficult. You can build an image for a given language with the following command:
+
+```bash
+# Build the image for the Spanish language
+# Retrieve model id here: https://spacy.io/models
+./do build_webserver --spacy_model es_core_news_sm  --source-lang es
+docker run -p 5001:5001 lingolift-webserver:latest
 ```
 
 The easiest option to interact with the provided endpoints is to clone the

@@ -60,6 +60,12 @@ jobs:
   build_webserver_german:
     needs: test
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        config:
+          - { spacy_model: 'de_core_news_sm', language: 'de' }
+          - { spacy_model: 'ru_core_news_sm', language: 'ru' }
+
     steps:
       - name: checkout
         uses: actions/checkout@v4
@@ -80,7 +86,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: tobiaswaslowski/lingolift-webserver
+          images: tobiaswaslowski/lingolift-webserver-${{ matrix.config.language }}
           flavor: |
             latest=true
           # generate Docker tags based on the following events/attributes
@@ -99,7 +105,7 @@ jobs:
           context: .
           file: ./docker/webserver.Dockerfile
           build-args: |
-            SPACY_MODEL=de_core_news_sm
+            SPACY_MODEL=${{ matrix.config.spacy_model }}
           platforms: linux/amd64
           push: true
           tags: ${{ steps.meta.outputs.tags }}
