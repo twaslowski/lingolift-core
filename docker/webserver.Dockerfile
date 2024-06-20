@@ -12,16 +12,12 @@ ENV OPENAI_API_KEY="sk-replace-me"
 ENV PYTHONPATH=/app
 ENV FLASK_APP=lingolift/webserver.py
 
-# Define source language
-ARG SOURCE_LANG
-ENV SOURCE_LANG=${SOURCE_LANG}
-
 # And corresponding spacy model id, e.g. "en_core_web_sm"
 ARG SPACY_MODEL
 ENV SPACY_MODEL=${SPACY_MODEL}
 
 # Verify that neither values are empty
-RUN test -n "${SOURCE_LANG}" && test -n "${SPACY_MODEL}"
+RUN test -n "${SPACY_MODEL}"
 
 # Copy source files
 COPY pyproject.toml poetry.lock ./
