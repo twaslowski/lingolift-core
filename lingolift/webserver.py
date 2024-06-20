@@ -10,6 +10,10 @@ from lingolift.core_lambda_handlers import (
     response_suggestion_handler,
     translation_handler,
 )
+from lingolift.nlp_lambda_handlers import (
+    inflection_handler,
+    syntactical_analysis_handler,
+)
 
 logging.basicConfig(
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.INFO
@@ -17,6 +21,12 @@ logging.basicConfig(
 
 app = Flask(__name__)
 CORS(app)
+
+
+"""
+This defines a simple Flask server that provides a wrapper around the core Lambda handlers.
+It emulates the API Gateway and Lambda integration, allowing for local testing of the frontend.
+"""
 
 
 @app.route("/translation", methods=["POST"])

@@ -80,6 +80,10 @@ function task_build_core_lambda_dependencies() {
   cd "${PACKAGE_DIRECTORY}" && zip -r "../${PACKAGE_DIRECTORY}.zip" . && cd ..
 }
 
+function task_build_webserver() {
+  docker build -t lingolift-webserver -f docker/webserver.Dockerfile .
+}
+
 ## clean: Removes all lambda package files
 function task_clean() {
   rm -rf package*
@@ -96,7 +100,7 @@ cmd=${1:-}
 shift || true
 resolved_command=$(echo "task_${cmd}" | sed 's/-/_/g')
 if [[ "$(LC_ALL=C type -t "${resolved_command}")" == "function" ]]; then
-    pushd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null
+    pushd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null || exit 1
     ${resolved_command} "$@"
 else
     task_usage
