@@ -41,7 +41,7 @@ jobs:
         uses: ./.github/actions/docker-build
         with:
           dockerfile: ./docker/syntactical_analysis.Dockerfile
-          image-name: syntactical_analysis-lambda
+          image_name: syntactical_analysis-lambda
           spacy_model: de_core_news_sm
 
   build_inflection_docker_german:
@@ -57,7 +57,7 @@ jobs:
         uses: ./.github/actions/docker-build
         with:
           dockerfile: ./docker/inflection.Dockerfile
-          image-name: inflection-lambda
+          image_name: inflection-lambda
           spacy_model: de_core_news_sm
 
   build_webserver_docker:

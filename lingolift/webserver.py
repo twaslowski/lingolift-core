@@ -22,7 +22,6 @@ logging.basicConfig(
 app = Flask(__name__)
 CORS(app)
 
-
 """
 This defines a simple Flask server that provides a wrapper around the core Lambda handlers.
 It emulates the API Gateway and Lambda integration, allowing for local testing of the frontend.

@@ -6,10 +6,10 @@ from lingolift.nlp.morphologizer import Morphologizer
 
 class NLPLambdaContextContainer(AbstractLambdaContextContainer):
     llm_adapter: AbstractLLMAdapter
-    morphology_generator: InflectionGenerator
+    inflection_generator: InflectionGenerator
     morphologizer: Morphologizer
 
     def __init__(self, llm_adapter: AbstractLLMAdapter = None):
         super().__init__(llm_adapter)
-        self.morphology_generator = InflectionGenerator(self.llm_adapter)
-        self.morphologizer = Morphologizer(self.morphology_generator)
+        self.inflection_generator = InflectionGenerator(self.llm_adapter)
+        self.morphologizer = Morphologizer(self.inflection_generator)

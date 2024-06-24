@@ -10,8 +10,8 @@ from lingolift.util.timing import timed
 
 
 class Morphologizer:
-    def __init__(self, morphology_generator: InflectionGenerator):
-        self.morphology_generator = morphology_generator
+    def __init__(self, inflection_generator: InflectionGenerator):
+        self.morphology_generator = inflection_generator
 
     @timed
     def retrieve_all_inflections(self, word: str) -> Inflections:

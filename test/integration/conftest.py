@@ -48,7 +48,7 @@ def nlp_context_container(mock_llm_adapter):
 
 @pytest.fixture
 def morphology_generator(nlp_context_container) -> InflectionGenerator:
-    return nlp_context_container.morphology_generator
+    return nlp_context_container.inflection_generator
 
 
 @pytest.fixture

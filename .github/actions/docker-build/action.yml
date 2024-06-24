@@ -5,7 +5,7 @@ inputs:
   dockerfile:
     description: 'Path to the Dockerfile'
     required: true
-  image-name:
+  image_name:
     description: 'Name of the Docker image'
     required: true
   spacy_model:
@@ -46,8 +46,8 @@ runs:
       uses: docker/metadata-action@v5
       with:
         images: |
-          246770851643.dkr.ecr.eu-central-1.amazonaws.com/${{ inputs.image-name }}-dev
-          246770851643.dkr.ecr.eu-central-1.amazonaws.com/${{ inputs.image-name }}-prod
+          246770851643.dkr.ecr.eu-central-1.amazonaws.com/${{ inputs.image_name }}-dev
+          246770851643.dkr.ecr.eu-central-1.amazonaws.com/${{ inputs.image_name }}-prod
         flavor: |
           latest=true
         tags: |
