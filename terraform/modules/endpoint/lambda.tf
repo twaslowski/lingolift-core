@@ -30,7 +30,7 @@ resource "aws_cloudwatch_event_rule" "keep_warm" {
   # These are only required on the much slower container-based lambdas
   count = var.package_type == "Image" ? 1 : 0
 
-  name                = "every-ten-minutes"
+  name                = "${module.lambda.lambda_function_name}-keep-warm"
   description         = "Fires every ten minutes"
   schedule_expression = "rate(10 minutes)"
 }
