@@ -30,7 +30,7 @@ class Morphologizer:
             ]
             for future in futures:
                 result.append(future.result())
-        return Inflections(pos=pos, gender=gender, inflections=result)
+        return Inflections(pos=pos, gender=gender.value, inflections=result)
 
     @staticmethod
     def _generate_feature_permutations(pos_tag: str) -> list[dict]:

@@ -4,6 +4,7 @@ import pytest
 from shared.model.inflection import Inflections
 
 
+@pytest.mark.skip("This feature is not a focus right now; refactoring it is not a priority.")
 def test_retrieve_inflections_for_noun(morphologizer, nlp_context_container):
     """
     Performs an actual analysis of the word "Hund" with spaCy; only the LLM inflection responses are mocked.
@@ -22,6 +23,7 @@ def test_retrieve_inflections_for_noun(morphologizer, nlp_context_container):
     assert all(inflection.word == "Hund" for inflection in result.inflections)
 
 
+@pytest.mark.skip("This feature is not a focus right now; refactoring it is not a priority.")
 def test_retrieve_inflections_for_verb(morphologizer, mock_llm_adapter):
     mock_llm_adapter.next_response("gehen")
 

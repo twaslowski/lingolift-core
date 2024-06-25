@@ -27,7 +27,7 @@ def syntactical_analysis_handler(event, _) -> dict:
     sentence = body.get("sentence")
     logger.info(f"Received sentence, language: {sentence}")
     analyses = perform_analysis(sentence)
-    return ok([a.model_dump() for a in analyses])
+    return ok([a.dict() for a in analyses])
 
 
 def inflection_handler(event, _) -> dict:

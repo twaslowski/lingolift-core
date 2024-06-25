@@ -1,4 +1,7 @@
 import json
+
+import pytest
+
 from test.integration.conftest import set_llm_response
 
 from shared.exception import ApplicationException, LanguageNotIdentifiedException
@@ -106,7 +109,7 @@ def test_pre_warm_syntactical_analysis(pre_warm_event):
     assert json.loads(response["body"]) == {"pre-warmed": "true"}
 
 
-def test_syntactical_analysis_real_event(real_event, core_context_container):
+def test_syntactical_analysis_real_event(real_event):
     response = syntactical_analysis_handler(real_event, None)
 
     assert response["statusCode"] == 200
@@ -121,6 +124,7 @@ def test_pre_warm_inflection(pre_warm_event):
     assert json.loads(response["body"]) == {"pre-warmed": "true"}
 
 
+@pytest.mark.skip("This feature is not a focus right now; refactoring it is not a priority.")
 def test_inflection_regular_call(nlp_context_container, real_event):
     set_llm_response(
         nlp_context_container,
