@@ -19,7 +19,6 @@ COPY lingolift/nlp ./lingolift/nlp/
 
 COPY lingolift/nlp_lambda_handlers.py ./nlp_lambda_handlers.py
 COPY lingolift/abstract_context_container.py ./lingolift/abstract_context_container.py
-COPY lingolift/nlp_lambda_context_container.py ./lingolift/nlp_lambda_context_container.py
 
 # Install dependencies
 COPY package/requirements.txt ./
