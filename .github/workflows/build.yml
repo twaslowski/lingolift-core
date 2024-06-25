@@ -46,6 +46,7 @@ jobs:
 
   build_webserver_docker:
     needs: test
+    if: github.event_name == 'push' && contains(github.ref, 'refs/tags/')
     runs-on: ubuntu-latest
     strategy:
       matrix:
