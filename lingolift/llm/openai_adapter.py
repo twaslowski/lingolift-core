@@ -34,7 +34,7 @@ class OpenAIAdapter(AbstractLLMAdapter):
         # mypy complains about the usage of the create() function, but clearly it works
         completion = self.client.chat.completions.create(  # type: ignore
             model=model_name,
-            response_format=ResponseFormat[response_format],
+            response_format={"type": response_format},
             messages=[message.asdict() for message in messages],
         )
         response = completion.choices[0].message.content
