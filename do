@@ -5,8 +5,8 @@ function task_smoke_test() {
   poetry run pytest test/smoketest.py
 }
 
-## coverage: Runs tests and generates test coverage report
-function test() {
+## test: Runs tests and generates test coverage report
+function task_test() {
   poetry run coverage run -m pytest
   poetry run coverage html
   poetry run coverage xml -o test/coverage.xml
