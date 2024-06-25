@@ -28,7 +28,7 @@ runs:
     - name: Setup Python and Poetry
       uses: ./.github/actions/setup-python-poetry
       with:
-        python-version: 3.11.6
+        python-version: 3.12.2
 
     - name: Export requirements.txt
       shell: bash

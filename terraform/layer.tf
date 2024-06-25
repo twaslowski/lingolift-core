@@ -5,7 +5,7 @@ module "core_dependencies" {
 
   layer_name          = "lingolift-core-dependencies-layer-${var.environment}"
   description         = "Core dependencies for non-NLP related tasks, including lingolift-shared and the OpenAI SDK"
-  compatible_runtimes = ["python3.11"]
+  compatible_runtimes = ["python3.12"]
 
 
   create_package         = false

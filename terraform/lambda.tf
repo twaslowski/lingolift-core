@@ -3,7 +3,7 @@ module "translation" {
   environment      = var.environment
   api_gateway_id         = aws_api_gateway_rest_api.lingolift_api.id
   root_resource_id       = aws_api_gateway_rest_api.lingolift_api.root_resource_id
-  runtime                = "python3.11"
+  runtime                = "python3.12"
   name                   = "translation"
   local_existing_package = "../package_core.zip"
   layers                 = [
@@ -18,7 +18,7 @@ module "literal_translation" {
   environment      = var.environment
   api_gateway_id         = aws_api_gateway_rest_api.lingolift_api.id
   root_resource_id       = aws_api_gateway_rest_api.lingolift_api.root_resource_id
-  runtime                = "python3.11"
+  runtime                = "python3.12"
   name                   = "literal-translation"
   local_existing_package = "../package_core.zip"
   layers                 = [
@@ -34,7 +34,7 @@ module "response_suggestion" {
   api_gateway_id   = aws_api_gateway_rest_api.lingolift_api.id
   root_resource_id = aws_api_gateway_rest_api.lingolift_api.root_resource_id
 
-  runtime                = "python3.11"
+  runtime                = "python3.12"
   name                   = "response-suggestion"
   local_existing_package = "../package_core.zip"
   layers                 = [

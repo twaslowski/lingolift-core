@@ -1,28 +1,16 @@
 #!/usr/bin/env bash
 
-## test: Runs unit tests
-function task_test {
-  # nlp_lambda_handlers.py has to reside in /var/task for the lambda handler
-  # however, if the PYTHONPATH does not point to ./lingolift/, the tests fail
-  # This solves that issue by setting the PYTHONPATH appropriately
-  poetry run coverage run -m pytest
-}
-
+## smoke_test: Runs smoke test against dev environment API Gateway to ensure application is running properly
 function task_smoke_test() {
   poetry run pytest test/smoketest.py
 }
 
-## coverage: Generates test coverage report
-function task_coverage() {
-  task_test
+## coverage: Runs tests and generates test coverage report
+function test() {
+  poetry run coverage run -m pytest
   poetry run coverage html
   poetry run coverage xml -o test/coverage.xml
   poetry run coverage-badge -f -o test/coverage.svg
-}
-
-## pc: runs pre-commit hook
-function task_pc() {
-  poetry run pre-commit run --all-files
 }
 
 ## export_requirements: Exports requirements to package/requirements.txt
@@ -70,11 +58,11 @@ function task_build_core_lambdas() {
 function task_build_core_lambda_dependencies() {
   PACKAGE_DIRECTORY="package_core_dependencies"
 
-  mkdir -p "${PACKAGE_DIRECTORY}/python/lib/python3.11/site-packages"
+  mkdir -p "${PACKAGE_DIRECTORY}/python/lib/python3.12/site-packages"
   poetry export -f requirements.txt -o "${PACKAGE_DIRECTORY}/requirements.txt" --without-hashes
 
-  python3.11 -m pip install -r "${PACKAGE_DIRECTORY}/requirements.txt" \
-    --target "${PACKAGE_DIRECTORY}/python/lib/python3.11/site-packages" \
+  python3.12 -m pip install -r "${PACKAGE_DIRECTORY}/requirements.txt" \
+    --target "${PACKAGE_DIRECTORY}/python/lib/python3.12/site-packages" \
     --platform manylinux2014_x86_64 --only-binary=:all:
 
   cd "${PACKAGE_DIRECTORY}" && zip -r "../${PACKAGE_DIRECTORY}.zip" . && cd ..
@@ -109,6 +97,11 @@ function task_build_webserver() {
   docker build -t "lingolift-webserver-$SOURCE_LANG:latest" \
    --build-arg SPACY_MODEL="$SPACY_MODEL" \
    -f docker/webserver.Dockerfile .
+}
+
+function task_run_webserver() {
+  LANGUAGE=$1
+  docker run -p 5001:5001 -e OPENAI_API_KEY="$OPENAI_API_KEY" "tobiaswaslowski/lingolift-webserver-$LANGUAGE:latest"
 }
 
 ## clean: Removes all lambda package files

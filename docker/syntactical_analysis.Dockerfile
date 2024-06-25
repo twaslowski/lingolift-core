@@ -1,4 +1,4 @@
-FROM public.ecr.aws/lambda/python:3.11.2024.02.07.18
+FROM public.ecr.aws/lambda/python:3.12.2024.06.19.12
 
 RUN yum install -y git
 

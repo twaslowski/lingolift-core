@@ -43,7 +43,7 @@ on your machine. You can simply pull a pre-built Docker image (amd64 only) for a
 
 ```bash
 docker pull tobiaswaslowski/lingolift-webserver-de:latest
-docker run -p 5001:5001 tobiaswaslowski/lingolift-webserver-de:latest
+docker run -p 5001:5001 -e OPENAI_API_KEY="$OPENAI_API_KEY" tobiaswaslowski/lingolift-webserver-de:latest
 ```
 
 Note that this image can only perform syntactical analysis for German. I host another model for the Russian language
@@ -54,7 +54,7 @@ is not terribly difficult. You can build an image for a given language with the 
 # Build the image for the Spanish language
 # Retrieve model id here: https://spacy.io/models
 ./do build_webserver --spacy_model es_core_news_sm  --source-lang es
-docker run -p 5001:5001 lingolift-webserver:latest
+./do run_webserver es
 ```
 
 The easiest option to interact with the provided endpoints is to clone the
