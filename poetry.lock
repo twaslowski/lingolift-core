@@ -2580,8 +2580,8 @@ pydantic = "^2.5.3"
 [package.source]
 type = "git"
 url = "https://github.com/twaslowski/lingolift-shared"
-reference = "0.7.2"
-resolved_reference = "f6b706c1d5d7ac634e94a61da4bc559c24c2d558"
+reference = "0.7.4"
+resolved_reference = "f86cda8ac49347765ccb09b262a5161b142d2849"
 
 [[package]]
 name = "shellingham"
@@ -3282,4 +3282,4 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.12"
-content-hash = "bf3d51d983bdfb63623a07c824522310eeaaddaa40e7aba29078119e8faa22c9"
+content-hash = "11b3db2a090a865c226c7ec7029ad1a6e6210d2bec4eeb30a8b3d2d4d90122fe"

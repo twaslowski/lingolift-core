@@ -8,7 +8,7 @@ readme = "README.md"
 [tool.poetry.dependencies]
 python = "^3.12"
 python-iso639 = "^2024.1.2"
-shared = {git = "https://github.com/twaslowski/lingolift-shared", tag = "0.7.2"}
+shared = {git = "https://github.com/twaslowski/lingolift-shared", tag = "0.7.4"}
 openai = "^1.7.2"
 json5 = "^0.9.14"
 
