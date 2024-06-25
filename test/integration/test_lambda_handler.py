@@ -1,11 +1,8 @@
 import json
 
-import pytest
-
 from test.integration.conftest import set_llm_response
 
 from shared.exception import ApplicationException, LanguageNotIdentifiedException
-from shared.model.inflection import Inflections
 from shared.model.literal_translation import LiteralTranslation
 from shared.model.response_suggestion import ResponseSuggestion
 from shared.model.translation import Translation
@@ -16,7 +13,6 @@ from lingolift.core_lambda_handlers import (
     translation_handler,
 )
 from lingolift.nlp_lambda_handlers import (
-    inflection_handler,
     syntactical_analysis_handler,
 )
 
@@ -115,26 +111,3 @@ def test_syntactical_analysis_real_event(real_event):
     assert response["statusCode"] == 200
     body = json.loads(response["body"])
     assert len(body) == 4
-
-
-def test_pre_warm_inflection(pre_warm_event):
-    response = inflection_handler(pre_warm_event, None)
-
-    assert response["statusCode"] == 200
-    assert json.loads(response["body"]) == {"pre-warmed": "true"}
-
-
-@pytest.mark.skip("This feature is not a focus right now; refactoring it is not a priority.")
-def test_inflection_regular_call(nlp_context_container, real_event):
-    set_llm_response(
-        nlp_context_container,
-        "Hund",
-    )
-    response = inflection_handler(real_event, None)
-
-    assert response["statusCode"] == 200
-    body = json.loads(response["body"])
-    inflections = Inflections(**body)
-
-    assert len(inflections.inflections) == 8  # for a noun
-    assert inflections.inflections[0].word == "Hund"
