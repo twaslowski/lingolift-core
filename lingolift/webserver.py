@@ -11,7 +11,6 @@ from lingolift.core_lambda_handlers import (
     translation_handler,
 )
 from lingolift.nlp_lambda_handlers import (
-    inflection_handler,
     syntactical_analysis_handler,
 )
 
@@ -61,15 +60,6 @@ def get_syntactical_analysis():
     lambda_body = create_lambda_event({"sentence": sentence})
     translation_response = syntactical_analysis_handler(lambda_body, None)
     body, status = parse_lambda_response(translation_response)
-    return jsonify(body), status
-
-
-@app.route("/inflection", methods=["POST"])
-def get_inflections():
-    word = request.json.get("word")
-    lambda_body = create_lambda_event({"word": word})
-    inflections_response = inflection_handler(lambda_body, None)
-    body, status = parse_lambda_response(inflections_response)
     return jsonify(body), status
 
 

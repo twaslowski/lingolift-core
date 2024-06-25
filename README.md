@@ -21,7 +21,6 @@ As of now, lingolift can do the following:
 - Provide a literal translation of each word in the input sentence (up to certain sentence lengths)
 - Provide a coherent syntactical analysis of the input sentence based in part-of-speech tagging
 - Provide response suggestions for the user to continue the conversation
-- Generate inflections for a given word (experimental, Streamlit-only, German-only)
 
 Currently, those features can be accessed via Chatbot-like UIs on both the
 [Streamlit Community Cloud](https://lingolift.streamlit.app)

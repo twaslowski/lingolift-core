@@ -46,9 +46,3 @@ async def test_syntactical_analysis_endpoint():
 async def test_response_suggestions_endpoint():
     suggestions = await client.fetch_response_suggestions("Donde esta la biblioteca?")
     assert len(suggestions) > 0
-
-
-@pytest.mark.asyncio
-async def test_inflections_endpoint():
-    suggestions = await client.fetch_response_suggestions("Donde esta la biblioteca?")
-    assert len(suggestions) > 0

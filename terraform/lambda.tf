@@ -58,18 +58,3 @@ module "syntactical_analysis" {
 
   openai_api_key = var.openai_api_key
 }
-
-module "inflection" {
-  source           = "./modules/endpoint"
-  environment      = var.environment
-  api_gateway_id   = aws_api_gateway_rest_api.lingolift_api.id
-  root_resource_id = aws_api_gateway_rest_api.lingolift_api.root_resource_id
-
-  name         = "inflection"
-  package_type = "Image"
-  image_uri    = "${module.inflection_repository.repository_url}:sha-${var.commit_sha}"
-
-  memory = 2048
-
-  openai_api_key = var.openai_api_key
-}

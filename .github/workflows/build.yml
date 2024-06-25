@@ -44,22 +44,6 @@ jobs:
           image_name: syntactical_analysis-lambda
           spacy_model: de_core_news_sm
 
-  build_inflection_docker_german:
-    needs: test
-    runs-on: ubuntu-latest
-    env:
-      AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
-    steps:
-      - name: checkout
-        uses: actions/checkout@v4
-
-      - name: Docker Build and Push
-        uses: ./.github/actions/docker-build
-        with:
-          dockerfile: ./docker/inflection.Dockerfile
-          image_name: inflection-lambda
-          spacy_model: de_core_news_sm
-
   build_webserver_docker:
     needs: test
     runs-on: ubuntu-latest
@@ -113,7 +97,7 @@ jobs:
   
 
   deploy_dev_infrastructure:
-    needs: [build_inflection_docker_german, build_syntactical_analysis_docker_german]
+    needs: build_syntactical_analysis_docker_german
     runs-on: ubuntu-latest
     env:
       AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
