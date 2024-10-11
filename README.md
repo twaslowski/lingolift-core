@@ -1,6 +1,11 @@
 ![Build](https://github.com/TobiasWaslowski/lingolift/actions/workflows/build.yml/badge.svg)
 ![Coverage](./test/coverage.svg)
 
+# Archival
+
+This repository is archived as of October 2024. While it was a fun project, it turns out that scaling this application beyond a certain complexity in Python just is not feasible.
+I do think there is value in this project, but I would have to do an entire rewrite in a programming language better suited for this usecase.
+
 # About
 
 This application's goal is to enable people in learning languages while conversing with native speakers.
